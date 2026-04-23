@@ -1496,3 +1496,74 @@ a { color: inherit; text-decoration: none; }
   .toefl-timer-row { flex-direction: column; align-items: flex-start; }
   .toefl-timer-text { font-size: 1.6rem; }
 }
+
+/* ── Text-based Thumbnail ── */
+.post-thumb--text {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem 1.5rem;
+  text-align: center;
+  gap: 0.6rem;
+  background-size: initial !important;
+  background-position: initial !important;
+}
+
+.thumb-category {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.72);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  display: block;
+}
+
+.thumb-title-text {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.45;
+  letter-spacing: -0.025em;
+  word-break: keep-all;
+  margin: 0;
+}
+
+/* ── Text-based Post Hero ── */
+.post-hero--text {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+.post-hero-text-inner {
+  max-width: 740px;
+  width: 100%;
+}
+
+.post-hero-label {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.8);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 1.1rem;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 0.3rem 0.9rem;
+  border-radius: 2rem;
+  backdrop-filter: blur(4px);
+}
+
+.post-hero-display-title {
+  font-size: clamp(1.75rem, 4.5vw, 2.8rem);
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.04em;
+  line-height: 1.25;
+  margin: 0;
+  word-break: keep-all;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+}

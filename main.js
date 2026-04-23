@@ -627,6 +627,84 @@ signupForm?.addEventListener('submit', e => {
   switchType('integrated');
 })();
 
+// ── Text-based Thumbnail & Hero Converter ──
+(function () {
+  const GRADIENT_MAP = {
+    '생활꿀팁':    'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+    'IT테크':      'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+    '뉴스요약':    'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+    '건강':        'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+    '의료':        'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+    '재테크':      'linear-gradient(135deg, #10b981 0%, #047857 100%)',
+    '경제':        'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+    '취업':        'linear-gradient(135deg, #6366f1 0%, #4338ca 100%)',
+    '커리어':      'linear-gradient(135deg, #6366f1 0%, #4338ca 100%)',
+    '생산성':      'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+    '스마트폰':    'linear-gradient(135deg, #64748b 0%, #334155 100%)',
+    'AI':          'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
+    'JavaScript':  'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+    'TypeScript':  'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+    'CSS':         'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
+    'Design':      'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
+    'React':       'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
+    'Next.js':     'linear-gradient(135deg, #111111 0%, #374151 100%)',
+    'Web':         'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+    'Performance': 'linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)',
+    'Security':    'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+    'Python':      'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+    'DevOps':      'linear-gradient(135deg, #64748b 0%, #475569 100%)',
+    'Git':         'linear-gradient(135deg, #475569 0%, #334155 100%)',
+    'Database':    'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+    'Backend':     'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+    'Architecture':'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+    'API':         'linear-gradient(135deg, #6366f1 0%, #4338ca 100%)',
+    'Network':     'linear-gradient(135deg, #6366f1 0%, #4338ca 100%)',
+    'UX':          'linear-gradient(135deg, #f43f5e 0%, #e11d48 100%)',
+    'Tools':       'linear-gradient(135deg, #64748b 0%, #475569 100%)',
+  };
+  const DEFAULT_GRADIENT = 'linear-gradient(135deg, #374151 0%, #1f2937 100%)';
+
+  function getGradient(tag) {
+    return GRADIENT_MAP[tag] || DEFAULT_GRADIENT;
+  }
+
+  // 인덱스 카드 썸네일 변환
+  document.querySelectorAll('.post-thumb').forEach(el => {
+    const card = el.closest('.post-card');
+    if (!card) return;
+
+    const firstTag = card.querySelector('.tag')?.textContent?.trim() || '';
+    const title    = card.querySelector('.post-title')?.textContent?.trim() || '';
+    const isFeatured = card.classList.contains('featured');
+
+    el.removeAttribute('style');
+    el.style.background = getGradient(firstTag);
+    el.classList.add('post-thumb--text');
+    el.innerHTML = `
+      ${isFeatured ? '<span class="featured-badge">Featured</span>' : ''}
+      <span class="thumb-category">${firstTag}</span>
+      <p class="thumb-title-text">${title}</p>
+    `;
+  });
+
+  // 개별 포스트 히어로 이미지 변환
+  const hero = document.querySelector('.post-hero-img');
+  if (hero) {
+    const firstTag = document.querySelector('.post-header .tag')?.textContent?.trim() || '';
+    const title    = document.querySelector('.post-h1')?.textContent?.trim() || '';
+
+    hero.removeAttribute('style');
+    hero.style.background = getGradient(firstTag);
+    hero.classList.add('post-hero--text');
+    hero.innerHTML = `
+      <div class="post-hero-text-inner">
+        <span class="post-hero-label">${firstTag}</span>
+        <h2 class="post-hero-display-title">${title}</h2>
+      </div>
+    `;
+  }
+})();
+
 // ── About: Contact Form (Formspree) ──
 document.querySelector('.contact-form')?.addEventListener('submit', async e => {
   e.preventDefault();
