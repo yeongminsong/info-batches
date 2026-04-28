@@ -1,0 +1,1255 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>관리자 대시보드 — 매일이슈</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Pretendard Variable', 'Pretendard', -apple-system, sans-serif;
+      background: #f0f2f5;
+      color: #1a1a1a;
+      min-height: 100vh;
+    }
+
+    /* ── Login ── */
+    #loginOverlay {
+      position: fixed; inset: 0;
+      background: #0f0f0e;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+    }
+    .login-box {
+      background: #1a1918; border: 1px solid #2a2825;
+      border-radius: 14px; padding: 3rem 2.5rem;
+      width: 100%; max-width: 380px; text-align: center;
+    }
+    .login-logo { font-size: 1.5rem; font-weight: 800; color: #e8e5e0; letter-spacing: -0.04em; }
+    .login-subtitle { font-size: 0.85rem; color: #6a6860; margin-top: 0.3rem; margin-bottom: 2rem; }
+    .login-input {
+      width: 100%; padding: 0.8rem 1rem;
+      background: #252320; border: 1px solid #3a3830; border-radius: 8px;
+      color: #e8e5e0; font-size: 1rem; font-family: inherit;
+      text-align: center; letter-spacing: 0.1em; outline: none;
+      transition: border-color 0.2s;
+    }
+    .login-input:focus { border-color: #6891f8; }
+    .login-btn {
+      width: 100%; margin-top: 1rem; padding: 0.8rem;
+      background: #6891f8; color: #fff; border: none; border-radius: 8px;
+      font-size: 0.95rem; font-weight: 700; font-family: inherit;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .login-btn:hover { background: #5070d8; }
+    .login-btn:disabled { background: #4a5568; cursor: not-allowed; }
+    .login-error { margin-top: 0.75rem; font-size: 0.85rem; color: #EA5B5B; min-height: 1.2rem; }
+
+    /* ── Layout ── */
+    #adminApp { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 220px; background: #1a1918; color: #e8e5e0;
+      flex-shrink: 0; display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+    }
+    .sidebar-header { padding: 1.5rem 1.25rem 1rem; border-bottom: 1px solid #2a2825; }
+    .sidebar-logo { font-size: 1.1rem; font-weight: 800; color: #e8e5e0; letter-spacing: -0.04em; }
+    .sidebar-sub { font-size: 0.72rem; color: #6a6860; margin-top: 0.2rem; }
+    .sidebar-nav { flex: 1; padding: 1rem 0.75rem; display: flex; flex-direction: column; gap: 0.2rem; }
+    .sidebar-btn {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.65rem 0.75rem; border-radius: 8px;
+      border: none; background: transparent; color: #8a8880;
+      font-size: 0.88rem; font-family: inherit;
+      cursor: pointer; text-align: left; width: 100%;
+      transition: all 0.15s;
+    }
+    .sidebar-btn:hover { background: #252320; color: #e8e5e0; }
+    .sidebar-btn.active { background: #252320; color: #6891f8; font-weight: 600; }
+    .sidebar-icon { font-size: 0.95rem; width: 1.2rem; text-align: center; flex-shrink: 0; }
+    .sidebar-footer { padding: 1rem 0.75rem; border-top: 1px solid #2a2825; display: flex; flex-direction: column; gap: 0.2rem; }
+
+    .main { margin-left: 220px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+    .topbar {
+      background: #fff; border-bottom: 1px solid #e8ecf0;
+      padding: 0 2rem; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .topbar-title { font-size: 1rem; font-weight: 700; }
+    .topbar-actions { display: flex; align-items: center; gap: 0.6rem; }
+
+    .page-content { padding: 2rem; flex: 1; }
+
+    /* ── Components ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.5rem 1rem; border-radius: 7px; border: none;
+      font-size: 0.85rem; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: all 0.15s; text-decoration: none;
+    }
+    .btn-primary { background: #6891f8; color: #fff; }
+    .btn-primary:hover { background: #5070d8; }
+    .btn-secondary { background: #f0f2f5; color: #374151; }
+    .btn-secondary:hover { background: #e4e7ec; }
+    .btn-danger { background: #fef2f2; color: #dc2626; }
+    .btn-danger:hover { background: #fee2e2; }
+    .btn-success { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+    .btn-success:hover { background: #dcfce7; }
+    .btn-sm { padding: 0.35rem 0.7rem; font-size: 0.78rem; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: #fff; border: 1px solid #e8ecf0; border-radius: 10px; padding: 1.25rem 1.5rem; }
+    .stat-label { font-size: 0.78rem; color: #9ca3af; font-weight: 500; margin-bottom: 0.35rem; }
+    .stat-value { font-size: 1.8rem; font-weight: 800; color: #1a1a1a; letter-spacing: -0.04em; }
+
+    .card { background: #fff; border: 1px solid #e8ecf0; border-radius: 10px; overflow: hidden; }
+    .card-header {
+      padding: 1rem 1.5rem; border-bottom: 1px solid #e8ecf0;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-title { font-size: 0.9rem; font-weight: 700; }
+
+    .post-row { padding: 0.85rem 1.5rem; border-bottom: 1px solid #f0f2f5; display: flex; align-items: center; gap: 1rem; }
+    .post-row:last-child { border-bottom: none; }
+    .post-row-info { flex: 1; min-width: 0; }
+    .post-row-name { font-size: 0.88rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .post-row-path { font-size: 0.75rem; color: #9ca3af; margin-top: 0.15rem; }
+    .post-row-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
+
+    .empty { text-align: center; padding: 3rem; color: #9ca3af; font-size: 0.9rem; }
+    .loading-msg { padding: 2rem; text-align: center; color: #9ca3af; font-size: 0.875rem; }
+
+    /* ── Editor ── */
+    .editor-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; height: calc(100vh - 130px); }
+    .editor-panel, .preview-panel {
+      background: #fff; border: 1px solid #e8ecf0;
+      border-radius: 10px; display: flex; flex-direction: column; overflow: hidden;
+    }
+    .panel-head {
+      padding: 0.7rem 1rem; border-bottom: 1px solid #e8ecf0;
+      font-size: 0.82rem; font-weight: 700; color: #374151;
+      background: #f8fafc; display: flex; align-items: center; justify-content: space-between;
+    }
+    .panel-body { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.7rem; }
+
+    .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
+    .form-label { font-size: 0.78rem; font-weight: 600; color: #374151; }
+    .form-input, .form-select, .form-textarea {
+      padding: 0.55rem 0.75rem; border: 1px solid #d1d5db; border-radius: 7px;
+      font-size: 0.85rem; font-family: inherit; color: #1a1a1a;
+      background: #fff; outline: none; width: 100%;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: #6891f8;
+      box-shadow: 0 0 0 3px rgba(104,145,248,0.12);
+    }
+    .form-input:read-only { background: #f5f5f5; color: #6b7280; cursor: not-allowed; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: 0.25rem;
+      padding: 0.4rem 0.6rem; border-bottom: 1px solid #e8ecf0;
+      background: #f8fafc;
+    }
+    .toolbar-btn {
+      padding: 0.25rem 0.55rem; border: 1px solid #d1d5db;
+      border-radius: 5px; background: #fff;
+      font-size: 0.75rem; font-weight: 600; font-family: inherit;
+      cursor: pointer; color: #374151; transition: all 0.12s;
+    }
+    .toolbar-btn:hover { background: #eef1ff; border-color: #6891f8; color: #6891f8; }
+
+    .content-textarea {
+      flex: 1; padding: 0.75rem;
+      border: none; outline: none;
+      font-size: 0.82rem;
+      font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+      line-height: 1.65; resize: none; color: #1a1a1a;
+      min-height: 300px;
+    }
+
+    .preview-frame { flex: 1; border: none; width: 100%; }
+
+    /* ── Settings ── */
+    .settings-section { max-width: 600px; display: flex; flex-direction: column; gap: 1.25rem; }
+    .settings-card { background: #fff; border: 1px solid #e8ecf0; border-radius: 10px; padding: 1.5rem; }
+    .settings-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid #f0f2f5; }
+    .settings-desc { font-size: 0.82rem; color: #6b7280; line-height: 1.7; margin-bottom: 1rem; }
+    .settings-desc code { background: #f3f4f6; padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.8rem; }
+    .settings-row { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .status-msg { margin-top: 0.6rem; font-size: 0.82rem; min-height: 1.2rem; }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed; bottom: 2rem; right: 2rem;
+      background: #1a1918; color: #e8e5e0;
+      padding: 0.7rem 1.2rem; border-radius: 8px;
+      font-size: 0.85rem; font-weight: 600; z-index: 9999;
+      opacity: 0; transform: translateY(0.5rem);
+      transition: all 0.3s; pointer-events: none;
+      max-width: 360px;
+    }
+    #toast.show { opacity: 1; transform: translateY(0); }
+    #toast.success { border-left: 4px solid #2ED573; }
+    #toast.error   { border-left: 4px solid #EA5B5B; }
+    #toast.info    { border-left: 4px solid #6891f8; }
+
+    /* ── Loading ── */
+    #loadingOverlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: none; align-items: center; justify-content: center;
+      z-index: 500;
+    }
+    #loadingOverlay.on { display: flex; }
+    .spinner {
+      width: 44px; height: 44px;
+      border: 3px solid rgba(255,255,255,0.25);
+      border-top-color: #6891f8; border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Responsive ── */
+    @media (max-width: 960px) {
+      .editor-wrap { grid-template-columns: 1fr; height: auto; }
+      .preview-panel { height: 480px; }
+    }
+    @media (max-width: 720px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Login ── -->
+<div id="loginOverlay">
+  <div class="login-box">
+    <div class="login-logo">매일이슈</div>
+    <div class="login-subtitle">관리자 대시보드</div>
+    <input type="password" id="loginPw" class="login-input" placeholder="비밀번호 입력" autocomplete="current-password" />
+    <button id="loginBtn" class="login-btn">로그인</button>
+    <div id="loginErr" class="login-error"></div>
+  </div>
+</div>
+
+<!-- ── Loading ── -->
+<div id="loadingOverlay">
+  <div class="spinner"></div>
+</div>
+
+<!-- ── Toast ── -->
+<div id="toast"></div>
+
+<!-- ── App ── -->
+<div id="adminApp" style="display:none">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">매일이슈</div>
+      <div class="sidebar-sub">관리자 패널</div>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="sidebar-btn active" data-view="dashboard">
+        <span class="sidebar-icon">📊</span> 대시보드
+      </button>
+      <button class="sidebar-btn" data-view="posts">
+        <span class="sidebar-icon">📝</span> 글 목록
+      </button>
+      <button class="sidebar-btn" data-view="editor">
+        <span class="sidebar-icon">✏️</span> 새 글 쓰기
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="sidebar-btn" data-view="settings">
+        <span class="sidebar-icon">⚙️</span> 설정
+      </button>
+      <button class="sidebar-btn" id="logoutBtn">
+        <span class="sidebar-icon">🚪</span> 로그아웃
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div id="topbarTitle" class="topbar-title">대시보드</div>
+      <div class="topbar-actions">
+        <a href="/index.html" target="_blank" class="btn btn-secondary btn-sm">사이트 보기 →</a>
+        <button class="btn btn-primary btn-sm" id="topNewBtn">+ 새 글</button>
+      </div>
+    </div>
+    <div id="pageContent" class="page-content"></div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// Config
+// ─────────────────────────────────────────────
+const CFG = {
+  REPO:    'yeongminsong/info-batches',
+  BRANCH:  'main',
+  SITE:    'https://mailissue.co.kr',
+  DEFAULT_PW: 'mailissue2026!',
+};
+
+const KEY = {
+  PW:      'mi_admin_pw_hash',
+  TOKEN:   'mi_admin_token',
+  SESSION: 'mi_admin_sess',
+};
+
+// ─────────────────────────────────────────────
+// Utils
+// ─────────────────────────────────────────────
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+function b64enc(str) {
+  const bytes = new TextEncoder().encode(str);
+  let binary = '';
+  bytes.forEach(b => binary += String.fromCharCode(b));
+  return btoa(binary);
+}
+
+function b64dec(b64) {
+  const binary = atob(b64.replace(/\n/g,''));
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+
+function toast(msg, type = 'info') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `show ${type}`;
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.className = '', 4000);
+}
+
+function loading(on) {
+  document.getElementById('loadingOverlay').classList.toggle('on', on);
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function escAttr(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function escJSON(s) {
+  return String(s).replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\n/g,'\\n');
+}
+
+function formatDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso + 'T00:00:00');
+  return `${d.getFullYear()}. ${String(d.getMonth()+1).padStart(2,'0')}. ${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function readingTime(html) {
+  const text = html.replace(/<[^>]+>/g, '');
+  return Math.max(1, Math.ceil(text.replace(/\s/g,'').length / 900));
+}
+
+// ─────────────────────────────────────────────
+// Auth
+// ─────────────────────────────────────────────
+async function checkPw(pw) {
+  const stored = localStorage.getItem(KEY.PW);
+  const hash = await sha256(pw);
+  if (stored) return hash === stored;
+  return hash === await sha256(CFG.DEFAULT_PW);
+}
+
+function isLoggedIn() { return sessionStorage.getItem(KEY.SESSION) === '1'; }
+function setSession()  { sessionStorage.setItem(KEY.SESSION, '1'); }
+function clearSession(){ sessionStorage.removeItem(KEY.SESSION); }
+
+// ─────────────────────────────────────────────
+// GitHub API
+// ─────────────────────────────────────────────
+function getToken() { return localStorage.getItem(KEY.TOKEN) || ''; }
+
+async function ghReq(path, opts = {}) {
+  const token = getToken();
+  if (!token) throw new Error('GitHub 토큰이 없습니다. 설정 → GitHub 토큰을 먼저 입력해주세요.');
+
+  const url = `https://api.github.com/repos/${CFG.REPO}/contents/${path}`;
+  const res = await fetch(url, {
+    ...opts,
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      'Content-Type': 'application/json',
+      ...(opts.headers || {}),
+    },
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(`GitHub API ${res.status}: ${err.message || res.statusText}`);
+  }
+  return res.json();
+}
+
+async function ghGetFile(path) {
+  const data = await ghReq(path);
+  return { content: b64dec(data.content), sha: data.sha, name: data.name };
+}
+
+async function ghList(path) {
+  return ghReq(path);
+}
+
+async function ghPut(path, content, message, sha = null) {
+  const body = { message, content: b64enc(content), branch: CFG.BRANCH };
+  if (sha) body.sha = sha;
+  return ghReq(path, { method: 'PUT', body: JSON.stringify(body) });
+}
+
+async function ghDelete(path, sha, message) {
+  const body = { message, sha, branch: CFG.BRANCH };
+  return ghReq(path, { method: 'DELETE', body: JSON.stringify(body) });
+}
+
+// ─────────────────────────────────────────────
+// State
+// ─────────────────────────────────────────────
+const state = {
+  view: 'dashboard',
+  posts: [],
+  postsLoaded: false,
+  editData: null,
+};
+
+// ─────────────────────────────────────────────
+// Navigation
+// ─────────────────────────────────────────────
+function go(view, data = null) {
+  state.view = view;
+  state.editData = data;
+
+  const labels = { dashboard:'대시보드', posts:'글 목록', editor: data ? '글 수정' : '새 글 쓰기', settings:'설정' };
+  document.getElementById('topbarTitle').textContent = labels[view] || view;
+  document.querySelectorAll('.sidebar-btn[data-view]').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === view);
+  });
+
+  const el = document.getElementById('pageContent');
+  if (view === 'dashboard') renderDashboard(el);
+  else if (view === 'posts')  renderPosts(el);
+  else if (view === 'editor') renderEditor(el, data);
+  else if (view === 'settings') renderSettings(el);
+}
+
+// ─────────────────────────────────────────────
+// Dashboard
+// ─────────────────────────────────────────────
+async function renderDashboard(el) {
+  const tokenOK = !!getToken();
+
+  el.innerHTML = `
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">전체 포스트</div>
+        <div class="stat-value" id="statCount">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">GitHub 연결</div>
+        <div class="stat-value" style="font-size:1rem;margin-top:0.3rem;color:${tokenOK ? '#2ED573' : '#EA5B5B'}">
+          ${tokenOK ? '✓ 연결됨' : '✗ 토큰 없음'}
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">저장소</div>
+        <div style="font-size:0.8rem;margin-top:0.4rem;color:#374151;word-break:break-all">${CFG.REPO}</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">최근 포스트</span>
+        <button class="btn btn-primary btn-sm" onclick="go('editor')">+ 새 글</button>
+      </div>
+      <div id="dashList"><div class="loading-msg">포스트 목록 불러오는 중…</div></div>
+    </div>
+  `;
+
+  await loadPosts();
+  document.getElementById('statCount').textContent = state.posts.length;
+
+  const listEl = document.getElementById('dashList');
+  if (!listEl) return;
+
+  if (state.posts.length === 0) {
+    listEl.innerHTML = '<div class="empty">아직 포스트가 없습니다.</div>';
+    return;
+  }
+
+  listEl.innerHTML = state.posts.slice(0, 10).map(p => `
+    <div class="post-row">
+      <div class="post-row-info">
+        <div class="post-row-name">${esc(p.name)}</div>
+      </div>
+      <div class="post-row-actions">
+        <button class="btn btn-secondary btn-sm" onclick="openEdit('${esc(p.name)}')">수정</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─────────────────────────────────────────────
+// Posts List
+// ─────────────────────────────────────────────
+async function renderPosts(el) {
+  el.innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title" id="postsCardTitle">전체 포스트</span>
+        <button class="btn btn-primary btn-sm" onclick="go('editor')">+ 새 글</button>
+      </div>
+      <div id="postsBody"><div class="loading-msg">불러오는 중…</div></div>
+    </div>
+  `;
+
+  await loadPosts();
+  refreshPostsTable();
+}
+
+async function loadPosts() {
+  if (state.postsLoaded) return;
+  try {
+    const files = await ghList('posts');
+    state.posts = files
+      .filter(f => f.name.endsWith('.html'))
+      .sort((a, b) => b.name.localeCompare(a.name));
+    state.postsLoaded = true;
+  } catch(e) {
+    state.posts = [];
+    state.postsLoaded = true;
+    if (getToken()) toast('목록 로드 실패: ' + e.message, 'error');
+  }
+}
+
+function refreshPostsTable() {
+  const el = document.getElementById('postsBody');
+  if (!el) return;
+
+  const title = document.getElementById('postsCardTitle');
+  if (title) title.textContent = `전체 포스트 (${state.posts.length}개)`;
+
+  if (state.posts.length === 0) {
+    el.innerHTML = '<div class="empty">포스트가 없습니다.</div>';
+    return;
+  }
+
+  el.innerHTML = state.posts.map(p => `
+    <div class="post-row">
+      <div class="post-row-info">
+        <div class="post-row-name">${esc(p.name)}</div>
+        <div class="post-row-path">/posts/${esc(p.name)}</div>
+      </div>
+      <div class="post-row-actions">
+        <a href="/posts/${esc(p.name)}" target="_blank" class="btn btn-secondary btn-sm">보기</a>
+        <button class="btn btn-secondary btn-sm" onclick="openEdit('${esc(p.name)}')">수정</button>
+        <button class="btn btn-danger btn-sm" onclick="deletePost('${esc(p.name)}')">삭제</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function openEdit(filename) {
+  loading(true);
+  try {
+    const file = await ghGetFile(`posts/${filename}`);
+    const parsed = parsePost(file.content, filename);
+    parsed._sha = file.sha;
+    parsed._filename = filename;
+    go('editor', parsed);
+  } catch(e) {
+    toast('로드 실패: ' + e.message, 'error');
+  } finally {
+    loading(false);
+  }
+}
+
+function parsePost(html, filename) {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+
+  const title = doc.querySelector('.post-h1')?.textContent?.trim()
+    || doc.querySelector('title')?.textContent?.replace(' — 매일이슈','')?.trim() || '';
+  const description = doc.querySelector('meta[name="description"]')?.content || '';
+  const tagEls = doc.querySelectorAll('.post-header .post-tags .tag');
+  const tags = Array.from(tagEls).map(el => el.textContent.trim());
+  const category = tags[0] || '생활꿀팁';
+
+  const dateTxt = doc.querySelector('.post-meta span')?.textContent?.replace('📅','').trim() || '';
+  const dm = dateTxt.match(/(\d{4})\.\s*(\d{2})\.\s*(\d{2})/);
+  const date = dm ? `${dm[1]}-${dm[2]}-${dm[3]}` : new Date().toISOString().split('T')[0];
+
+  const content = doc.querySelector('.post-content')?.innerHTML?.trim() || '';
+  const slug = filename.replace('.html','');
+
+  return { title, description, tags, category, date, content, slug };
+}
+
+async function deletePost(filename) {
+  if (!confirm(`"${filename}" 포스트를 GitHub에서 삭제할까요?\n\n이 작업은 되돌릴 수 없습니다.`)) return;
+  loading(true);
+  try {
+    const file = await ghGetFile(`posts/${filename}`);
+    await ghDelete(`posts/${filename}`, file.sha, `Delete post: ${filename}`);
+    state.posts = state.posts.filter(p => p.name !== filename);
+    toast('삭제되었습니다.', 'success');
+    refreshPostsTable();
+  } catch(e) {
+    toast('삭제 실패: ' + e.message, 'error');
+  } finally {
+    loading(false);
+  }
+}
+
+// ─────────────────────────────────────────────
+// Editor
+// ─────────────────────────────────────────────
+function renderEditor(el, data = null) {
+  const isEdit = !!data;
+  const today = new Date().toISOString().split('T')[0];
+  const d = data || { title:'', slug:'', description:'', category:'생활꿀팁', tags:['생활꿀팁'], date:today, content:'' };
+  const tagsStr = Array.isArray(d.tags) ? d.tags.join(', ') : '';
+
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem;flex-wrap:wrap">
+      <button class="btn btn-secondary btn-sm" onclick="go('posts')">← 목록</button>
+      <span style="font-weight:700;font-size:0.95rem">${isEdit ? '글 수정: ' + esc(d.slug||'') : '새 글 쓰기'}</span>
+      <div style="margin-left:auto;display:flex;gap:0.5rem;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-sm" onclick="saveDraft()">임시저장</button>
+        <button class="btn btn-primary" id="publishBtn" onclick="publishPost()">🚀 게시하기</button>
+      </div>
+    </div>
+
+    <div class="editor-wrap">
+      <!-- Left: Form + Editor -->
+      <div class="editor-panel">
+        <div class="panel-head">
+          <span>글 정보 편집</span>
+          <button class="btn btn-secondary btn-sm" onclick="refreshPreview()">미리보기 새로고침</button>
+        </div>
+
+        <div class="panel-body" id="editorFields">
+          <!-- meta fields -->
+          <div class="form-group">
+            <label class="form-label">제목 *</label>
+            <input id="f_title" class="form-input" placeholder="글 제목" value="${escAttr(d.title)}">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">슬러그 (파일명) *</label>
+              <input id="f_slug" class="form-input" placeholder="my-post-slug"
+                value="${escAttr(d.slug||'')}" ${isEdit ? 'readonly' : ''}>
+            </div>
+            <div class="form-group">
+              <label class="form-label">발행 날짜</label>
+              <input id="f_date" class="form-input" type="date" value="${d.date}">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">설명 (SEO meta description)</label>
+            <input id="f_desc" class="form-input" placeholder="검색 결과에 표시되는 설명" value="${escAttr(d.description)}">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">메인 카테고리</label>
+              <select id="f_cat" class="form-select">
+                <option value="생활꿀팁"  ${d.category==='생활꿀팁' ?'selected':''}>생활꿀팁</option>
+                <option value="IT테크"   ${d.category==='IT테크'   ?'selected':''}>IT테크</option>
+                <option value="뉴스요약" ${d.category==='뉴스요약' ?'selected':''}>뉴스요약</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">태그 (쉼표 구분)</label>
+              <input id="f_tags" class="form-input" placeholder="건강, AI, Python" value="${escAttr(tagsStr)}">
+            </div>
+          </div>
+
+          <!-- Toolbar -->
+          <div class="form-group" style="flex:1;display:flex;flex-direction:column;min-height:0">
+            <label class="form-label">본문 HTML</label>
+            <div style="border:1px solid #d1d5db;border-radius:7px;overflow:hidden;flex:1;display:flex;flex-direction:column">
+              <div class="toolbar">
+                <button class="toolbar-btn" onclick="ins('h2')">H2</button>
+                <button class="toolbar-btn" onclick="ins('h3')">H3</button>
+                <button class="toolbar-btn" onclick="ins('p')">단락</button>
+                <button class="toolbar-btn" onclick="ins('strong')"><b>굵게</b></button>
+                <button class="toolbar-btn" onclick="ins('em')"><i>기울임</i></button>
+                <button class="toolbar-btn" onclick="ins('code')">인라인코드</button>
+                <button class="toolbar-btn" onclick="insCodeBlock()">코드블록</button>
+                <button class="toolbar-btn" onclick="insCallout()">Callout</button>
+                <button class="toolbar-btn" onclick="ins('ul')">목록</button>
+                <button class="toolbar-btn" onclick="ins('ol')">번호목록</button>
+                <button class="toolbar-btn" onclick="ins('a')">링크</button>
+                <button class="toolbar-btn" onclick="autoSlug()" style="background:#eef1ff;color:#6891f8">슬러그 자동생성</button>
+              </div>
+              <textarea id="f_content" class="content-textarea"
+                oninput="refreshPreview()"
+                placeholder="HTML 태그를 직접 입력하거나 위 버튼을 활용하세요&#10;&#10;예시:&#10;&lt;p&gt;본문 내용&lt;/p&gt;&#10;&lt;h2&gt;소제목&lt;/h2&gt;"
+              >${escHTMLForTA(d.content)}</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Preview -->
+      <div class="preview-panel">
+        <div class="panel-head">
+          <span>실시간 미리보기</span>
+          <span style="font-size:0.72rem;color:#9ca3af">실제 CSS 기준</span>
+        </div>
+        <iframe id="previewFrame" class="preview-frame" sandbox="allow-same-origin allow-scripts"></iframe>
+      </div>
+    </div>
+  `;
+
+  // Store edit meta on a hidden input
+  const meta = document.createElement('input');
+  meta.id = 'editorMeta';
+  meta.type = 'hidden';
+  meta.dataset.sha = d._sha || '';
+  meta.dataset.isEdit = isEdit ? '1' : '0';
+  el.appendChild(meta);
+
+  // Auto-slug on title change (new only)
+  if (!isEdit) {
+    document.getElementById('f_title').addEventListener('input', () => {
+      autoSlug();
+      refreshPreview();
+    });
+  } else {
+    document.getElementById('f_title').addEventListener('input', refreshPreview);
+  }
+
+  ['f_slug','f_date','f_desc','f_cat','f_tags'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', refreshPreview);
+    document.getElementById(id)?.addEventListener('change', refreshPreview);
+  });
+
+  refreshPreview();
+}
+
+function escHTMLForTA(html) {
+  return String(html).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function getFormData() {
+  const title       = document.getElementById('f_title')?.value.trim() || '';
+  const slug        = document.getElementById('f_slug')?.value.trim()  || '';
+  const description = document.getElementById('f_desc')?.value.trim()  || '';
+  const category    = document.getElementById('f_cat')?.value          || '생활꿀팁';
+  const tagsRaw     = document.getElementById('f_tags')?.value         || '';
+  const date        = document.getElementById('f_date')?.value         || new Date().toISOString().split('T')[0];
+  const contentTA   = document.getElementById('f_content')?.value      || '';
+
+  const tags = tagsRaw.split(',').map(t => t.trim()).filter(Boolean);
+  if (tags.length === 0) tags.push(category);
+
+  return { title, slug, description, category, tags, date, content: contentTA };
+}
+
+function refreshPreview() {
+  const frame = document.getElementById('previewFrame');
+  if (!frame) return;
+  const d = getFormData();
+  frame.srcdoc = buildPreviewHTML(d);
+}
+
+function buildPreviewHTML(d) {
+  const tagsHTML = d.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('');
+  const dateStr  = formatDate(d.date);
+  return `<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <base href="${CFG.SITE}/">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
+  <link href="/style.css" rel="stylesheet">
+</head>
+<body>
+  <div class="post-hero-img" style="min-height:120px"></div>
+  <div class="post-wrapper">
+    <article class="post-article">
+      <header class="post-header">
+        <div class="post-tags">${tagsHTML}</div>
+        <h1 class="post-h1">${esc(d.title) || '(제목 없음)'}</h1>
+        <div class="post-meta">
+          <span>📅 ${dateStr}</span>
+          <span>⏱ ${readingTime(d.content)}분 읽기</span>
+        </div>
+      </header>
+      <div class="post-content">${d.content || '<p style="color:#9ca3af">본문을 입력해주세요.</p>'}</div>
+    </article>
+  </div>
+  <script src="/main.js"><\/script>
+</body>
+</html>`;
+}
+
+// ─── Toolbar helpers ───
+function ins(tag) {
+  const ta = document.getElementById('f_content');
+  if (!ta) return;
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  const sel = ta.value.substring(s, e);
+  let snippet;
+
+  if (tag === 'h2')     snippet = `\n<h2>${sel || '소제목'}</h2>\n`;
+  else if (tag === 'h3')snippet = `\n<h3>${sel || '소소제목'}</h3>\n`;
+  else if (tag === 'p') snippet = `\n<p>${sel || '본문 내용을 입력하세요.'}</p>\n`;
+  else if (tag === 'ul')snippet = `\n<ul>\n  <li>${sel || '항목 1'}</li>\n  <li>항목 2</li>\n  <li>항목 3</li>\n</ul>\n`;
+  else if (tag === 'ol')snippet = `\n<ol>\n  <li>${sel || '항목 1'}</li>\n  <li>항목 2</li>\n</ol>\n`;
+  else if (tag === 'a') snippet = `<a href="URL" target="_blank" rel="noopener">${sel || '링크 텍스트'}</a>`;
+  else snippet = `<${tag}>${sel || ''}</${tag}>`;
+
+  ta.value = ta.value.slice(0,s) + snippet + ta.value.slice(e);
+  ta.selectionStart = ta.selectionEnd = s + snippet.length;
+  ta.focus();
+  refreshPreview();
+}
+
+function insCodeBlock() {
+  const ta = document.getElementById('f_content');
+  if (!ta) return;
+  const s = ta.selectionStart;
+  const snippet = `\n<pre><code class="language-js">// 코드를 입력하세요
+</code></pre>\n`;
+  ta.value = ta.value.slice(0,s) + snippet + ta.value.slice(s);
+  refreshPreview();
+}
+
+function insCallout() {
+  const ta = document.getElementById('f_content');
+  if (!ta) return;
+  const s = ta.selectionStart;
+  const snippet = `\n<div class="callout">\n  <strong>핵심 포인트</strong><br>\n  내용을 입력하세요.\n</div>\n`;
+  ta.value = ta.value.slice(0,s) + snippet + ta.value.slice(s);
+  refreshPreview();
+}
+
+function autoSlug() {
+  const titleEl = document.getElementById('f_title');
+  const slugEl  = document.getElementById('f_slug');
+  if (!titleEl || !slugEl || slugEl.readOnly) return;
+
+  const slug = titleEl.value
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9가-힣\-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/, '')
+    || ('post-' + Date.now());
+  slugEl.value = slug;
+}
+
+// ─────────────────────────────────────────────
+// Draft (localStorage)
+// ─────────────────────────────────────────────
+function saveDraft() {
+  const d = getFormData();
+  if (!d.title) { toast('제목을 입력하세요.', 'error'); return; }
+  const key = 'mi_draft_' + (d.slug || 'new');
+  d._savedAt = new Date().toISOString();
+  localStorage.setItem(key, JSON.stringify(d));
+  toast('임시저장 완료!', 'success');
+}
+
+// ─────────────────────────────────────────────
+// Post HTML Generator
+// ─────────────────────────────────────────────
+function buildPostHTML(d) {
+  const tagsHTML = d.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('\n          ');
+  const url = `${CFG.SITE}/posts/${d.slug}.html`;
+  const rt = readingTime(d.content);
+
+  return `<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CG5VPJWVEQ"><\/script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CG5VPJWVEQ');
+  <\/script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>${esc(d.title)} — 매일이슈</title>
+  <meta name="description" content="${escAttr(d.description)}">
+  <meta property="og:title" content="${escAttr(d.title)} — 매일이슈">
+  <meta property="og:description" content="${escAttr(d.description)}">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="${url}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${escAttr(d.title)} — 매일이슈">
+  <meta name="twitter:description" content="${escAttr(d.description)}">
+  <link rel="canonical" href="${url}">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
+  <link href="../style.css" rel="stylesheet">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5414405329595188" crossorigin="anonymous"><\/script>
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "${escJSON(d.title)}",
+    "description": "${escJSON(d.description)}",
+    "url": "${url}",
+    "datePublished": "${d.date}",
+    "dateModified": "${d.date}",
+    "author": {"@type": "Organization", "name": "매일이슈"},
+    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "${CFG.SITE}"}
+  }<\/script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/index.html" class="logo">매일이슈</a>
+      <nav class="nav">
+        <a href="/index.html">홈</a>
+        <a href="/category.html">카테고리</a>
+        <a href="/tags.html">태그</a>
+        <a href="/about.html">소개</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="테마 전환">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="post-hero-img"></div>
+
+  <div class="post-wrapper">
+    <a href="/index.html" class="post-back">← 목록으로</a>
+    <article class="post-article">
+      <header class="post-header">
+        <div class="post-tags">
+          ${tagsHTML}
+        </div>
+        <h1 class="post-h1">${esc(d.title)}</h1>
+        <div class="post-meta">
+          <span>📅 ${formatDate(d.date)}</span>
+          <span>⏱ ${rt}분 읽기</span>
+        </div>
+      </header>
+
+      <div class="post-content">
+        ${d.content}
+      </div>
+    </article>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span class="footer-logo">매일이슈</span>
+      <p>매일 이슈와 꿀팁을 전합니다 · contact@mailissue.co.kr</p>
+      <div class="footer-links">
+        <a href="/terms.html">이용약관</a>
+        <a href="/privacy.html">개인정보처리방침</a>
+      </div>
+    </div>
+  </footer>
+  <script src="../main.js"><\/script>
+</body>
+</html>`;
+}
+
+function buildPostCard(d) {
+  const tagsHTML = d.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('');
+  return `
+      <a class="post-card" data-category="${escAttr(d.category)}" href="/posts/${d.slug}.html">
+        <div class="post-thumb"></div>
+        <div class="post-body">
+          <div class="post-tags">${tagsHTML}</div>
+          <h3 class="post-title">${esc(d.title)}</h3>
+          <p class="post-excerpt">${esc(d.description)}</p>
+          <div class="post-footer">
+            <span class="date">${formatDate(d.date)}</span>
+          </div>
+        </div>
+      </a>`;
+}
+
+// ─────────────────────────────────────────────
+// Publish
+// ─────────────────────────────────────────────
+async function publishPost() {
+  if (!getToken()) {
+    toast('GitHub 토큰이 없습니다. 설정에서 먼저 입력해주세요.', 'error');
+    go('settings');
+    return;
+  }
+
+  const d = getFormData();
+  if (!d.title)   { toast('제목을 입력하세요.', 'error'); return; }
+  if (!d.slug)    { toast('슬러그(파일명)를 입력하세요.', 'error'); return; }
+  if (!d.content) { toast('본문 내용을 입력하세요.', 'error'); return; }
+
+  const meta   = document.getElementById('editorMeta');
+  const isEdit = meta?.dataset.isEdit === '1';
+  const sha    = meta?.dataset.sha || null;
+
+  const action = isEdit ? '수정' : '게시';
+  if (!confirm(`"${d.title}"\n\n이 글을 GitHub에 ${action}하시겠습니까?\nCloudflare Pages에 자동 배포됩니다.`)) return;
+
+  loading(true);
+  const btn = document.getElementById('publishBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '게시 중…'; }
+
+  try {
+    const postHTML = buildPostHTML(d);
+    const filePath = `posts/${d.slug}.html`;
+    const commitMsg = isEdit ? `Update post: ${d.title}` : `Add post: ${d.title}`;
+
+    // Resolve SHA for existing file
+    let fileSha = sha;
+    if (!fileSha) {
+      try {
+        const existing = await ghGetFile(filePath);
+        fileSha = existing.sha;
+      } catch { /* new file */ }
+    }
+
+    // 1. Commit post file
+    await ghPut(filePath, postHTML, commitMsg, fileSha);
+    toast('포스트 파일 저장 완료!', 'success');
+
+    // 2. Prepend card in index.html (new posts only)
+    if (!isEdit) {
+      await prependToIndex(d);
+    }
+
+    // Reset
+    state.postsLoaded = false;
+    toast(isEdit ? '수정 완료! 잠시 후 배포됩니다.' : '게시 완료! 잠시 후 배포됩니다.', 'success');
+    setTimeout(() => go('posts'), 1800);
+
+  } catch(e) {
+    toast('게시 실패: ' + e.message, 'error');
+  } finally {
+    loading(false);
+    if (btn) { btn.disabled = false; btn.textContent = '🚀 게시하기'; }
+  }
+}
+
+async function prependToIndex(d) {
+  try {
+    const { content: html, sha } = await ghGetFile('index.html');
+    const marker = '<div class="posts-grid">';
+    const idx = html.indexOf(marker);
+    if (idx === -1) { toast('index.html의 posts-grid를 찾지 못했습니다. 수동으로 추가해주세요.', 'error'); return; }
+
+    const card = buildPostCard(d);
+    const newHTML = html.slice(0, idx + marker.length) + '\n' + card + html.slice(idx + marker.length);
+    await ghPut('index.html', newHTML, `Add post card: ${d.title}`, sha);
+    toast('홈 화면(index.html) 업데이트 완료!', 'success');
+  } catch(e) {
+    toast('index.html 업데이트 실패: ' + e.message, 'error');
+  }
+}
+
+// ─────────────────────────────────────────────
+// Settings
+// ─────────────────────────────────────────────
+function renderSettings(el) {
+  const hasToken = !!getToken();
+
+  el.innerHTML = `
+    <div class="settings-section">
+
+      <!-- GitHub PAT -->
+      <div class="settings-card">
+        <div class="settings-title">GitHub Personal Access Token</div>
+        <p class="settings-desc">
+          글을 게시하려면 GitHub PAT이 필요합니다.<br>
+          <strong>GitHub → Settings → Developer Settings → Personal Access Tokens → Tokens (classic)</strong><br>
+          → Generate new token → <code>repo</code> 권한 선택 → 생성 후 아래 입력
+        </p>
+        <div class="settings-row">
+          <input id="tokenInput" class="form-input" type="password"
+            placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+            value="${hasToken ? '•'.repeat(30) : ''}"
+            ${hasToken ? 'data-filled="1"' : ''}>
+          <button class="btn btn-secondary btn-sm" onclick="toggleToken()">표시</button>
+        </div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="saveToken()">저장</button>
+          ${hasToken ? '<button class="btn btn-danger" onclick="clearToken()">삭제</button>' : ''}
+          <button class="btn btn-secondary btn-sm" onclick="testToken()" style="margin-left:auto">연결 테스트</button>
+        </div>
+        <div id="tokenMsg" class="status-msg"></div>
+      </div>
+
+      <!-- Password -->
+      <div class="settings-card">
+        <div class="settings-title">관리자 비밀번호 변경</div>
+        <p class="settings-desc">기본 비밀번호: <code>mailissue2026!</code> — 보안을 위해 변경을 권장합니다.</p>
+        <div class="form-group" style="margin-bottom:0.6rem">
+          <label class="form-label">현재 비밀번호</label>
+          <input id="pw0" class="form-input" type="password" placeholder="현재 비밀번호">
+        </div>
+        <div class="form-group" style="margin-bottom:0.6rem">
+          <label class="form-label">새 비밀번호 (8자 이상)</label>
+          <input id="pw1" class="form-input" type="password" placeholder="새 비밀번호">
+        </div>
+        <div class="form-group" style="margin-bottom:1rem">
+          <label class="form-label">새 비밀번호 확인</label>
+          <input id="pw2" class="form-input" type="password" placeholder="재입력">
+        </div>
+        <button class="btn btn-primary" onclick="changePw()">비밀번호 변경</button>
+        <div id="pwMsg" class="status-msg"></div>
+      </div>
+
+      <!-- Site Info -->
+      <div class="settings-card">
+        <div class="settings-title">사이트 정보</div>
+        <div style="font-size:0.85rem;line-height:2.2;color:#374151">
+          <div><strong>저장소:</strong> <code>${CFG.REPO}</code></div>
+          <div><strong>브랜치:</strong> <code>${CFG.BRANCH}</code></div>
+          <div><strong>사이트 URL:</strong> <code>${CFG.SITE}</code></div>
+          <div><strong>배포:</strong> Cloudflare Pages (GitHub push → 자동 배포)</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function toggleToken() {
+  const el = document.getElementById('tokenInput');
+  if (!el) return;
+  if (el.dataset.filled && el.type === 'password') {
+    el.value = getToken();
+    delete el.dataset.filled;
+  }
+  el.type = el.type === 'password' ? 'text' : 'password';
+}
+
+function saveToken() {
+  const el = document.getElementById('tokenInput');
+  const val = el?.value.trim();
+  if (!val || /^•+$/.test(val)) { toast('토큰을 입력해주세요.', 'error'); return; }
+  localStorage.setItem(KEY.TOKEN, val);
+  toast('토큰이 저장되었습니다.', 'success');
+  renderSettings(document.getElementById('pageContent'));
+}
+
+function clearToken() {
+  if (!confirm('저장된 GitHub 토큰을 삭제할까요?')) return;
+  localStorage.removeItem(KEY.TOKEN);
+  toast('토큰이 삭제되었습니다.', 'info');
+  renderSettings(document.getElementById('pageContent'));
+}
+
+async function testToken() {
+  const msgEl = document.getElementById('tokenMsg');
+  if (!msgEl) return;
+  msgEl.textContent = '테스트 중…'; msgEl.style.color = '#6b7280';
+  try {
+    await ghList('posts');
+    msgEl.textContent = '✅ 연결 성공! 저장소에 정상 접근됩니다.';
+    msgEl.style.color = '#16a34a';
+  } catch(e) {
+    msgEl.textContent = '❌ ' + e.message;
+    msgEl.style.color = '#dc2626';
+  }
+}
+
+async function changePw() {
+  const cur  = document.getElementById('pw0')?.value;
+  const nw   = document.getElementById('pw1')?.value;
+  const conf = document.getElementById('pw2')?.value;
+  const msg  = document.getElementById('pwMsg');
+
+  const set = (text, ok) => { if (msg) { msg.textContent = text; msg.style.color = ok ? '#16a34a' : '#dc2626'; } };
+
+  if (nw !== conf)    { set('❌ 새 비밀번호가 일치하지 않습니다.', false); return; }
+  if (nw.length < 8)  { set('❌ 8자 이상이어야 합니다.', false); return; }
+  if (!await checkPw(cur)) { set('❌ 현재 비밀번호가 틀립니다.', false); return; }
+
+  localStorage.setItem(KEY.PW, await sha256(nw));
+  set('✅ 비밀번호가 변경되었습니다.', true);
+  ['pw0','pw1','pw2'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+}
+
+// ─────────────────────────────────────────────
+// Boot
+// ─────────────────────────────────────────────
+(function boot() {
+  const overlay = document.getElementById('loginOverlay');
+  const app     = document.getElementById('adminApp');
+
+  function showApp() {
+    overlay.style.display = 'none';
+    app.style.display = 'flex';
+
+    // Sidebar nav
+    document.querySelectorAll('.sidebar-btn[data-view]').forEach(btn => {
+      btn.addEventListener('click', () => go(btn.dataset.view));
+    });
+    document.getElementById('logoutBtn')?.addEventListener('click', () => {
+      clearSession(); location.reload();
+    });
+    document.getElementById('topNewBtn')?.addEventListener('click', () => go('editor'));
+
+    go('dashboard');
+  }
+
+  if (isLoggedIn()) { showApp(); return; }
+
+  const loginBtn  = document.getElementById('loginBtn');
+  const loginPw   = document.getElementById('loginPw');
+  const loginErr  = document.getElementById('loginErr');
+
+  async function tryLogin() {
+    const pw = loginPw.value;
+    if (!pw) return;
+    loginBtn.disabled = true;
+    loginBtn.textContent = '확인 중…';
+    loginErr.textContent = '';
+
+    const ok = await checkPw(pw);
+    if (ok) {
+      setSession();
+      showApp();
+    } else {
+      loginErr.textContent = '비밀번호가 올바르지 않습니다.';
+      loginPw.value = '';
+      loginPw.focus();
+      loginBtn.disabled = false;
+      loginBtn.textContent = '로그인';
+    }
+  }
+
+  loginBtn.addEventListener('click', tryLogin);
+  loginPw.addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin(); });
+})();
+</script>
+</body>
+</html>
