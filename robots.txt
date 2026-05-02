@@ -2,7 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /login.html
 Disallow: /mypage.html
-Disallow: /toefl.html
 Disallow: /admin/
 
 Sitemap: https://mailissue.co.kr/sitemap.xml
