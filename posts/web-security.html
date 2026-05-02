@@ -11,6 +11,7 @@
   </script>
   <meta charset="UTF-8"/>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#6891f8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>웹 보안 기초 — XSS, CSRF, CSP 완전 정복 — 매일이슈</title>
   <meta name="description" content="XSS, CSRF, SQL 인젝션, 보안 헤더(CSP·HSTS)까지 — 프론트엔드와 백엔드 개발자가 반드시 알아야 할 웹 보안 기초를 실전 예제로 정리합니다.">
@@ -18,11 +19,16 @@
   <meta property="og:description" content="XSS, CSRF, SQL 인젝션, 보안 헤더(CSP·HSTS)까지 — 프론트엔드와 백엔드 개발자가 반드시 알아야 할 웹 보안 기초를 실전 예제로 정리합니다.">
   <meta property="og:type" content="article">
   <meta property="og:image" content="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1200&h=630&fit=crop">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://info-batches.pages.dev/posts/web-security.html">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="매일이슈">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="웹 보안 기초 — XSS, CSRF, CSP 완전 정복 — 매일이슈">
   <meta name="twitter:description" content="XSS, CSRF, SQL 인젝션, 보안 헤더(CSP·HSTS)까지 — 프론트엔드와 백엔드 개발자가 반드시 알아야 할 웹 보안 기초를 실전 예제로 정리합니다.">
   <meta name="twitter:image" content="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1200&h=630&fit=crop">
+  <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
   <link rel="canonical" href="https://info-batches.pages.dev/posts/web-security.html">
   <script type="application/ld+json">{
     "@context": "https://schema.org",
@@ -75,6 +81,14 @@
       </header>
 
       <div class="post-content">
+  <!-- AdSense: 본문 상단 광고 (data-ad-slot을 AdSense 대시보드의 실제 슬롯 ID로 교체하세요) -->
+  <ins class="adsbygoogle ad-post-top"
+       style="display:block"
+       data-ad-client="ca-pub-5414405329595188"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         <p>기능이 아무리 훌륭해도 보안이 뚫리면 사용자의 신뢰는 한순간에 무너집니다. 웹 개발자라면 OWASP Top 10에 등재된 주요 취약점을 이해하고 방어하는 방법을 반드시 알아야 합니다.</p>
 
         <p>이 글에서는 웹 서비스에서 가장 자주 발생하는 <strong>XSS, CSRF, SQL 인젝션</strong> 세 가지 공격 방식과, 보안 헤더(CSP, HSTS, X-Frame-Options)를 활용한 심층 방어 전략을 실전 예제와 함께 살펴봅니다.</p>
@@ -202,6 +216,15 @@ npx npm-check-updates -u && npm install</code></pre>
           웹 보안의 출발점은 세 가지 원칙입니다. <strong>① 사용자 입력은 항상 불신하고 검증·이스케이프하라</strong>, <strong>② 최소 권한 원칙을 지켜라</strong>, <strong>③ 심층 방어(Defense in Depth)로 여러 레이어에서 막아라</strong>. CSP, HSTS, SameSite 쿠키, Prepared Statement만 제대로 적용해도 대부분의 일반적인 공격을 막을 수 있습니다.
         </div>
       </div>
+
+  <!-- AdSense: 본문 하단 광고 -->
+  <ins class="adsbygoogle ad-post-bottom"
+       style="display:block"
+       data-ad-client="ca-pub-5414405329595188"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </article>
   </div>
 

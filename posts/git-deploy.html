@@ -12,9 +12,11 @@
   </script>
   <meta charset="UTF-8"/>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#6891f8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="description" content="Git post-receive hook을 활용해 git push 한 번으로 서버에 자동 배포하는 환경을 구성하는 방법입니다.">
   <title>Git Push로 자동 배포하기 — 매일이슈</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
   <link href="../style.css" rel="stylesheet">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5414405329595188" crossorigin="anonymous"></script>
@@ -22,11 +24,16 @@
   <meta property="og:description" content="Git post-receive hook을 활용해 git push 한 번으로 서버에 자동 배포하는 환경을 구성하는 방법입니다.">
   <meta property="og:type" content="article">
   <meta property="og:image" content="https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=1200&h=630&fit=crop">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://info-batches.pages.dev/posts/git-deploy.html">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="매일이슈">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Git Push로 자동 배포하기 — 매일이슈">
   <meta name="twitter:description" content="Git post-receive hook을 활용해 git push 한 번으로 서버에 자동 배포하는 환경을 구성하는 방법입니다.">
   <meta name="twitter:image" content="https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=1200&h=630&fit=crop">
+  <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
   <link rel="canonical" href="https://info-batches.pages.dev/posts/git-deploy.html">
   <script type="application/ld+json">{
     "@context": "https://schema.org",
@@ -75,6 +82,14 @@
       </header>
 
       <div class="post-content">
+  <!-- AdSense: 본문 상단 광고 (data-ad-slot을 AdSense 대시보드의 실제 슬롯 ID로 교체하세요) -->
+  <ins class="adsbygoogle ad-post-top"
+       style="display:block"
+       data-ad-client="ca-pub-5414405329595188"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         <p>GitHub Actions, CI/CD 파이프라인 없이도 <code>git push</code> 한 번만으로 서버에 자동 배포되는 환경을 구성할 수 있습니다. Git의 <strong>server-side hook</strong> 중 하나인 <code>post-receive</code>를 이용하면 됩니다.</p>
 
         <h2>Git Hooks란?</h2>
@@ -165,6 +180,15 @@ gh-pages -d dist</code></pre>
         <h2>마치며</h2>
         <p>GitHub Actions가 강력하지만, 소규모 프로젝트나 개인 서버 환경에서는 git hooks만으로도 충분한 자동화가 가능합니다. 한번 설정해두면 이후 <code>git push production main</code> 한 줄로 배포가 끝납니다.</p>
       </div>
+
+  <!-- AdSense: 본문 하단 광고 -->
+  <ins class="adsbygoogle ad-post-bottom"
+       style="display:block"
+       data-ad-client="ca-pub-5414405329595188"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </article>
   </div>
 

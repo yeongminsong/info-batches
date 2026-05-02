@@ -12,9 +12,11 @@
   </script>
   <meta charset="UTF-8"/>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#6891f8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="description" content="CSS @layer를 활용해 !important 없이 스타일 우선순위를 명확하게 관리하고 외부 라이브러리 충돌을 해결하는 방법입니다.">
   <title>CSS @layer로 스타일 우선순위 정복하기 — 매일이슈</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
   <link href="../style.css" rel="stylesheet">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5414405329595188" crossorigin="anonymous"></script>
@@ -22,11 +24,16 @@
   <meta property="og:description" content="CSS @layer를 활용해 !important 없이 스타일 우선순위를 명확하게 관리하고 외부 라이브러리 충돌을 해결하는 방법입니다.">
   <meta property="og:type" content="article">
   <meta property="og:image" content="https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?w=1200&h=630&fit=crop">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://info-batches.pages.dev/posts/css-layer.html">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="매일이슈">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="CSS @layer로 스타일 우선순위 정복하기 — 매일이슈">
   <meta name="twitter:description" content="CSS @layer를 활용해 !important 없이 스타일 우선순위를 명확하게 관리하고 외부 라이브러리 충돌을 해결하는 방법입니다.">
   <meta name="twitter:image" content="https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?w=1200&h=630&fit=crop">
+  <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
   <link rel="canonical" href="https://info-batches.pages.dev/posts/css-layer.html">
   <script type="application/ld+json">{
     "@context": "https://schema.org",
@@ -72,6 +79,14 @@
       </header>
 
       <div class="post-content">
+  <!-- AdSense: 본문 상단 광고 (data-ad-slot을 AdSense 대시보드의 실제 슬롯 ID로 교체하세요) -->
+  <ins class="adsbygoogle ad-post-top"
+       style="display:block"
+       data-ad-client="ca-pub-5414405329595188"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         <p>CSS를 오래 작성하다 보면 반드시 마주치는 문제가 있습니다. 바로 스타일 <strong>우선순위 충돌</strong>입니다. 외부 라이브러리의 스타일이 내 스타일을 덮어쓰거나, 컴포넌트 스타일이 글로벌 스타일과 충돌하는 상황 말이죠. 이를 해결하기 위해 <code>!important</code>를 남발하다 보면 코드는 금방 엉망이 됩니다.</p>
 
         <p>CSS <strong>@layer</strong>는 이 문제를 우아하게 해결하는 현대적인 방법입니다.</p>
@@ -160,6 +175,15 @@
           @layer는 CSS 우선순위를 명시적으로 관리하는 도구입니다. 레이어 순서를 선언부에서 한 번에 제어하고, 외부 라이브러리는 레이어 안에 가두세요. <code>!important</code>와의 이별을 선언할 시간입니다.
         </div>
       </div>
+
+  <!-- AdSense: 본문 하단 광고 -->
+  <ins class="adsbygoogle ad-post-bottom"
+       style="display:block"
+       data-ad-client="ca-pub-5414405329595188"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </article>
   </div>
 

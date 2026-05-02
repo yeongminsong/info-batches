@@ -11,6 +11,7 @@
   </script>
   <meta charset="UTF-8"/>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#6891f8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PWA(Progressive Web App) 완전 가이드 — 매일이슈</title>
   <meta name="description" content="Service Worker, Web App Manifest, 오프라인 캐싱, 푸시 알림까지 — PWA를 처음부터 끝까지 구현하는 실전 가이드입니다.">
@@ -18,11 +19,16 @@
   <meta property="og:description" content="Service Worker, Web App Manifest, 오프라인 캐싱, 푸시 알림까지 — PWA를 처음부터 끝까지 구현하는 실전 가이드입니다.">
   <meta property="og:type" content="article">
   <meta property="og:image" content="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=1200&h=630&fit=crop">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://info-batches.pages.dev/posts/pwa.html">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="매일이슈">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="PWA(Progressive Web App) 완전 가이드 — 매일이슈">
   <meta name="twitter:description" content="Service Worker, Web App Manifest, 오프라인 캐싱, 푸시 알림까지 — PWA를 처음부터 끝까지 구현하는 실전 가이드입니다.">
   <meta name="twitter:image" content="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=1200&h=630&fit=crop">
+  <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
   <link rel="canonical" href="https://info-batches.pages.dev/posts/pwa.html">
   <script type="application/ld+json">{
     "@context": "https://schema.org",
@@ -75,6 +81,14 @@
       </header>
 
       <div class="post-content">
+  <!-- AdSense: 본문 상단 광고 (data-ad-slot을 AdSense 대시보드의 실제 슬롯 ID로 교체하세요) -->
+  <ins class="adsbygoogle ad-post-top"
+       style="display:block"
+       data-ad-client="ca-pub-5414405329595188"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         <p>스마트폰 사용자가 앱 스토어에서 새 앱을 다운받는 빈도는 해마다 감소하고 있습니다. 반면 브라우저로 접근할 수 있는 웹 서비스 이용은 꾸준히 늘고 있죠. <strong>PWA(Progressive Web App)</strong>는 이 두 세계의 장점을 결합한 기술입니다. 설치 없이도 앱처럼 동작하고, 오프라인에서도 콘텐츠를 볼 수 있으며, 홈 화면에 아이콘을 추가할 수 있습니다.</p>
 
         <p>이 글에서는 PWA를 구성하는 핵심 기술인 Web App Manifest, Service Worker, 캐싱 전략을 처음부터 실전 코드와 함께 살펴봅니다.</p>
@@ -240,6 +254,15 @@ self.addEventListener('fetch', (event) => {
           PWA의 시작은 <code>manifest.json</code>과 Service Worker 등록 두 가지입니다. 캐싱 전략은 정적 자산에는 Cache First, API에는 Network First, 블로그 콘텐츠처럼 중간 성격의 자원에는 Stale While Revalidate를 조합하면 최적의 경험을 만들 수 있습니다.
         </div>
       </div>
+
+  <!-- AdSense: 본문 하단 광고 -->
+  <ins class="adsbygoogle ad-post-bottom"
+       style="display:block"
+       data-ad-client="ca-pub-5414405329595188"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </article>
   </div>
 

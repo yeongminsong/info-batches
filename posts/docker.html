@@ -12,6 +12,7 @@
   </script>
   <meta charset="UTF-8"/>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#6891f8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Docker 기초 — 컨테이너로 개발 환경 통일하기 — 매일이슈</title>
   <meta name="description" content="Docker의 핵심 개념인 이미지, 컨테이너, Dockerfile, docker-compose를 실전 예제로 배우는 입문 가이드입니다.">
@@ -19,14 +20,20 @@
   <meta property="og:description" content="Docker의 핵심 개념인 이미지, 컨테이너, Dockerfile, docker-compose를 실전 예제로 배우는 입문 가이드입니다.">
   <meta property="og:type" content="article">
   <meta property="og:image" content="https://images.unsplash.com/photo-1605745341112-85968b19335b?w=1200&h=630&fit=crop">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
   <link href="../style.css" rel="stylesheet">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5414405329595188" crossorigin="anonymous"></script>
   <meta property="og:url" content="https://info-batches.pages.dev/posts/docker.html">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="매일이슈">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Docker 기초 — 컨테이너로 개발 환경 통일하기 — 매일이슈">
   <meta name="twitter:description" content="Docker의 핵심 개념인 이미지, 컨테이너, Dockerfile, docker-compose를 실전 예제로 배우는 입문 가이드입니다.">
   <meta name="twitter:image" content="https://images.unsplash.com/photo-1605745341112-85968b19335b?w=1200&h=630&fit=crop">
+  <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
   <link rel="canonical" href="https://info-batches.pages.dev/posts/docker.html">
   <script type="application/ld+json">{
     "@context": "https://schema.org",
@@ -71,6 +78,14 @@
         </div>
       </header>
       <div class="post-content">
+  <!-- AdSense: 본문 상단 광고 (data-ad-slot을 AdSense 대시보드의 실제 슬롯 ID로 교체하세요) -->
+  <ins class="adsbygoogle ad-post-top"
+       style="display:block"
+       data-ad-client="ca-pub-5414405329595188"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         <p>"내 컴퓨터에서는 되는데요?" — 개발자라면 한 번쯤 들어봤거나 해본 말일 겁니다. 환경 차이로 인한 버그는 매우 흔하고 해결하기도 어렵습니다. <strong>Docker</strong>는 애플리케이션과 그 실행 환경을 하나의 컨테이너로 패키징해 어디서든 동일하게 실행할 수 있게 해줍니다.</p>
 
         <h2>핵심 개념</h2>
@@ -197,6 +212,15 @@ CMD ["node", "dist/app.js"]</code></pre>
           Docker는 "환경 차이" 문제를 컨테이너로 해결합니다. Dockerfile로 이미지를 정의하고, docker-compose로 여러 서비스를 함께 관리하세요. 멀티 스테이지 빌드로 최종 이미지 크기를 최소화하는 것이 좋습니다.
         </div>
       </div>
+
+  <!-- AdSense: 본문 하단 광고 -->
+  <ins class="adsbygoogle ad-post-bottom"
+       style="display:block"
+       data-ad-client="ca-pub-5414405329595188"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </article>
   </div>
 
