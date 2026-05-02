@@ -673,11 +673,22 @@ signupForm?.addEventListener('submit', e => {
     const card = el.closest('.post-card');
     if (!card) return;
 
+    const isFeatured = card.classList.contains('featured');
+    const hasPhoto = el.style.backgroundImage && el.style.backgroundImage !== 'none';
+
+    if (hasPhoto) {
+      if (isFeatured) {
+        const badge = document.createElement('span');
+        badge.className = 'featured-badge';
+        badge.textContent = 'Featured';
+        el.prepend(badge);
+      }
+      return;
+    }
+
     const firstTag = card.querySelector('.tag')?.textContent?.trim() || '';
     const title    = card.querySelector('.post-title')?.textContent?.trim() || '';
-    const isFeatured = card.classList.contains('featured');
 
-    el.removeAttribute('style');
     el.style.background = getGradient(firstTag);
     el.classList.add('post-thumb--text');
     el.innerHTML = `
@@ -692,9 +703,11 @@ signupForm?.addEventListener('submit', e => {
   if (hero) {
     const firstTag = document.querySelector('.post-header .tag')?.textContent?.trim() || '';
     const title    = document.querySelector('.post-h1')?.textContent?.trim() || '';
+    const hasPhoto = hero.style.backgroundImage && hero.style.backgroundImage !== 'none';
 
-    hero.removeAttribute('style');
-    hero.style.background = getGradient(firstTag);
+    if (!hasPhoto) {
+      hero.style.background = getGradient(firstTag);
+    }
     hero.classList.add('post-hero--text');
     hero.innerHTML = `
       <div class="post-hero-text-inner">
