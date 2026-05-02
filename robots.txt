@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://info-batches.pages.dev/sitemap.xml
+Sitemap: https://mailissue.co.kr/sitemap.xml
