@@ -26,7 +26,7 @@
   <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
   <link href="../style.css" rel="stylesheet">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5414405329595188" crossorigin="anonymous"></script>
-  <meta property="og:url" content="https://info-batches.pages.dev/posts/docker.html">
+  <meta property="og:url" content="https://mailissue.co.kr/posts/docker.html">
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="매일이슈">
   <meta name="twitter:card" content="summary_large_image">
@@ -34,18 +34,18 @@
   <meta name="twitter:description" content="Docker의 핵심 개념인 이미지, 컨테이너, Dockerfile, docker-compose를 실전 예제로 배우는 입문 가이드입니다.">
   <meta name="twitter:image" content="https://images.unsplash.com/photo-1605745341112-85968b19335b?w=1200&h=630&fit=crop">
   <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
-  <link rel="canonical" href="https://info-batches.pages.dev/posts/docker.html">
+  <link rel="canonical" href="https://mailissue.co.kr/posts/docker.html">
   <script type="application/ld+json">{
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": "Docker 기초 — 컨테이너로 개발 환경 통일하기",
     "description": "Docker의 핵심 개념인 이미지, 컨테이너, Dockerfile, docker-compose를 실전 예제로 배우는 입문 가이드입니다.",
     "image": "https://images.unsplash.com/photo-1605745341112-85968b19335b?w=1200&h=630&fit=crop",
-    "url": "https://info-batches.pages.dev/posts/docker.html",
+    "url": "https://mailissue.co.kr/posts/docker.html",
     "datePublished": "2026-03-30",
     "dateModified": "2026-03-30",
     "author": {"@type": "Organization", "name": "매일이슈"},
-    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://info-batches.pages.dev"}
+    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://mailissue.co.kr"}
   }</script>
 </head>
 <body>
@@ -207,9 +207,20 @@ COPY --from=builder /app/package*.json ./
 RUN npm install --production
 CMD ["node", "dist/app.js"]</code></pre>
 
+        <h2>컨테이너 vs 가상 머신(VM) — 무엇이 다른가</h2>
+        <p>Docker 컨테이너는 가상 머신(VM)과 혼동하기 쉽지만 근본적으로 다릅니다. 가상 머신은 하드웨어를 소프트웨어로 흉내 내고 그 위에 완전한 운영체제를 올립니다. 반면 Docker 컨테이너는 호스트 OS의 커널을 공유하며 프로세스 수준의 격리만 적용합니다.</p>
+        <p>이 차이 때문에 컨테이너는 부팅 시간이 수 초 이내로 매우 빠르고, 메모리와 디스크 사용량이 훨씬 적습니다. Node.js 앱 컨테이너 하나가 50MB 안팎인 반면, 동일한 앱을 올린 VM은 수 GB의 이미지를 필요로 합니다. 이런 이유로 마이크로서비스 아키텍처나 CI/CD 파이프라인에서 컨테이너가 표준이 됐습니다.</p>
+
+        <h2>Docker 볼륨 — 데이터 영속성</h2>
+        <p>컨테이너는 삭제되면 내부 데이터가 모두 사라집니다. 데이터베이스 파일, 업로드된 파일, 로그처럼 컨테이너가 재시작되어도 유지되어야 하는 데이터는 반드시 볼륨을 사용해야 합니다.</p>
+        <ul>
+          <li><strong>named volume</strong> — Docker가 관리하는 볼륨. <code>mongo_data:/data/db</code> 형태로 사용. 운영 환경에 적합합니다.</li>
+          <li><strong>bind mount</strong> — 호스트의 특정 디렉토리를 컨테이너에 마운트. <code>./src:/app/src</code> 형태로 사용. 개발 시 코드 변경을 즉시 반영할 때 편리합니다.</li>
+        </ul>
+
         <div class="callout">
           <strong>핵심 정리</strong><br>
-          Docker는 "환경 차이" 문제를 컨테이너로 해결합니다. Dockerfile로 이미지를 정의하고, docker-compose로 여러 서비스를 함께 관리하세요. 멀티 스테이지 빌드로 최종 이미지 크기를 최소화하는 것이 좋습니다.
+          Docker는 "환경 차이" 문제를 컨테이너로 해결합니다. 컨테이너는 VM보다 훨씬 가볍고 빠릅니다. Dockerfile로 이미지를 정의하고, docker-compose로 여러 서비스를 함께 관리하세요. 데이터베이스처럼 재시작 후에도 데이터를 유지해야 하는 서비스는 반드시 볼륨을 설정하고, 멀티 스테이지 빌드로 최종 이미지 크기를 최소화하세요.
         </div>
       </div>
 

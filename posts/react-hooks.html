@@ -26,7 +26,7 @@
   <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
   <link href="../style.css" rel="stylesheet">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5414405329595188" crossorigin="anonymous"></script>
-  <meta property="og:url" content="https://info-batches.pages.dev/posts/react-hooks.html">
+  <meta property="og:url" content="https://mailissue.co.kr/posts/react-hooks.html">
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="매일이슈">
   <meta name="twitter:card" content="summary_large_image">
@@ -34,18 +34,18 @@
   <meta name="twitter:description" content="useState, useEffect, useCallback, useMemo, useRef, 커스텀 훅까지 React Hooks를 실전 예제로 완전히 마스터하는 가이드입니다.">
   <meta name="twitter:image" content="https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=1200&h=630&fit=crop">
   <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
-  <link rel="canonical" href="https://info-batches.pages.dev/posts/react-hooks.html">
+  <link rel="canonical" href="https://mailissue.co.kr/posts/react-hooks.html">
   <script type="application/ld+json">{
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": "React Hooks 완전 정복",
     "description": "useState, useEffect, useCallback, useMemo, useRef, 커스텀 훅까지 React Hooks를 실전 예제로 완전히 마스터하는 가이드입니다.",
     "image": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=1200&h=630&fit=crop",
-    "url": "https://info-batches.pages.dev/posts/react-hooks.html",
+    "url": "https://mailissue.co.kr/posts/react-hooks.html",
     "datePublished": "2026-03-10",
     "dateModified": "2026-03-10",
     "author": {"@type": "Organization", "name": "매일이슈"},
-    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://info-batches.pages.dev"}
+    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://mailissue.co.kr"}
   }</script>
 </head>
 <body>
@@ -207,11 +207,69 @@ function Posts() {
   return &lt;ul&gt;{data.map(p => &lt;li key={p.id}&gt;{p.title}&lt;/li&gt;)}&lt;/ul&gt;;
 }</code></pre>
 
+        <h2>useContext — 전역 상태 공유</h2>
+        <p>컴포넌트 트리 깊은 곳까지 props를 계속 전달하는 "prop drilling" 문제를 <code>useContext</code>로 해결할 수 있습니다. 로그인 사용자 정보, 테마, 언어 설정처럼 앱 전체에서 공유되는 값에 적합합니다.</p>
+        <pre><code class="language-jsx">import { createContext, useContext, useState } from 'react';
+
+const ThemeContext = createContext('light');
+
+function App() {
+  const [theme, setTheme] = useState('light');
+  return (
+    &lt;ThemeContext.Provider value={{ theme, setTheme }}&gt;
+      &lt;Layout /&gt;
+    &lt;/ThemeContext.Provider&gt;
+  );
+}
+
+// 트리 어디서든 바로 꺼내 사용
+function Button() {
+  const { theme, setTheme } = useContext(ThemeContext);
+  return (
+    &lt;button onClick={() => setTheme(t => t === 'light' ? 'dark' : 'light')}&gt;
+      현재 테마: {theme}
+    &lt;/button&gt;
+  );
+}</code></pre>
+
+        <h2>useReducer — 복잡한 상태 관리</h2>
+        <p>상태 로직이 복잡해지면 <code>useState</code> 대신 <code>useReducer</code>를 사용하면 상태 전환 로직을 한 곳으로 모을 수 있습니다. Redux 패턴에 익숙하다면 더 자연스럽게 사용할 수 있습니다.</p>
+        <pre><code class="language-jsx">const initialState = { count: 0, loading: false };
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'increment': return { ...state, count: state.count + 1 };
+    case 'decrement': return { ...state, count: state.count - 1 };
+    case 'setLoading': return { ...state, loading: action.payload };
+    default: return state;
+  }
+}
+
+function Counter() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;카운트: {state.count}&lt;/p&gt;
+      &lt;button onClick={() => dispatch({ type: 'increment' })}&gt;+1&lt;/button&gt;
+      &lt;button onClick={() => dispatch({ type: 'decrement' })}&gt;-1&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+        <h2>자주 하는 실수와 해결법</h2>
+        <ul>
+          <li><strong>의존성 배열 누락</strong> — <code>useEffect</code>의 의존성 배열에서 사용하는 변수를 빠뜨리면 오래된 값을 참조하는 클로저 버그가 생깁니다. ESLint의 <code>exhaustive-deps</code> 규칙을 반드시 켜두세요.</li>
+          <li><strong>매 렌더링마다 새 객체/배열 생성</strong> — <code>useEffect</code> 의존성에 <code>[]</code> 대신 <code>{}</code>처럼 리터럴을 넣으면 매 렌더링마다 새 참조가 생겨 무한 실행됩니다. 객체는 <code>useMemo</code>로 감싸세요.</li>
+          <li><strong>불필요한 useCallback/useMemo 남용</strong> — 메모이제이션 자체도 비용입니다. 렌더링이 실제로 느릴 때만, 또는 자식 컴포넌트에 <code>React.memo</code>를 함께 사용할 때만 적용하세요.</li>
+        </ul>
+
         <div class="callout">
           <strong>Hooks 규칙</strong><br>
           1. Hook은 항상 함수 컴포넌트 또는 커스텀 Hook의 최상위에서만 호출하세요.<br>
           2. 조건문, 반복문, 중첩 함수 안에서 Hook을 호출하면 안 됩니다.<br>
-          3. Hook 이름은 항상 <code>use</code>로 시작해야 합니다.
+          3. Hook 이름은 항상 <code>use</code>로 시작해야 합니다.<br>
+          4. useContext는 전역 공유 값에, useReducer는 복잡한 상태 로직에 활용하세요.
         </div>
       </div>
 

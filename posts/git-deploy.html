@@ -26,7 +26,7 @@
   <meta property="og:image" content="https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=1200&h=630&fit=crop">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:url" content="https://info-batches.pages.dev/posts/git-deploy.html">
+  <meta property="og:url" content="https://mailissue.co.kr/posts/git-deploy.html">
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="매일이슈">
   <meta name="twitter:card" content="summary_large_image">
@@ -34,18 +34,18 @@
   <meta name="twitter:description" content="Git post-receive hook을 활용해 git push 한 번으로 서버에 자동 배포하는 환경을 구성하는 방법입니다.">
   <meta name="twitter:image" content="https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=1200&h=630&fit=crop">
   <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
-  <link rel="canonical" href="https://info-batches.pages.dev/posts/git-deploy.html">
+  <link rel="canonical" href="https://mailissue.co.kr/posts/git-deploy.html">
   <script type="application/ld+json">{
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": "Git Push로 자동 배포하기",
     "description": "Git post-receive hook을 활용해 git push 한 번으로 서버에 자동 배포하는 환경을 구성하는 방법입니다.",
     "image": "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=1200&h=630&fit=crop",
-    "url": "https://info-batches.pages.dev/posts/git-deploy.html",
+    "url": "https://mailissue.co.kr/posts/git-deploy.html",
     "datePublished": "2026-04-01",
     "dateModified": "2026-04-01",
     "author": {"@type": "Organization", "name": "매일이슈"},
-    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://info-batches.pages.dev"}
+    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://mailissue.co.kr"}
   }</script>
 </head>
 <body>
@@ -177,8 +177,40 @@ gh-pages -d dist</code></pre>
           서버 훅 방식을 사용할 때는 배포 전용 사용자(<code>deploy</code>)를 따로 만들고, SSH 공개 키 인증만 허용하세요. 비밀번호 인증은 반드시 비활성화하세요.
         </div>
 
+        <h2>배포 실패 대비 — 롤백 전략</h2>
+        <p>어떤 배포 방식이든 실패에 대비한 롤백 절차를 미리 만들어두어야 합니다. Git 훅 방식에서는 이전 배포 커밋 해시를 기록해두고, 문제 발생 시 해당 커밋으로 강제 체크아웃하는 스크립트를 추가하면 됩니다.</p>
+        <pre><code class="language-bash">#!/bin/bash
+# rollback.sh — 특정 커밋으로 롤백
+TARGET="/var/www/myproject"
+GIT_DIR="/home/deploy/repos/myproject.git"
+ROLLBACK_TO=$1  # 인수로 커밋 해시 전달
+
+if [ -z "$ROLLBACK_TO" ]; then
+  echo "사용법: ./rollback.sh &lt;커밋 해시&gt;"
+  exit 1
+fi
+
+git --work-tree="$TARGET" --git-dir="$GIT_DIR" checkout -f "$ROLLBACK_TO"
+echo "롤백 완료: $ROLLBACK_TO"</code></pre>
+        <p>배포할 때마다 <code>git log --oneline -5</code>로 최근 커밋 해시를 기록해두거나, 배포 성공 시점의 해시를 별도 파일에 저장해두면 롤백 시 빠르게 대응할 수 있습니다.</p>
+
+        <h2>Git 훅 vs GitHub Actions — 선택 기준</h2>
+        <p>두 방식 모두 자동 배포를 구현하지만 적합한 상황이 다릅니다. 상황에 맞는 도구를 선택하세요.</p>
+        <table>
+          <thead>
+            <tr><th>항목</th><th>Git Hooks</th><th>GitHub Actions</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>설정 난이도</td><td>낮음 (스크립트 하나)</td><td>중간 (YAML 파일 작성)</td></tr>
+            <tr><td>서버 필요</td><td>필요 (SSH 접근)</td><td>불필요 (GitHub 인프라 사용)</td></tr>
+            <tr><td>비용</td><td>서버 운영 비용만</td><td>월 2,000분 무료, 초과 시 과금</td></tr>
+            <tr><td>테스트 연동</td><td>직접 구성 필요</td><td>테스트·린트·배포 파이프라인 통합 쉬움</td></tr>
+            <tr><td>적합한 상황</td><td>소규모 개인 서버, 간단한 배포</td><td>팀 프로젝트, CI/CD 전체 파이프라인</td></tr>
+          </tbody>
+        </table>
+
         <h2>마치며</h2>
-        <p>GitHub Actions가 강력하지만, 소규모 프로젝트나 개인 서버 환경에서는 git hooks만으로도 충분한 자동화가 가능합니다. 한번 설정해두면 이후 <code>git push production main</code> 한 줄로 배포가 끝납니다.</p>
+        <p>GitHub Actions가 강력하지만, 소규모 프로젝트나 개인 서버 환경에서는 git hooks만으로도 충분한 자동화가 가능합니다. 롤백 스크립트도 함께 준비해두면 배포 사고 발생 시 빠르게 복구할 수 있습니다. 한번 설정해두면 이후 <code>git push production main</code> 한 줄로 배포가 끝납니다.</p>
       </div>
 
   <!-- AdSense: 본문 하단 광고 -->

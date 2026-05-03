@@ -26,7 +26,7 @@
   <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
   <link href="../style.css" rel="stylesheet">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5414405329595188" crossorigin="anonymous"></script>
-  <meta property="og:url" content="https://info-batches.pages.dev/posts/css-grid.html">
+  <meta property="og:url" content="https://mailissue.co.kr/posts/css-grid.html">
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="매일이슈">
   <meta name="twitter:card" content="summary_large_image">
@@ -34,18 +34,18 @@
   <meta name="twitter:description" content="CSS Grid의 기본 개념부터 반응형 레이아웃, 복잡한 그리드 디자인까지 실전 예제로 완전히 마스터하는 가이드입니다.">
   <meta name="twitter:image" content="https://images.unsplash.com/photo-1523437113738-bbd3cc89fb19?w=1200&h=630&fit=crop">
   <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
-  <link rel="canonical" href="https://info-batches.pages.dev/posts/css-grid.html">
+  <link rel="canonical" href="https://mailissue.co.kr/posts/css-grid.html">
   <script type="application/ld+json">{
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": "CSS Grid 레이아웃 마스터하기",
     "description": "CSS Grid의 기본 개념부터 반응형 레이아웃, 복잡한 그리드 디자인까지 실전 예제로 완전히 마스터하는 가이드입니다.",
     "image": "https://images.unsplash.com/photo-1523437113738-bbd3cc89fb19?w=1200&h=630&fit=crop",
-    "url": "https://info-batches.pages.dev/posts/css-grid.html",
+    "url": "https://mailissue.co.kr/posts/css-grid.html",
     "datePublished": "2026-04-04",
     "dateModified": "2026-04-04",
     "author": {"@type": "Organization", "name": "매일이슈"},
-    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://info-batches.pages.dev"}
+    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://mailissue.co.kr"}
   }</script>
 </head>
 <body>
@@ -196,9 +196,41 @@
   }
 }</code></pre>
 
+        <h2>subgrid — 중첩 그리드 정렬</h2>
+        <p>CSS Grid Level 2에서 도입된 <code>subgrid</code>를 사용하면 자식 그리드가 부모 그리드의 트랙을 그대로 상속할 수 있습니다. 카드 컴포넌트 내부의 요소들을 그리드 전체에 맞춰 정렬할 때 특히 유용합니다.</p>
+        <pre><code class="language-css">/* 부모 그리드 */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto 1fr auto; /* 제목 / 내용 / 버튼 */
+  gap: 1.5rem;
+}
+
+/* 각 카드가 부모의 행 구조를 상속 */
+.card {
+  display: grid;
+  grid-row: span 3;
+  grid-template-rows: subgrid;
+}
+
+/* 이제 모든 카드의 제목, 내용, 버튼 높이가 맞춰집니다 */
+.card-title   { grid-row: 1; }
+.card-body    { grid-row: 2; }
+.card-footer  { grid-row: 3; align-self: end; }</code></pre>
+        <p>크롬 117+, 파이어폭스 71+, 사파리 16+에서 지원됩니다. 2026년 기준 주요 브라우저에서 모두 사용할 수 있습니다.</p>
+
+        <h2>CSS Grid 실전 적용 팁</h2>
+        <p>Grid를 처음 배울 때 헷갈리기 쉬운 부분과 실무에서 자주 쓰는 패턴을 정리했습니다.</p>
+        <ul>
+          <li><strong>dense 키워드</strong> — <code>grid-auto-flow: dense</code>를 추가하면 빈 공간을 자동으로 채워 핀터레스트 스타일의 마소너리(masonry) 레이아웃과 유사한 효과를 낼 수 있습니다.</li>
+          <li><strong>place-items 단축 속성</strong> — <code>place-items: center</code>는 <code>align-items: center; justify-items: center</code>와 같습니다. 가운데 정렬 코드를 한 줄로 줄일 수 있습니다.</li>
+          <li><strong>브라우저 DevTools 활용</strong> — Chrome과 Firefox의 DevTools에는 Grid 오버레이 기능이 있습니다. 라인 번호와 영역 이름을 시각적으로 확인할 수 있어 레이아웃 디버깅에 큰 도움이 됩니다.</li>
+          <li><strong>고정 열 + 반응형 혼합</strong> — <code>grid-template-columns: 240px minmax(0, 1fr)</code>처럼 사이드바는 고정하고 메인 콘텐츠는 유동적으로 설정하면, 미디어 쿼리를 최소화하면서도 다양한 화면 크기를 커버할 수 있습니다.</li>
+        </ul>
+
         <div class="callout">
           <strong>Grid vs Flexbox 선택 기준</strong><br>
-          카드 목록, 대시보드, 전체 페이지 레이아웃처럼 <strong>2차원</strong> 배치가 필요하면 Grid를 사용하세요. 네비게이션 바, 버튼 그룹처럼 <strong>1차원</strong> 정렬이 목적이면 Flexbox가 적합합니다. 둘을 함께 사용하는 것도 훌륭한 선택입니다.
+          카드 목록, 대시보드, 전체 페이지 레이아웃처럼 <strong>2차원</strong> 배치가 필요하면 Grid를 사용하세요. 네비게이션 바, 버튼 그룹처럼 <strong>1차원</strong> 정렬이 목적이면 Flexbox가 적합합니다. 둘을 함께 사용하는 것이 가장 실용적인 선택입니다. Grid로 전체 페이지 뼈대를 잡고, 각 영역 내부는 Flexbox로 정렬하는 패턴이 현업에서 가장 많이 쓰입니다.
         </div>
       </div>
 

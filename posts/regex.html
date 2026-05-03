@@ -26,7 +26,7 @@
   <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
   <link href="../style.css" rel="stylesheet">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5414405329595188" crossorigin="anonymous"></script>
-  <meta property="og:url" content="https://info-batches.pages.dev/posts/regex.html">
+  <meta property="og:url" content="https://mailissue.co.kr/posts/regex.html">
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="매일이슈">
   <meta name="twitter:card" content="summary_large_image">
@@ -34,18 +34,18 @@
   <meta name="twitter:description" content="정규표현식의 기본 문법부터 이메일 검증, URL 파싱, 로그 분석까지 실무에 바로 쓰는 정규표현식 실전 가이드입니다.">
   <meta name="twitter:image" content="https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=1200&h=630&fit=crop">
   <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
-  <link rel="canonical" href="https://info-batches.pages.dev/posts/regex.html">
+  <link rel="canonical" href="https://mailissue.co.kr/posts/regex.html">
   <script type="application/ld+json">{
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": "정규표현식(Regex) 실전 가이드 — 패턴 매칭 완전 정복",
     "description": "정규표현식의 기본 문법부터 이메일 검증, URL 파싱, 로그 분석까지 실무에 바로 쓰는 정규표현식 실전 가이드입니다.",
     "image": "https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=1200&h=630&fit=crop",
-    "url": "https://info-batches.pages.dev/posts/regex.html",
+    "url": "https://mailissue.co.kr/posts/regex.html",
     "datePublished": "2026-04-07",
     "dateModified": "2026-04-07",
     "author": {"@type": "Organization", "name": "매일이슈"},
-    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://info-batches.pages.dev"}
+    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://mailissue.co.kr"}
   }</script>
 </head>
 <body>
@@ -207,9 +207,20 @@ function addCommas(n) {
 }
 addCommas(1234567);  // '1,234,567'</code></pre>
 
+        <h2>성능과 보안 — 주의해야 할 패턴</h2>
+        <p>정규표현식은 잘못 작성하면 심각한 성능 문제를 일으킬 수 있습니다. 특히 <strong>ReDoS(Regular Expression Denial of Service)</strong>라고 불리는 취약점은 특정 입력값에 대해 처리 시간이 기하급수적으로 늘어나는 패턴에서 발생합니다.</p>
+        <ul>
+          <li><strong>위험한 패턴</strong> — <code>(a+)+</code>, <code>([a-zA-Z]+)*</code>처럼 중첩된 수량자가 있는 패턴은 입력 길이에 따라 처리 시간이 폭발적으로 증가할 수 있습니다.</li>
+          <li><strong>입력 길이 제한</strong> — 사용자 입력을 정규표현식으로 검증할 때는 미리 입력 길이를 제한하세요. <code>if (input.length > 100) return false;</code>처럼 간단한 검사만으로도 대부분의 ReDoS를 예방할 수 있습니다.</li>
+          <li><strong>라이브러리 활용</strong> — 이메일, URL, 신용카드 번호처럼 표준이 복잡한 형식은 직접 정규표현식을 작성하지 말고 <code>validator.js</code> 같은 검증된 라이브러리를 사용하는 것이 안전합니다.</li>
+        </ul>
+
+        <h2>정규표현식이 어려운 이유와 대안</h2>
+        <p>정규표현식은 강력하지만 코드 가독성을 크게 해칩니다. 팀원이 수정해야 할 때마다 처음부터 다시 해석해야 하는 경우가 많습니다. 특히 복잡한 패턴은 6개월 후 본인도 이해하기 어렵습니다. 이런 경우에는 단계별로 문자열 메서드(<code>split</code>, <code>includes</code>, <code>startsWith</code>)를 조합하거나, 정규표현식에 주석을 붙이는 <strong>verbose 모드</strong>를 지원하는 언어(Python의 <code>re.VERBOSE</code>)를 활용할 수 있습니다. JavaScript에서는 긴 정규표현식을 변수로 분리하고 의미를 설명하는 주석을 달아두는 것이 최선입니다.</p>
+
         <div class="callout">
           <strong>실전 팁</strong><br>
-          regex101.com 또는 regexr.com에서 실시간으로 패턴을 테스트하세요. 복잡한 정규표현식은 주석과 함께 명명된 그룹을 활용해 가독성을 높이세요. 이메일이나 URL 검증처럼 복잡한 케이스는 battle-tested 라이브러리(validator.js 등)를 사용하는 것이 안전합니다.
+          regex101.com 또는 regexr.com에서 실시간으로 패턴을 테스트하세요. 복잡한 정규표현식은 주석과 함께 명명된 그룹을 활용해 가독성을 높이세요. 이메일이나 URL 검증처럼 복잡한 케이스는 battle-tested 라이브러리(validator.js 등)를 사용하는 것이 안전하고, 중첩 수량자 패턴은 ReDoS 취약점을 유발할 수 있으므로 반드시 피하세요.
         </div>
       </div>
 

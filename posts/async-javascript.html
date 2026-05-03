@@ -26,7 +26,7 @@
   <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
   <link href="../style.css" rel="stylesheet">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5414405329595188" crossorigin="anonymous"></script>
-  <meta property="og:url" content="https://info-batches.pages.dev/posts/async-javascript.html">
+  <meta property="og:url" content="https://mailissue.co.kr/posts/async-javascript.html">
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="매일이슈">
   <meta name="twitter:card" content="summary_large_image">
@@ -34,18 +34,18 @@
   <meta name="twitter:description" content="콜백 지옥부터 Promise, async/await까지 JavaScript 비동기 프로그래밍을 실전 예제로 완전히 이해하는 가이드입니다.">
   <meta name="twitter:image" content="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=1200&h=630&fit=crop">
   <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
-  <link rel="canonical" href="https://info-batches.pages.dev/posts/async-javascript.html">
+  <link rel="canonical" href="https://mailissue.co.kr/posts/async-javascript.html">
   <script type="application/ld+json">{
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": "JavaScript 비동기 완전 정복 — Promise, async/await",
     "description": "콜백 지옥부터 Promise, async/await까지 JavaScript 비동기 프로그래밍을 실전 예제로 완전히 이해하는 가이드입니다.",
     "image": "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=1200&h=630&fit=crop",
-    "url": "https://info-batches.pages.dev/posts/async-javascript.html",
+    "url": "https://mailissue.co.kr/posts/async-javascript.html",
     "datePublished": "2026-04-06",
     "dateModified": "2026-04-06",
     "author": {"@type": "Organization", "name": "매일이슈"},
-    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://info-batches.pages.dev"}
+    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://mailissue.co.kr"}
   }</script>
 </head>
 <body>
@@ -202,9 +202,49 @@ const newPost = await api('/api/posts', {
   body: JSON.stringify({ title: '새 글', content: '...' })
 });</code></pre>
 
+        <h2>이벤트 루프와 마이크로태스크 큐</h2>
+        <p>JavaScript의 비동기 처리가 실제로 어떻게 동작하는지 이해하면 실수를 줄일 수 있습니다. 브라우저(또는 Node.js)의 이벤트 루프는 크게 두 종류의 비동기 작업을 처리합니다.</p>
+        <ul>
+          <li><strong>마이크로태스크 큐</strong> — Promise의 <code>.then</code>, <code>async/await</code>, <code>queueMicrotask</code>가 여기 들어갑니다. 현재 콜 스택이 비면 <em>즉시</em> 실행됩니다.</li>
+          <li><strong>매크로태스크 큐(태스크 큐)</strong> — <code>setTimeout</code>, <code>setInterval</code>, 이벤트 핸들러가 여기 들어갑니다. 마이크로태스크 큐가 완전히 비워진 다음에 실행됩니다.</li>
+        </ul>
+        <p>그래서 <code>Promise.resolve().then()</code>은 <code>setTimeout(fn, 0)</code>보다 항상 먼저 실행됩니다. 이 차이가 복잡한 비동기 버그의 원인이 되기도 합니다.</p>
+
+        <h2>AbortController — 요청 취소</h2>
+        <p>컴포넌트가 언마운트되거나 사용자가 페이지를 이동할 때, 진행 중인 fetch 요청을 취소하지 않으면 불필요한 상태 업데이트나 메모리 누수가 발생할 수 있습니다.</p>
+        <pre><code class="language-javascript">async function fetchWithTimeout(url, timeoutMs = 5000) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    return await response.json();
+  } catch (err) {
+    if (err.name === 'AbortError') {
+      throw new Error('요청이 타임아웃되었습니다');
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}</code></pre>
+
+        <h2>async/await 성능 주의: 직렬 vs 병렬</h2>
+        <p>가장 많이 하는 실수 중 하나는 병렬로 처리할 수 있는 작업을 불필요하게 직렬로 실행하는 것입니다.</p>
+        <pre><code class="language-javascript">// 나쁜 예 — 순서가 없는데 직렬로 기다림 (2초 소요)
+const user = await fetchUser(id);     // 1초
+const config = await fetchConfig();   // 1초 (user와 무관)
+
+// 좋은 예 — 병렬 처리 (1초 소요)
+const [user, config] = await Promise.all([
+  fetchUser(id),
+  fetchConfig()
+]);</code></pre>
+        <p>두 요청이 서로 의존하지 않는다면 항상 <code>Promise.all</code>로 병렬 처리하세요. 데이터가 클수록 성능 차이가 커집니다.</p>
+
         <div class="callout">
           <strong>핵심 정리</strong><br>
-          콜백 → Promise → async/await 순서로 발전했습니다. 현대 JavaScript에서는 <code>async/await</code>를 기본으로 사용하고, 병렬 처리가 필요할 땐 <code>Promise.all</code>을 활용하세요. 에러 처리는 반드시 <code>try/catch</code>로 감싸세요.
+          콜백 → Promise → async/await 순서로 발전했습니다. 현대 JavaScript에서는 <code>async/await</code>를 기본으로 사용하고, 서로 의존 관계가 없는 요청은 <code>Promise.all</code>로 병렬 처리하세요. 에러 처리는 반드시 <code>try/catch</code>로 감싸고, 긴 요청은 <code>AbortController</code>로 타임아웃을 설정하세요.
         </div>
       </div>
 

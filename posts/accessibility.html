@@ -26,7 +26,7 @@
   <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
   <link href="../style.css" rel="stylesheet">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5414405329595188" crossorigin="anonymous"></script>
-  <meta property="og:url" content="https://info-batches.pages.dev/posts/accessibility.html">
+  <meta property="og:url" content="https://mailissue.co.kr/posts/accessibility.html">
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="매일이슈">
   <meta name="twitter:card" content="summary_large_image">
@@ -34,18 +34,18 @@
   <meta name="twitter:description" content="ARIA 속성, 키보드 네비게이션, 색상 대비, 스크린 리더 지원까지 웹 접근성을 실무에 바로 적용하는 실천 가이드입니다.">
   <meta name="twitter:image" content="https://images.unsplash.com/photo-1573164713988-8665fc963095?w=1200&h=630&fit=crop">
   <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
-  <link rel="canonical" href="https://info-batches.pages.dev/posts/accessibility.html">
+  <link rel="canonical" href="https://mailissue.co.kr/posts/accessibility.html">
   <script type="application/ld+json">{
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": "웹 접근성(A11y) 실천 가이드",
     "description": "ARIA 속성, 키보드 네비게이션, 색상 대비, 스크린 리더 지원까지 웹 접근성을 실무에 바로 적용하는 실천 가이드입니다.",
     "image": "https://images.unsplash.com/photo-1573164713988-8665fc963095?w=1200&h=630&fit=crop",
-    "url": "https://info-batches.pages.dev/posts/accessibility.html",
+    "url": "https://mailissue.co.kr/posts/accessibility.html",
     "datePublished": "2026-03-22",
     "dateModified": "2026-03-22",
     "author": {"@type": "Organization", "name": "매일이슈"},
-    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://info-batches.pages.dev"}
+    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://mailissue.co.kr"}
   }</script>
 </head>
 <body>
@@ -199,6 +199,26 @@
   &lt;/div&gt;
 &lt;/form&gt;</code></pre>
 
+        <h2>접근성 자동 검사 도구</h2>
+        <p>개발 단계에서 접근성 문제를 빠르게 발견하기 위한 도구들이 많습니다. 완벽하지는 않지만 명백한 오류를 자동으로 잡아주므로 반드시 활용하세요.</p>
+        <ul>
+          <li><strong>Lighthouse</strong> — Chrome DevTools에 내장. 접근성 점수와 구체적인 문제 목록을 제공합니다.</li>
+          <li><strong>axe DevTools</strong> — 브라우저 확장 프로그램. 실시간으로 WCAG 위반 사항을 강조 표시해 줍니다.</li>
+          <li><strong>WAVE</strong> — 웹 기반 접근성 평가 도구. 시각적으로 문제 위치를 표시해 직관적입니다.</li>
+          <li><strong>키보드 직접 탐색</strong> — Tab, Shift+Tab, Enter, Space, 방향키만으로 사이트의 모든 기능을 사용할 수 있는지 직접 확인합니다.</li>
+        </ul>
+
+        <h2>스크린 리더 실제 테스트</h2>
+        <p>자동 검사 도구가 놓치는 문제는 스크린 리더를 직접 사용해야 발견됩니다. 무료로 사용할 수 있는 스크린 리더는 다음과 같습니다.</p>
+        <ul>
+          <li><strong>NVDA</strong> (Windows, 무료) — 가장 많이 사용되는 스크린 리더입니다.</li>
+          <li><strong>VoiceOver</strong> (macOS·iOS 내장) — Mac/iPhone 사용자라면 바로 켤 수 있습니다. macOS는 Cmd+F5, iOS는 설정 > 손쉬운 사용에서 활성화합니다.</li>
+          <li><strong>TalkBack</strong> (Android 내장) — Android 기기에서 설정 > 접근성에서 활성화합니다.</li>
+        </ul>
+
+        <h2>접근성의 비즈니스 이점</h2>
+        <p>접근성은 윤리적 의무이기도 하지만, 비즈니스 측면에서도 이점이 있습니다. 전 세계 인구의 약 15%(약 10억 명)가 어떤 형태로든 장애를 가지고 있어, 접근성을 개선하면 더 넓은 사용자 층에 도달할 수 있습니다. 또한 시맨틱 HTML과 ARIA 속성은 검색 엔진 크롤러가 콘텐츠를 더 잘 이해하도록 도와주기 때문에 SEO 점수도 함께 올라가는 경우가 많습니다. 많은 국가에서 공공 웹사이트와 일부 상업 사이트에 접근성 기준 준수를 법으로 요구하고 있으므로, 법적 리스크를 줄이는 역할도 합니다.</p>
+
         <div class="callout">
           <strong>접근성 체크리스트</strong><br>
           ✅ 모든 이미지에 적절한 alt 텍스트<br>
@@ -206,7 +226,9 @@
           ✅ 포커스 표시 스타일 명확히<br>
           ✅ 색상만으로 정보 전달 금지<br>
           ✅ 폼 요소에 label 연결<br>
-          ✅ 명암 대비 4.5:1 이상 확인
+          ✅ 명암 대비 4.5:1 이상 확인<br>
+          ✅ Lighthouse·axe로 자동 검사 통과<br>
+          ✅ 스크린 리더로 주요 흐름 직접 테스트
         </div>
       </div>
 
