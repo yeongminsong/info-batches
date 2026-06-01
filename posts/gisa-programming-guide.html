@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CG5VPJWVEQ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CG5VPJWVEQ');
+  </script>
+  <meta charset="UTF-8"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#6891f8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>정보처리기사 실기 프로그래밍 완전 정복 — C·Java·Python 코드 추적 — 매일이슈</title>
+  <meta name="description" content="정보처리기사 실기 프로그래밍 언어 출제 유형 완벽 정리. C언어 포인터·재귀, Java 상속·오버라이딩, Python 리스트·람다까지 코드 추적 연습 예제로 설명합니다.">
+  <meta property="og:title" content="정보처리기사 실기 프로그래밍 완전 정복 — C·Java·Python — 매일이슈">
+  <meta property="og:description" content="정보처리기사 실기 프로그래밍 출제 유형 완벽 정리. C언어 포인터, Java 상속, Python 리스트까지 코드 추적 예제로 설명합니다.">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=1200&h=630&fit=crop">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://mailissue.co.kr/posts/gisa-programming-guide.html">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="매일이슈">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="정보처리기사 실기 프로그래밍 완전 정복 — C·Java·Python — 매일이슈">
+  <meta name="twitter:description" content="정보처리기사 실기 프로그래밍 출제 유형 완벽 정리. 코드 추적 연습 예제로 설명합니다.">
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=1200&h=630&fit=crop">
+  <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
+  <link rel="canonical" href="https://mailissue.co.kr/posts/gisa-programming-guide.html">
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "정보처리기사 실기 프로그래밍 완전 정복 — C·Java·Python 코드 추적",
+    "description": "정보처리기사 실기 프로그래밍 언어 출제 유형 완벽 정리. C언어 포인터·재귀, Java 상속·오버라이딩, Python 리스트·람다까지 코드 추적 연습.",
+    "image": "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=1200&h=630&fit=crop",
+    "url": "https://mailissue.co.kr/posts/gisa-programming-guide.html",
+    "datePublished": "2026-06-01",
+    "dateModified": "2026-06-01",
+    "author": {"@type": "Organization", "name": "매일이슈"},
+    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://mailissue.co.kr"}
+  }</script>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
+  <link href="../style.css" rel="stylesheet">
+  <meta name="google-adsense-account" content="ca-pub-5414405329595188">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5414405329595188" crossorigin="anonymous"></script>
+  <style>
+    .lang-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 2rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+    }
+    .badge-c    { background: #1565c0; color: #fff; }
+    .badge-java { background: #b71c1c; color: #fff; }
+    .badge-py   { background: #1b5e20; color: #fff; }
+    .exam-box {
+      background: #fff8e1;
+      border-left: 4px solid #ffc107;
+      border-radius: 0 0.5rem 0.5rem 0;
+      padding: 1rem 1.2rem;
+      margin: 1.2rem 0;
+      font-size: 0.95rem;
+    }
+    .exam-box strong { color: #e65100; }
+    .tip-box {
+      background: #e8f5e9;
+      border-left: 4px solid #43a047;
+      border-radius: 0 0.5rem 0.5rem 0;
+      padding: 1rem 1.2rem;
+      margin: 1.2rem 0;
+      font-size: 0.95rem;
+    }
+    .tip-box strong { color: #1b5e20; }
+    .trace-box {
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      padding: 1rem 1.2rem;
+      margin: 1rem 0;
+      font-family: 'Pretendard Variable', monospace;
+      font-size: 0.9rem;
+    }
+    .trace-box .trace-title {
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: #374151;
+    }
+    .answer-reveal {
+      background: #6891f8;
+      color: #fff;
+      border-radius: 0.4rem;
+      padding: 0.3rem 0.8rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    .prog-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.2rem 0;
+      font-size: 0.93rem;
+    }
+    .prog-table th {
+      background: var(--primary, #6891f8);
+      color: #fff;
+      padding: 0.6rem 1rem;
+      text-align: left;
+    }
+    .prog-table td {
+      padding: 0.55rem 1rem;
+      border-bottom: 1px solid var(--border, #e3e6ea);
+      vertical-align: top;
+    }
+    .prog-table tr:nth-child(even) td { background: var(--bg-gray, #f7f8fc); }
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.4rem;
+      margin: 0.8rem 0;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+    .memory-cell {
+      border: 1px solid #6891f8;
+      border-radius: 0.3rem;
+      padding: 0.4rem 0.2rem;
+    }
+    .memory-cell .addr { font-size: 0.72rem; color: #888; }
+    .memory-cell .val  { font-weight: 700; color: #1e3a8a; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/index.html" class="logo">매일이슈</a>
+      <nav class="nav">
+        <a href="/index.html">홈</a>
+        <a href="/category.html">카테고리</a>
+        <a href="/tags.html">태그</a>
+        <a href="/about.html">소개</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="테마 전환">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="post-hero-img" style="background-image:url('https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=1400&h=500&fit=crop&auto=format');"></div>
+
+  <div class="post-wrapper">
+    <a href="/index.html" class="post-back">← 목록으로</a>
+    <article class="post-article">
+      <header class="post-header">
+        <div class="post-tags">
+          <span class="tag">정보처리기사</span>
+          <span class="tag">프로그래밍</span>
+          <span class="tag">실기</span>
+        </div>
+        <h1 class="post-h1">정보처리기사 실기 프로그래밍 완전 정복</h1>
+        <div class="post-meta">
+          <span>📅 2026. 06. 01</span>
+          <span>⏱ 18분 읽기</span>
+        </div>
+      </header>
+
+      <div class="post-content">
+  <!-- AdSense: 본문 상단 광고 -->
+  <ins class="adsbygoogle ad-post-top"
+       style="display:block"
+       data-ad-client="ca-pub-5414405329595188"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+        <p>정보처리기사 실기에서 프로그래밍 문제는 <strong>전체 20문항 중 4~6문항</strong>을 차지합니다. C언어, Java, Python 세 가지 언어에서 번갈아 출제되는데요. 코드를 직접 짜는 게 아니라 <strong>"이 코드를 실행하면 결과가 뭐야?"</strong>를 묻는 코드 추적 문제가 대부분입니다. 언어 자체를 깊이 배울 필요는 없고, 시험에 자주 나오는 패턴만 잡으면 충분히 점수를 챙길 수 있어요.</p>
+
+        <div class="exam-box">
+          <strong>📌 프로그래밍 출제 비중 & 유형</strong><br>
+          ✔ <strong>코드 추적</strong> — 코드 실행 결과 출력값 쓰기 (가장 많음)<br>
+          ✔ <strong>빈칸 채우기</strong> — 코드 일부가 비워져 있고 올바른 키워드/값 작성<br>
+          ✔ <strong>오류 찾기</strong> — 잘못된 코드 줄 찾아 수정<br><br>
+          언어별로 <strong>C → 포인터·재귀, Java → 상속·오버라이딩, Python → 리스트·람다</strong>가 단골 출제 테마입니다.
+        </div>
+
+        <!-- ===================== C 언어 ===================== -->
+        <h2><span class="lang-badge badge-c">C 언어</span></h2>
+        <p>C언어 문제에서 가장 많이 나오는 건 <strong>포인터</strong>와 <strong>재귀함수</strong>입니다. 이 두 가지만 완벽히 잡아도 C언어 문제의 70%는 풀 수 있어요.</p>
+
+        <h3>① 기본 출력과 연산자</h3>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    int a = 10, b = 3;
+
+    printf("%d\n", a / b);   // 정수 나눗셈 → 3
+    printf("%d\n", a % b);   // 나머지 → 1
+    printf("%d\n", a++);     // 출력 후 증가 → 10
+    printf("%d\n", ++b);     // 증가 후 출력 → 4
+    return 0;
+}</code></pre>
+
+        <div class="trace-box">
+          <div class="trace-title">🔍 코드 추적</div>
+          <code>a / b</code> → 10 ÷ 3 = <strong>3</strong> (소수점 버림)<br>
+          <code>a % b</code> → 10 mod 3 = <strong>1</strong><br>
+          <code>a++</code> → 현재 a(10) 출력 후 a가 11이 됨 → <strong>10</strong><br>
+          <code>++b</code> → b를 먼저 4로 만든 뒤 출력 → <strong>4</strong>
+        </div>
+
+        <div class="tip-box">
+          <strong>💡 후위(a++) vs 전위(++a) 헷갈릴 때</strong><br>
+          <strong>후위(a++)</strong> — "나 먼저 쓰고 나서 올라갈게" → 현재 값 출력 후 증가<br>
+          <strong>전위(++a)</strong> — "올라가고 나서 쓸게" → 먼저 증가 후 출력
+        </div>
+
+        <h3>② 포인터 — C언어 최빈출 주제</h3>
+        <p>포인터는 변수의 <strong>메모리 주소</strong>를 저장하는 변수입니다. <code>&</code>는 주소 가져오기, <code>*</code>는 주소가 가리키는 값 가져오기입니다.</p>
+
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    int a = 10;
+    int *p = &a;    // p는 a의 주소를 저장
+
+    printf("%d\n", a);   // 10
+    printf("%d\n", *p);  // p가 가리키는 값 → 10
+
+    *p = 20;             // p가 가리키는 곳(a)의 값을 20으로 변경
+    printf("%d\n", a);   // a도 20으로 바뀜 → 20
+
+    return 0;
+}</code></pre>
+
+        <div class="trace-box">
+          <div class="trace-title">🔍 메모리 구조로 이해하기</div>
+          <div class="memory-grid">
+            <div class="memory-cell">
+              <div class="addr">0x100 (a)</div>
+              <div class="val">10</div>
+            </div>
+            <div class="memory-cell">
+              <div class="addr">0x104 (p)</div>
+              <div class="val">0x100</div>
+            </div>
+          </div>
+          p는 a의 주소(0x100)를 담고 있고, *p는 그 주소로 가서 값(10)을 가져옵니다.<br>
+          <code>*p = 20</code>을 하면 0x100 위치(= a)의 값이 20으로 바뀝니다.
+        </div>
+
+        <h3>③ 배열과 포인터</h3>
+        <pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    int arr[] = {10, 20, 30, 40, 50};
+    int *p = arr;   // 배열 이름 = 첫 번째 원소의 주소
+
+    printf("%d\n", *p);       // 10
+    printf("%d\n", *(p+1));   // 20  (주소+1 칸 이동)
+    printf("%d\n", *(p+2));   // 30
+    printf("%d\n", p[3]);     // 40  (p[n] == *(p+n))
+
+    p++;                       // p가 arr[1]을 가리킴
+    printf("%d\n", *p);       // 20
+    return 0;
+}</code></pre>
+
+        <div class="exam-box">
+          <strong>🎯 배열 포인터 핵심 공식</strong><br>
+          <code>arr[i]</code> == <code>*(arr + i)</code> == <code>*(p + i)</code> == <code>p[i]</code><br>
+          배열 이름(arr)은 그 자체가 첫 번째 원소(&arr[0])의 주소입니다.
+        </div>
+
+        <h3>④ 재귀 함수 — 두 번째 단골 주제</h3>
+        <p>재귀는 함수가 자기 자신을 호출하는 것입니다. 시험에서는 팩토리얼, 피보나치, 거듭제곱 형태로 자주 나옵니다.</p>
+
+        <pre><code>#include &lt;stdio.h&gt;
+
+int factorial(int n) {
+    if (n <= 1) return 1;        // 종료 조건 (base case)
+    return n * factorial(n - 1); // 자기 자신 호출
+}
+
+int main() {
+    printf("%d\n", factorial(5)); // ?
+    return 0;
+}</code></pre>
+
+        <div class="trace-box">
+          <div class="trace-title">🔍 호출 스택 추적 (factorial(5))</div>
+          factorial(5) = 5 × factorial(4)<br>
+          factorial(4) = 4 × factorial(3)<br>
+          factorial(3) = 3 × factorial(2)<br>
+          factorial(2) = 2 × factorial(1)<br>
+          factorial(1) = <strong>1</strong> ← 여기서 멈춤<br><br>
+          ↑ 거슬러 올라가며 계산<br>
+          2×1=2 → 3×2=6 → 4×6=24 → 5×24=<span class="answer-reveal">120</span>
+        </div>
+
+        <pre><code>// 피보나치 수열 (자주 출제!)
+int fib(int n) {
+    if (n <= 1) return n;
+    return fib(n-1) + fib(n-2);
+}
+// fib(5) = fib(4)+fib(3) = 3+2 = 5
+// fib(0)=0, fib(1)=1, fib(2)=1, fib(3)=2, fib(4)=3, fib(5)=5</code></pre>
+
+        <h3>⑤ 구조체</h3>
+        <pre><code>#include &lt;stdio.h&gt;
+
+struct Student {
+    char name[20];
+    int  score;
+};
+
+int main() {
+    struct Student s = {"홍길동", 95};
+
+    printf("%s\n", s.name);   // 홍길동
+    printf("%d\n", s.score);  // 95
+
+    struct Student *p = &s;
+    printf("%s\n", p->name);  // 포인터로 접근할 때는 ->
+    return 0;
+}</code></pre>
+
+        <div class="tip-box">
+          <strong>💡 . vs -> 구분법</strong><br>
+          <strong>구조체 변수</strong>로 접근 → <code>s.name</code> (점 연산자)<br>
+          <strong>구조체 포인터</strong>로 접근 → <code>p->name</code> (화살표 연산자)
+        </div>
+
+        <!-- ===================== Java ===================== -->
+        <h2><span class="lang-badge badge-java">Java</span></h2>
+        <p>Java 문제에서는 <strong>클래스·상속·오버라이딩</strong>이 압도적으로 자주 나옵니다. 코드를 보고 어떤 메서드가 실행될지, 출력값이 뭔지를 추적하는 패턴이 반복됩니다.</p>
+
+        <h3>① 클래스와 생성자</h3>
+        <pre><code>class Animal {
+    String name;
+    int age;
+
+    // 생성자
+    Animal(String name, int age) {
+        this.name = name;  // this = 현재 객체
+        this.age  = age;
+    }
+
+    void speak() {
+        System.out.println(name + "이(가) 소리를 냅니다.");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Animal a = new Animal("강아지", 3);
+        a.speak();   // 강아지이(가) 소리를 냅니다.
+        System.out.println(a.age); // 3
+    }
+}</code></pre>
+
+        <h3>② 상속 + 오버라이딩 — 최빈출!</h3>
+        <p>오버라이딩은 부모 클래스의 메서드를 자식 클래스에서 같은 이름으로 재정의하는 것입니다. 실기에서 <strong>"출력값은?"</strong> 형태로 단골 출제됩니다.</p>
+
+        <pre><code>class Animal {
+    void speak() {
+        System.out.println("...");
+    }
+}
+
+class Dog extends Animal {
+    @Override
+    void speak() {
+        System.out.println("멍멍!");  // 오버라이딩
+    }
+}
+
+class Cat extends Animal {
+    @Override
+    void speak() {
+        System.out.println("야옹~");  // 오버라이딩
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Animal a = new Dog();  // 다형성 — Animal 타입으로 Dog 객체 생성
+        a.speak();             // ?
+
+        Animal b = new Cat();
+        b.speak();             // ?
+    }
+}</code></pre>
+
+        <div class="trace-box">
+          <div class="trace-title">🔍 코드 추적</div>
+          <code>Animal a = new Dog()</code> — 타입은 Animal이지만 실제 객체는 Dog<br>
+          <code>a.speak()</code> → 실제 객체(Dog)의 speak() 실행 → <span class="answer-reveal">멍멍!</span><br>
+          <code>b.speak()</code> → 실제 객체(Cat)의 speak() 실행 → <span class="answer-reveal">야옹~</span><br><br>
+          이것이 <strong>다형성(Polymorphism)</strong>입니다. 변수 타입이 아니라 <strong>실제 객체 타입</strong>의 메서드가 실행됩니다.
+        </div>
+
+        <h3>③ 오버로딩 vs 오버라이딩 구분</h3>
+        <table class="prog-table">
+          <thead>
+            <tr><th>구분</th><th>오버로딩(Overloading)</th><th>오버라이딩(Overriding)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>정의</td><td>같은 이름, <strong>매개변수가 다른</strong> 메서드 여러 개</td><td>부모 메서드를 자식이 <strong>재정의</strong></td></tr>
+            <tr><td>위치</td><td>같은 클래스 안</td><td>부모·자식 클래스 간</td></tr>
+            <tr><td>반환 타입</td><td>달라도 됨</td><td>같아야 함</td></tr>
+            <tr><td>예시</td><td><code>add(int a)</code>, <code>add(int a, int b)</code></td><td><code>@Override void speak()</code></td></tr>
+          </tbody>
+        </table>
+
+        <h3>④ 인터페이스와 추상 클래스</h3>
+        <pre><code>interface Flyable {
+    void fly();           // 구현 없음, 반드시 오버라이딩 필요
+}
+
+abstract class Vehicle {
+    abstract void move(); // 추상 메서드 — 반드시 오버라이딩
+    void stop() {         // 일반 메서드 — 그대로 상속 가능
+        System.out.println("정지");
+    }
+}
+
+class Airplane extends Vehicle implements Flyable {
+    @Override
+    public void move() { System.out.println("활주로 이동"); }
+
+    @Override
+    public void fly()  { System.out.println("비행 중"); }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Airplane ap = new Airplane();
+        ap.move();  // 활주로 이동
+        ap.fly();   // 비행 중
+        ap.stop();  // 정지  (Vehicle에서 상속)
+    }
+}</code></pre>
+
+        <div class="exam-box">
+          <strong>🎯 인터페이스 vs 추상 클래스 차이</strong><br>
+          <table class="prog-table" style="margin:0.6rem 0 0;">
+            <thead><tr><th></th><th>인터페이스</th><th>추상 클래스</th></tr></thead>
+            <tbody>
+              <tr><td>다중 구현</td><td>✅ 여러 개 implements 가능</td><td>❌ 단일 extends만</td></tr>
+              <tr><td>일반 메서드</td><td>default 메서드만 가능</td><td>✅ 일반 메서드 포함 가능</td></tr>
+              <tr><td>생성자</td><td>❌ 없음</td><td>✅ 있음</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>⑤ static과 인스턴스 변수</h3>
+        <pre><code>class Counter {
+    static int count = 0;  // 모든 객체가 공유
+    int id;
+
+    Counter() {
+        count++;
+        id = count;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Counter c1 = new Counter();
+        Counter c2 = new Counter();
+        Counter c3 = new Counter();
+
+        System.out.println(Counter.count); // ?
+        System.out.println(c1.id);         // ?
+        System.out.println(c3.id);         // ?
+    }
+}</code></pre>
+
+        <div class="trace-box">
+          <div class="trace-title">🔍 코드 추적</div>
+          c1 생성: count++ → count=1, c1.id=1<br>
+          c2 생성: count++ → count=2, c2.id=2<br>
+          c3 생성: count++ → count=3, c3.id=3<br><br>
+          <code>Counter.count</code> → <span class="answer-reveal">3</span><br>
+          <code>c1.id</code> → <span class="answer-reveal">1</span><br>
+          <code>c3.id</code> → <span class="answer-reveal">3</span>
+        </div>
+
+        <!-- ===================== Python ===================== -->
+        <h2><span class="lang-badge badge-py">Python</span></h2>
+        <p>Python은 문법이 간결해서 비교적 읽기 쉽습니다. 시험에서는 <strong>리스트 조작, 슬라이싱, 반복문, 함수</strong>가 주로 나와요. 최근에는 람다식과 리스트 컴프리헨션도 출제됩니다.</p>
+
+        <h3>① 리스트와 슬라이싱</h3>
+        <pre><code>a = [1, 2, 3, 4, 5]
+
+print(a[0])     # 1  (첫 번째)
+print(a[-1])    # 5  (마지막)
+print(a[1:3])   # [2, 3]  (인덱스 1 이상, 3 미만)
+print(a[::2])   # [1, 3, 5]  (2칸씩 건너뜀)
+print(a[::-1])  # [5, 4, 3, 2, 1]  (역순)
+
+a.append(6)     # 끝에 추가 → [1,2,3,4,5,6]
+a.insert(0, 0)  # 0번 위치에 0 삽입 → [0,1,2,3,4,5,6]
+a.pop()         # 마지막 제거 → [0,1,2,3,4,5]
+a.remove(3)     # 값 3 제거 → [0,1,2,4,5]</code></pre>
+
+        <div class="tip-box">
+          <strong>💡 슬라이싱 공식</strong><br>
+          <code>a[start:end:step]</code><br>
+          start부터 end-1까지, step 간격으로 가져옵니다.<br>
+          생략하면 → start=0, end=끝, step=1
+        </div>
+
+        <h3>② 반복문과 조건문</h3>
+        <pre><code># for문 — range
+for i in range(1, 6):   # 1, 2, 3, 4, 5
+    print(i, end=' ')
+# 출력: 1 2 3 4 5
+
+# 리스트 순회
+fruits = ['사과', '바나나', '포도']
+for fruit in fruits:
+    print(fruit)
+
+# enumerate — 인덱스와 값 동시에
+for i, fruit in enumerate(fruits):
+    print(i, fruit)
+# 0 사과
+# 1 바나나
+# 2 포도</code></pre>
+
+        <h3>③ 함수와 기본값 매개변수</h3>
+        <pre><code>def greet(name, greeting='안녕하세요'):
+    print(f"{greeting}, {name}!")
+
+greet('홍길동')             # 안녕하세요, 홍길동!
+greet('이순신', '반갑습니다') # 반갑습니다, 이순신!</code></pre>
+
+        <h3>④ 람다(lambda)와 map/filter</h3>
+        <pre><code># 람다 — 이름 없는 함수
+square = lambda x: x ** 2
+print(square(5))   # 25
+
+# map — 리스트 각 원소에 함수 적용
+nums = [1, 2, 3, 4, 5]
+result = list(map(lambda x: x * 2, nums))
+print(result)   # [2, 4, 6, 8, 10]
+
+# filter — 조건에 맞는 원소만 추출
+evens = list(filter(lambda x: x % 2 == 0, nums))
+print(evens)    # [2, 4]</code></pre>
+
+        <h3>⑤ 리스트 컴프리헨션 — 최근 출제 증가</h3>
+        <pre><code># 기본 형태: [표현식 for 변수 in 이터러블 if 조건]
+squares = [x**2 for x in range(1, 6)]
+print(squares)   # [1, 4, 9, 16, 25]
+
+# 조건 포함
+even_sq = [x**2 for x in range(1, 11) if x % 2 == 0]
+print(even_sq)   # [4, 16, 36, 64, 100]</code></pre>
+
+        <div class="trace-box">
+          <div class="trace-title">🔍 리스트 컴프리헨션 추적</div>
+          <code>[x**2 for x in range(1, 6)]</code><br>
+          x=1: 1² = 1<br>
+          x=2: 2² = 4<br>
+          x=3: 3² = 9<br>
+          x=4: 4² = 16<br>
+          x=5: 5² = 25<br>
+          결과 → <span class="answer-reveal">[1, 4, 9, 16, 25]</span>
+        </div>
+
+        <h3>⑥ 딕셔너리</h3>
+        <pre><code>student = {'이름': '홍길동', '성적': 90, '학과': '컴공'}
+
+print(student['이름'])          # 홍길동
+print(student.get('학년', 1))  # 키가 없으면 기본값 1 반환
+
+student['학년'] = 3             # 추가
+del student['학과']             # 삭제
+
+for key, value in student.items():
+    print(f"{key}: {value}")</code></pre>
+
+        <h2>🧩 실전 문제 풀어보기</h2>
+
+        <div class="exam-box">
+          <strong>📝 문제 1 — C언어</strong><br>
+          아래 코드의 출력 결과를 쓰시오.<br><br>
+          <pre style="background:#fff3e0; margin:0.5rem 0; padding:0.8rem; border-radius:0.4rem;">#include &lt;stdio.h&gt;
+int func(int n) {
+    if (n == 0) return 0;
+    return n + func(n - 1);
+}
+int main() {
+    printf("%d\n", func(5));
+}</pre>
+        </div>
+
+        <div class="trace-box">
+          <div class="trace-title">🔍 풀이</div>
+          func(5) = 5 + func(4)<br>
+          func(4) = 4 + func(3)<br>
+          func(3) = 3 + func(2)<br>
+          func(2) = 2 + func(1)<br>
+          func(1) = 1 + func(0)<br>
+          func(0) = <strong>0</strong> ← 종료<br><br>
+          1+0=1 → 2+1=3 → 3+3=6 → 4+6=10 → 5+10= <span class="answer-reveal">15</span>
+        </div>
+
+        <div class="exam-box">
+          <strong>📝 문제 2 — Java</strong><br>
+          아래 코드의 출력 결과를 쓰시오.<br><br>
+          <pre style="background:#fff3e0; margin:0.5rem 0; padding:0.8rem; border-radius:0.4rem;">class A {
+    int x = 10;
+    void print() { System.out.println("A: " + x); }
+}
+class B extends A {
+    int x = 20;
+    @Override
+    void print() { System.out.println("B: " + x); }
+}
+public class Main {
+    public static void main(String[] args) {
+        A obj = new B();
+        obj.print();
+        System.out.println(obj.x);
+    }
+}</pre>
+        </div>
+
+        <div class="trace-box">
+          <div class="trace-title">🔍 풀이</div>
+          <code>A obj = new B()</code> — 타입은 A, 실제 객체는 B<br>
+          <code>obj.print()</code> → <strong>메서드는 실제 객체(B) 기준</strong> → <span class="answer-reveal">B: 20</span><br>
+          <code>obj.x</code> → <strong>필드는 참조 타입(A) 기준</strong> → <span class="answer-reveal">10</span><br><br>
+          ⚠ 메서드는 다형성 적용되지만, <strong>필드(변수)는 다형성 적용 안 됨!</strong>
+        </div>
+
+        <div class="exam-box">
+          <strong>📝 문제 3 — Python</strong><br>
+          아래 코드의 출력 결과를 쓰시오.<br><br>
+          <pre style="background:#fff3e0; margin:0.5rem 0; padding:0.8rem; border-radius:0.4rem;">data = [3, 1, 4, 1, 5, 9, 2, 6]
+result = sorted(set(data), reverse=True)
+print(result[:3])</pre>
+        </div>
+
+        <div class="trace-box">
+          <div class="trace-title">🔍 풀이</div>
+          <code>set(data)</code> → 중복 제거 → {1, 2, 3, 4, 5, 6, 9}<br>
+          <code>sorted(..., reverse=True)</code> → 내림차순 → [9, 6, 5, 4, 3, 2, 1]<br>
+          <code>[:3]</code> → 앞 3개 → <span class="answer-reveal">[9, 6, 5]</span>
+        </div>
+
+        <div class="callout">
+          <strong>📚 프로그래밍 실기 고득점 전략 3가지</strong><br><br>
+          <strong>① 손으로 직접 추적하세요.</strong> 변수 값이 바뀔 때마다 종이에 표로 적어가며 따라가는 게 가장 확실합니다. 머릿속으로만 계산하면 실수합니다.<br><br>
+          <strong>② C언어는 포인터·재귀, Java는 상속·다형성에 집중하세요.</strong> 이 두 테마가 전체 프로그래밍 문제의 절반 이상을 차지합니다.<br><br>
+          <strong>③ Python은 슬라이싱 인덱스를 정확히 익히세요.</strong> <code>a[1:3]</code>이 인덱스 1~2(3 미포함)라는 것, <code>a[::-1]</code>이 역순이라는 것을 헷갈리면 안 됩니다.
+        </div>
+      </div>
+
+  <!-- AdSense: 본문 하단 광고 -->
+  <ins class="adsbygoogle ad-post-bottom"
+       style="display:block"
+       data-ad-client="ca-pub-5414405329595188"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </article>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p>© 2026 매일이슈. 매일 조금씩, 더 나은 내일.</p>
+      <nav class="footer-nav">
+        <a href="/about.html">소개</a>
+        <a href="/privacy.html">개인정보처리방침</a>
+        <a href="/terms.html">이용약관</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="../main.js"></script>
+</body>
+</html>
