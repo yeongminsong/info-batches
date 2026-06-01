@@ -290,6 +290,53 @@ module.exports = {
           2. <code>prettier-plugin-tailwindcss</code>로 클래스 순서를 자동 정렬하세요.<br>
           3. 반복되는 조합만 <code>@apply</code>로 추상화하고, 나머지는 HTML에 인라인으로 두는 것이 검색하기 쉽습니다.
         </div>
+
+        <h2>JIT 모드와 동적 클래스 주의사항</h2>
+        <p>Tailwind의 JIT(Just-In-Time) 컴파일러는 실제로 사용된 클래스만 번들에 포함합니다. 단, 동적으로 생성된 클래스 이름은 감지하지 못합니다.</p>
+        <pre><code class="language-javascript">// ❌ JIT가 감지 못함 — 빌드에서 제외될 수 있음
+const color = 'red';
+&lt;div className={`text-${color}-500`}&gt;
+
+// ✅ 올바른 방법 — 완전한 클래스 이름 사용
+const colorClass = condition ? 'text-red-500' : 'text-blue-500';
+&lt;div className={colorClass}&gt;</code></pre>
+        <p>동적 클래스 문제는 Tailwind 사용 중 가장 자주 겪는 함정입니다. CMS나 백엔드 API에서 색상값을 받아 동적으로 클래스를 생성하는 경우, tailwind.config.js의 <code>safelist</code>에 해당 클래스들을 명시적으로 추가해야 합니다.</p>
+
+        <h2>Tailwind CSS v4 변경점</h2>
+        <p>2025년 출시된 Tailwind CSS v4는 기존 버전과 크게 달라졌습니다. 설정 방식이 CSS 파일 중심으로 바뀌었고 빌드 속도가 대폭 개선됐습니다.</p>
+        <pre><code class="language-css">/* tailwind.css — v4에서는 CSS 파일에서 직접 설정 */
+@import "tailwindcss";
+
+/* 커스텀 테마 설정 (tailwind.config.js 불필요) */
+@theme {
+  --font-sans: 'Pretendard Variable', sans-serif;
+  --color-brand: oklch(58% 0.22 264);
+  --spacing-18: 4.5rem;
+}
+
+/* 커스텀 유틸리티 */
+@utility card-shadow {
+  box-shadow: 0 2px 8px oklch(0% 0 0 / 0.1);
+}</code></pre>
+        <p>v4에서는 <code>tailwind.config.js</code> 없이 CSS 파일 하나로 모든 설정을 관리합니다. Rust로 재작성된 빌드 엔진 덕분에 빌드 속도가 v3 대비 3~10배 빨라졌습니다.</p>
+
+        <h2>Tailwind vs CSS Modules vs styled-components 비교</h2>
+        <table>
+          <thead>
+            <tr><th>항목</th><th>Tailwind CSS</th><th>CSS Modules</th><th>styled-components</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>번들 크기</td><td>매우 작음 (사용한 것만)</td><td>작음</td><td>큼 (런타임 포함)</td></tr>
+            <tr><td>디자인 일관성</td><td>높음 (토큰 기반)</td><td>보통</td><td>보통</td></tr>
+            <tr><td>러닝 커브</td><td>중간 (클래스 암기 필요)</td><td>낮음</td><td>낮음</td></tr>
+            <tr><td>SSR 성능</td><td>우수</td><td>우수</td><td>추가 설정 필요</td></tr>
+            <tr><td>적합한 용도</td><td>디자인 시스템, 빠른 개발</td><td>컴포넌트 스타일 캡슐화</td><td>동적 스타일링</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Tailwind CSS를 팀에서 효과적으로 사용하는 방법</h2>
+        <p>Tailwind CSS의 가장 큰 장점 중 하나는 디자인 토큰이 중앙에서 관리된다는 것입니다. <code>tailwind.config.js</code>의 <code>theme</code> 설정에서 색상, 간격, 폰트 등을 정의하면, 이 값들이 전체 프로젝트에서 일관되게 사용됩니다. 디자이너가 Figma에서 정의한 컬러 팔레트를 그대로 Tailwind 설정에 반영해두면, 개발자가 임의로 색상 값을 입력하는 일이 없어집니다. 이 방식으로 디자인 일관성을 코드 레벨에서 강제할 수 있습니다. 팀 내에서 클래스 순서에 대한 합의도 필요합니다. Prettier 플러그인인 <code>prettier-plugin-tailwindcss</code>를 사용하면 Tailwind 권장 순서로 클래스를 자동 정렬해줘서 코드 리뷰 시 클래스 순서 관련 의견 충돌이 줄어듭니다.</p>
+        <p>Tailwind CSS의 단점으로 자주 거론되는 것은 긴 클래스 문자열이 HTML을 읽기 어렵게 만든다는 것입니다. 이를 해결하는 실무적인 방법은 반복되는 클래스 조합을 컴포넌트로 추상화하는 것입니다. React나 Vue 같은 컴포넌트 기반 프레임워크를 사용한다면, 공통 UI 요소를 컴포넌트로 만들어 내부에서 Tailwind 클래스를 관리하면 사용하는 쪽의 코드는 깔끔하게 유지됩니다. <code>@apply</code> 지시어는 반복되는 유틸리티 조합을 CSS 클래스로 묶을 때 사용할 수 있지만, 지나치게 사용하면 Tailwind의 장점인 명시성이 사라지므로 꼭 필요한 경우에만 제한적으로 씁니다. Tailwind를 도입했다면 기존의 전통적인 CSS 방식과 섞지 않는 것이 일관성 유지에 중요합니다.</p>
       </div>
 
   <!-- AdSense: 본문 하단 광고 -->

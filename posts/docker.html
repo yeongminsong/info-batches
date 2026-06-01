@@ -222,6 +222,71 @@ CMD ["node", "dist/app.js"]</code></pre>
           <strong>핵심 정리</strong><br>
           Docker는 "환경 차이" 문제를 컨테이너로 해결합니다. 컨테이너는 VM보다 훨씬 가볍고 빠릅니다. Dockerfile로 이미지를 정의하고, docker-compose로 여러 서비스를 함께 관리하세요. 데이터베이스처럼 재시작 후에도 데이터를 유지해야 하는 서비스는 반드시 볼륨을 설정하고, 멀티 스테이지 빌드로 최종 이미지 크기를 최소화하세요.
         </div>
+
+        <h2>Docker 네트워킹</h2>
+        <p>Docker 컨테이너들은 기본적으로 서로 통신할 수 없습니다. docker-compose를 사용하면 같은 파일의 서비스들이 자동으로 같은 네트워크에 배치됩니다. 서비스 이름으로 통신할 수 있습니다.</p>
+        <pre><code class="language-yaml">services:
+  web:
+    build: .
+    environment:
+      # 컨테이너 이름(db)을 호스트명으로 직접 사용
+      DATABASE_URL: postgresql://user:pass@db:5432/mydb
+      REDIS_URL: redis://cache:6379
+
+  db:
+    image: postgres:16
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  cache:
+    image: redis:7-alpine
+
+volumes:
+  pg_data:</code></pre>
+        <p>도커 네트워크에서는 서비스 이름이 DNS 이름이 됩니다. <code>web</code> 컨테이너에서 <code>db</code>로 접속하면 PostgreSQL 컨테이너로 연결됩니다. 외부에서는 포트 매핑(<code>ports: - "5432:5432"</code>)을 설정한 서비스만 접근 가능합니다.</p>
+
+        <h2>Docker 이미지 보안 강화</h2>
+        <p>프로덕션 환경에서는 최소 권한 원칙을 적용해야 합니다.</p>
+        <pre><code class="language-dockerfile"># 1. 특정 버전 태그 사용 (latest는 위험)
+FROM node:20.11-alpine
+
+# 2. 비루트 사용자로 실행
+RUN addgroup -S appgroup &amp;&amp; adduser -S appuser -G appgroup
+USER appuser
+
+# 3. 불필요한 패키지 설치 금지
+# alpine 이미지는 최소한의 패키지만 포함
+
+WORKDIR /app
+COPY --chown=appuser:appgroup . .
+RUN npm ci --production
+
+CMD ["node", "server.js"]</code></pre>
+        <p>이미지 취약점 스캔을 CI/CD에 포함하세요. <code>docker scout cves my-image</code>(Docker Scout) 또는 <code>trivy image my-image</code>(Trivy)로 알려진 CVE 취약점을 자동으로 검출할 수 있습니다.</p>
+
+        <h2>컨테이너 리소스 제한</h2>
+        <p>리소스 제한 없이 컨테이너를 실행하면 하나의 컨테이너가 서버 전체 메모리와 CPU를 독점할 수 있습니다.</p>
+        <pre><code class="language-yaml">services:
+  web:
+    image: myapp
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'     # CPU 50% 이하
+          memory: 512M     # 메모리 512MB 이하
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    restart: unless-stopped   # 크래시 시 자동 재시작
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3</code></pre>
+
+        <h2>Docker를 실무에 도입하면 달라지는 개발 문화</h2>
+        <p>Docker를 도입한 팀에서 가장 먼저 변화를 느끼는 것은 "내 컴퓨터에서는 됩니다" 문제의 해소입니다. 컨테이너가 애플리케이션과 의존성을 함께 패키징하기 때문에, 개발 환경과 프로덕션 환경의 차이에서 비롯된 버그가 크게 줄어듭니다. 신규 팀원 온보딩도 빨라집니다. 기존에는 개발 환경 세팅에 반나절이 걸리던 것이, Docker와 docker-compose 파일이 갖춰진 프로젝트에서는 <code>docker compose up</code> 명령 하나로 모든 서비스가 실행됩니다. 데이터베이스, 캐시 서버, 메시지 큐까지 로컬에서 동일하게 띄울 수 있어 외부 서비스에 의존하지 않고도 개발할 수 있습니다.</p>
+        <p>배포 자동화와의 시너지도 큽니다. Docker 이미지가 한 번 빌드되면, CI/CD 파이프라인에서 그 이미지를 스테이징과 프로덕션에 순서대로 배포할 수 있습니다. 배포 단위가 이미지 태그로 명확하게 관리되어 롤백도 이전 버전 이미지를 다시 실행하는 것으로 간단하게 처리됩니다. 다만 Docker를 처음 도입할 때는 이미지 크기 관리, 볼륨 데이터 영속성, 네트워크 설정 같은 개념을 팀 전체가 이해해야 합니다. 무작정 도입했다가 이미지가 수 기가바이트가 되거나, 컨테이너가 재시작될 때 데이터가 사라지는 문제를 겪는 팀이 많습니다. 공식 문서와 실습을 통해 기본 개념을 다진 후 단계적으로 적용하는 것을 권장합니다.</p>
       </div>
 
   <!-- AdSense: 본문 하단 광고 -->

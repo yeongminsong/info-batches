@@ -230,6 +230,70 @@ Cache-Control: private, max-age=300
           <strong>핵심 정리</strong><br>
           HTTP는 요청-응답 구조의 무상태 프로토콜입니다. 올바른 메서드(GET/POST/PUT/PATCH/DELETE)와 상태 코드(2xx/4xx/5xx)를 사용하고, HTTPS로 통신을 암호화하세요. 캐싱 전략으로 불필요한 요청을 줄이면 성능이 크게 향상됩니다.
         </div>
+
+        <h2>보안 헤더 — 필수 설정 목록</h2>
+        <p>HTTPS만으로는 부족합니다. 다양한 웹 공격을 방어하기 위해 보안 헤더를 반드시 설정해야 합니다.</p>
+        <pre><code class="language-http">Strict-Transport-Security: max-age=31536000; includeSubDomains
+# HSTS: 브라우저가 항상 HTTPS를 사용하도록 강제. 1년간 유지
+
+Content-Security-Policy: default-src 'self'; script-src 'self' https://cdnjs.com
+# CSP: XSS 방어. 허가된 출처에서만 리소스 로드 허용
+
+X-Frame-Options: DENY
+# Clickjacking 방어. iframe 삽입 차단
+
+X-Content-Type-Options: nosniff
+# MIME 타입 스니핑 방어
+
+Referrer-Policy: strict-origin-when-cross-origin
+# 외부 사이트로 Referrer 헤더 전송 제한
+
+Permissions-Policy: camera=(), microphone=(), geolocation=()
+# 브라우저 API 사용 권한 제한</code></pre>
+        <p>Node.js/Express에서는 <code>helmet</code> 라이브러리 하나로 주요 보안 헤더를 한꺼번에 설정할 수 있습니다. <code>app.use(helmet())</code>를 추가하면 됩니다.</p>
+
+        <h2>WebSocket — 실시간 양방향 통신</h2>
+        <p>HTTP는 클라이언트가 요청해야만 서버가 응답할 수 있습니다. 실시간 채팅, 주식 시세, 게임처럼 서버가 먼저 데이터를 밀어줘야 하는 경우 WebSocket을 사용합니다.</p>
+        <pre><code class="language-javascript">// 클라이언트
+const ws = new WebSocket('wss://api.example.com/chat');
+
+ws.onopen = () => ws.send(JSON.stringify({ type: 'join', room: 'general' }));
+
+ws.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  appendMessage(data.user, data.text);
+};
+
+ws.onclose = () => console.log('연결 종료');
+
+// Node.js 서버 (ws 라이브러리)
+import { WebSocketServer } from 'ws';
+
+const wss = new WebSocketServer({ port: 8080 });
+
+wss.on('connection', (ws) => {
+  ws.on('message', (data) => {
+    // 모든 클라이언트에게 브로드캐스트
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(data.toString());
+      }
+    });
+  });
+});</code></pre>
+
+        <h2>HTTP/3와 QUIC — 차세대 프로토콜</h2>
+        <p>HTTP/3는 TCP 대신 <strong>QUIC</strong>(UDP 기반) 프로토콜을 사용합니다. 패킷 손실 시 다른 스트림에 영향을 주지 않아 불안정한 모바일 환경에서 특히 유리합니다.</p>
+        <ul>
+          <li><strong>연결 설정</strong> — 0-RTT 또는 1-RTT로 기존 HTTP/2의 1~2 RTT보다 빠름</li>
+          <li><strong>HOL Blocking 해소</strong> — TCP의 Head-of-Line blocking 문제가 없어 패킷 손실 시 다른 요청에 영향 없음</li>
+          <li><strong>Connection Migration</strong> — Wi-Fi에서 LTE로 전환되어도 연결이 유지됨</li>
+        </ul>
+        <p>2026년 기준 Google, Cloudflare, Nginx, Caddy 등 주요 서버·CDN에서 HTTP/3를 지원합니다. 모바일 사용자가 많은 서비스라면 HTTP/3 활성화를 검토해보세요.</p>
+
+        <h2>HTTPS 인증서 관리와 자동화</h2>
+        <p>HTTPS를 운영하려면 SSL/TLS 인증서가 필요하며, 인증서 관리는 보안 운영의 중요한 부분입니다. Let's Encrypt는 무료로 인증서를 발급해주는 CA(인증 기관)로, Certbot 도구를 사용하면 발급과 갱신을 완전히 자동화할 수 있습니다. 인증서는 보통 90일 유효기간을 가지며, Certbot은 만료 30일 전부터 자동 갱신을 시도합니다. cron 작업으로 <code>certbot renew</code>를 주기적으로 실행하도록 설정해두면 인증서 만료로 인한 사이트 접속 오류를 예방할 수 있습니다. 클라우드 환경에서는 AWS Certificate Manager(ACM)이나 Google-managed SSL 인증서를 사용하면 갱신까지 완전 자동화가 가능합니다.</p>
+        <p>인증서 종류 선택도 서비스 성격에 따라 다릅니다. 도메인 유효성만 검증하는 DV(Domain Validation) 인증서는 개인 블로그나 소규모 서비스에 적합하고, Let's Encrypt가 제공하는 것이 바로 이 유형입니다. 기업이나 이커머스 사이트라면 조직 실체를 검증하는 OV(Organization Validation) 또는 EV(Extended Validation) 인증서가 신뢰도 측면에서 더 유리할 수 있습니다. 와일드카드 인증서(<code>*.yourdomain.com</code>)는 여러 서브도메인을 한 인증서로 커버할 수 있어 서브도메인이 많은 서비스에서 관리 편의성이 높습니다. 인증서 교체는 서비스 중단 없이 진행할 수 있도록 미리 새 인증서를 발급해두고 만료 직전에 교체하는 방식이 안전합니다.</p>
       </div>
 
   <!-- AdSense: 본문 하단 광고 -->

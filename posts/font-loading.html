@@ -192,7 +192,59 @@ small { font-weight: 300; }</code></pre>
           ✅ <code>woff2</code> 형식만 사용 (최신 브라우저 100% 지원)<br>
           ✅ 서브셋 또는 Variable Font 적용
         </div>
-      </div>
+
+        <h2>실제 성능 측정 — DevTools 활용</h2>
+        <p>폰트 로딩 최적화 전후 효과는 Chrome DevTools의 Performance 탭과 Network 탭으로 직접 확인할 수 있습니다.</p>
+        <ul>
+          <li><strong>Network 탭</strong> — 폰트 파일 요청 타이밍, 크기, 우선순위 확인. Initiator 컬럼에서 어디서 폰트를 요청하는지 추적</li>
+          <li><strong>Performance 탭</strong> — Layout Shift 이벤트 확인. FOUT로 인한 CLS(Cumulative Layout Shift) 점수 측정</li>
+          <li><strong>Lighthouse</strong> — "Avoid invisible text during webfont loading" 경고와 "Preconnect to required origins" 제안을 점검</li>
+        </ul>
+        <p>측정 시에는 크롬 시크릿 창을 사용하거나 캐시를 비우고 테스트하세요. 캐시된 상태에서는 폰트 로딩 문제가 보이지 않습니다.</p>
+
+        <h2>Google Fonts vs 자체 호스팅 비교</h2>
+        <table>
+          <thead>
+            <tr><th>항목</th><th>Google Fonts CDN</th><th>자체 호스팅</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>설정 난이도</td><td>매우 쉬움 (링크 태그 한 줄)</td><td>보통 (파일 다운로드 + 설정)</td></tr>
+            <tr><td>추가 DNS 조회</td><td>발생</td><td>없음 (같은 서버)</td></tr>
+            <tr><td>업데이트</td><td>자동 (Google 관리)</td><td>수동 관리 필요</td></tr>
+            <tr><td>GDPR·개인정보</td><td>사용자 IP가 Google에 전달</td><td>문제 없음</td></tr>
+            <tr><td>성능</td><td>preconnect 필수</td><td>최적화에 유리</td></tr>
+          </tbody>
+        </table>
+        <p>한국 서비스라면 <strong>Pretendard Variable</strong>(jsDelivr CDN 또는 자체 호스팅)이 실용적인 선택입니다. 유럽 사용자가 있는 서비스라면 GDPR 관점에서 자체 호스팅을 고려하세요.</p>
+
+        <h2>size-adjust로 폰트 교체 흔들림 최소화</h2>
+        <p>FOUT에서 기본 폰트와 웹폰트의 크기 차이로 레이아웃이 흔들리는 문제는 <code>size-adjust</code> 속성으로 완화할 수 있습니다.</p>
+        <pre><code class="language-css">/* 시스템 폰트의 크기를 웹폰트에 맞게 조정 */
+@font-face {
+  font-family: 'FallbackFont';
+  src: local('Apple SD Gothic Neo'), local('Malgun Gothic');
+  size-adjust: 105%;
+  ascent-override: 90%;
+  descent-override: 10%;
+}
+
+body {
+  font-family: 'Pretendard Variable', 'FallbackFont', sans-serif;
+}</code></pre>
+        <p>이 기법은 폰트 교체 시 CLS 점수를 0.01 이하로 낮추는 데 효과적입니다. Chrome 92+, Firefox 92+에서 지원됩니다.</p>
+
+        <h2>웹폰트 로딩이 Core Web Vitals에 미치는 영향</h2>
+        <p>폰트 최적화는 SEO 핵심 지표인 Core Web Vitals와 직결됩니다.</p>
+        <ul>
+          <li><strong>LCP (Largest Contentful Paint)</strong> — 텍스트가 LCP 요소라면 폰트 로딩 지연이 LCP를 직접 악화시킵니다. 목표: 2.5초 이내</li>
+          <li><strong>CLS (Cumulative Layout Shift)</strong> — FOUT로 인한 레이아웃 이동. 목표: 0.1 이하. <code>font-display: swap</code>은 CLS를 유발하지만 <code>size-adjust</code>로 완화 가능</li>
+          <li><strong>FCP (First Contentful Paint)</strong> — FOIT는 FCP를 늦춥니다. <code>font-display: swap</code>으로 개선</li>
+        </ul>
+        <p>실제 사용자 데이터(Field Data)는 Google Search Console의 Core Web Vitals 리포트에서 확인하고, 실험실 데이터(Lab Data)는 Lighthouse로 측정하는 습관을 들이세요. 두 데이터의 차이가 크다면 지역별, 기기별 편차가 있다는 신호입니다.</p>
+
+        <h2>폰트 선택이 웹사이트 성격을 결정한다</h2>
+        <p>웹폰트 최적화는 기술적인 문제이기도 하지만, 동시에 디자인과 브랜드 아이덴티티의 문제이기도 합니다. 한글 웹폰트는 영문 폰트와 달리 글자 수가 수천 자에 달해 파일 크기가 기본적으로 크기 때문에, 어떤 폰트를 선택하느냐가 성능에 직접적인 영향을 미칩니다. 나눔고딕, 본고딕(Noto Sans KR), 스포카 한 산스, 프리텐다드 같은 오픈소스 한글 폰트들은 서브셋과 가변 폰트 형식을 모두 지원해서 최적화하기 좋습니다. 반면 아름다운 세리프 폰트나 손글씨체 폰트는 서브셋 지원이 제한적인 경우가 많아서, 특정 섹션에만 부분적으로 적용하는 방식이 현실적입니다.</p>
+        <p>가변 폰트(Variable Font)는 한 파일 안에 여러 굵기와 너비를 담고 있어서, 여러 weight를 사용하는 사이트라면 파일 수와 전체 용량을 크게 줄일 수 있습니다. 예를 들어 400, 500, 700 세 가지 굵기를 따로 로드하면 세 개의 폰트 파일이 필요하지만, 가변 폰트 하나면 모든 굵기를 커버할 수 있습니다. 가변 폰트는 CSS의 <code>font-variation-settings</code>나 <code>font-weight</code>에 범위를 지정해 사용합니다. 2025년 기준으로 Chromium, Firefox, Safari 모두 가변 폰트를 완전히 지원하므로, 신규 프로젝트에서는 가변 폰트를 기본 선택지로 고려하는 것이 좋습니다.</p>
 
   <!-- AdSense: 본문 하단 광고 -->
   <ins class="adsbygoogle ad-post-bottom"

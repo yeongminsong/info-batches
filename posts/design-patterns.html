@@ -274,6 +274,121 @@ const fetchUser = withLogging(withCache(
           <strong>핵심 정리</strong><br>
           디자인 패턴은 도구이지 목표가 아닙니다. 싱글턴은 공유 자원 관리, 옵저버는 이벤트 기반 통신, 팩토리는 유연한 객체 생성, 전략은 교체 가능한 알고리즘, 데코레이터는 기능 합성에 각각 강합니다. 패턴을 억지로 끼워 맞추기보다, 실제 문제가 생겼을 때 적합한 패턴을 자연스럽게 적용하는 것이 좋습니다.
         </div>
+
+        <h2>6. 퍼사드 (Facade)</h2>
+        <p>복잡한 서브시스템을 단순한 인터페이스로 감춥니다. 라이브러리나 API를 래핑해 사용하기 쉽게 만들 때 유용합니다.</p>
+        <pre><code class="language-javascript">// 복잡한 스토리지 조작을 단순하게 래핑
+class StorageFacade {
+  #prefix;
+
+  constructor(prefix = 'app') {
+    this.#prefix = prefix;
+  }
+
+  #key(name) { return `${this.#prefix}:${name}`; }
+
+  set(name, value, ttl = null) {
+    const item = { value, timestamp: Date.now(), ttl };
+    localStorage.setItem(this.#key(name), JSON.stringify(item));
+  }
+
+  get(name) {
+    const raw = localStorage.getItem(this.#key(name));
+    if (!raw) return null;
+    const { value, timestamp, ttl } = JSON.parse(raw);
+    if (ttl && Date.now() - timestamp &gt; ttl) {
+      this.remove(name);
+      return null;
+    }
+    return value;
+  }
+
+  remove(name) { localStorage.removeItem(this.#key(name)); }
+}
+
+const storage = new StorageFacade('myapp');
+storage.set('user', { name: '홍길동' }, 3_600_000); // 1시간 TTL
+const user = storage.get('user');</code></pre>
+
+        <h2>7. 커맨드 (Command)</h2>
+        <p>요청을 객체로 캡슐화해 실행 취소(undo), 재실행(redo), 큐잉이 가능하도록 합니다. 텍스트 에디터, 그래픽 툴의 히스토리 기능에 필수적입니다.</p>
+        <pre><code class="language-javascript">class TextEditor {
+  #content = '';
+  #history = [];
+  #redoStack = [];
+
+  execute(command) {
+    command.execute(this);
+    this.#history.push(command);
+    this.#redoStack = [];
+  }
+
+  undo() {
+    const command = this.#history.pop();
+    if (command) {
+      command.undo(this);
+      this.#redoStack.push(command);
+    }
+  }
+
+  redo() {
+    const command = this.#redoStack.pop();
+    if (command) {
+      command.execute(this);
+      this.#history.push(command);
+    }
+  }
+
+  setContent(text) { this.#content = text; }
+  getContent() { return this.#content; }
+}
+
+class InsertTextCommand {
+  constructor(text, position) {
+    this.text = text;
+    this.position = position;
+  }
+
+  execute(editor) {
+    const c = editor.getContent();
+    editor.setContent(c.slice(0, this.position) + this.text + c.slice(this.position));
+  }
+
+  undo(editor) {
+    const c = editor.getContent();
+    editor.setContent(c.slice(0, this.position) + c.slice(this.position + this.text.length));
+  }
+}</code></pre>
+
+        <h2>패턴 선택 빠른 가이드</h2>
+        <table>
+          <thead>
+            <tr><th>상황</th><th>추천 패턴</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>전역 단일 인스턴스 필요</td><td>싱글턴 (Singleton)</td></tr>
+            <tr><td>상태 변화를 여러 곳에서 감지</td><td>옵저버 (Observer)</td></tr>
+            <tr><td>생성 로직이 복잡하거나 타입이 런타임 결정</td><td>팩토리 (Factory)</td></tr>
+            <tr><td>알고리즘을 교체 가능하게</td><td>전략 (Strategy)</td></tr>
+            <tr><td>기능을 동적으로 추가 (로깅, 캐싱)</td><td>데코레이터 (Decorator)</td></tr>
+            <tr><td>복잡한 API 단순화</td><td>퍼사드 (Facade)</td></tr>
+            <tr><td>undo/redo, 작업 큐잉</td><td>커맨드 (Command)</td></tr>
+          </tbody>
+        </table>
+        <p>디자인 패턴을 처음 배울 때는 "이 상황에 어떤 패턴을 쓸까?"보다 "이 코드의 문제가 뭔가?"를 먼저 생각하는 것이 중요합니다. 문제를 명확히 정의하면 적합한 패턴이 자연스럽게 보입니다.</p>
+
+        <h2>디자인 패턴 도입 시 주의사항</h2>
+        <p>디자인 패턴은 코드의 품질을 높이지만, 무분별하게 적용하면 오히려 복잡도만 증가합니다. 실제 현업에서 패턴을 도입할 때 흔히 범하는 실수와 올바른 접근 방법을 살펴보겠습니다.</p>
+        <p>가장 흔한 실수는 <strong>패턴을 위한 패턴</strong>을 만드는 것입니다. 예를 들어, 단순히 두세 개의 버튼 컴포넌트를 만들면서 팩토리 패턴을 억지로 적용하거나, 전역 설정값 하나를 관리하기 위해 복잡한 싱글턴 클래스를 설계하는 경우입니다. 이런 과설계(Over-engineering)는 처음 읽는 개발자를 혼란스럽게 만들고, 테스트도 어렵게 만듭니다.</p>
+        <p>반대로 패턴을 너무 늦게 도입하는 경우도 문제입니다. 이미 비슷한 로직이 10곳에 복사·붙여넣기 되어 있고, 수정할 때마다 모든 곳을 찾아 고쳐야 하는 상황이 되어서야 팩토리나 전략 패턴을 적용하면 리팩터링 비용이 매우 커집니다.</p>
+        <p>이상적인 접근은 코드를 처음 작성할 때는 가장 단순한 방법으로 구현하고, 같은 문제가 세 번 이상 반복될 때 비로소 패턴 도입을 고려하는 것입니다. 이를 <strong>"Rule of Three"</strong>라고 부릅니다. 코드 리뷰와 페어 프로그래밍 과정에서 팀원과 함께 검토하면 과설계와 미설계의 균형을 잡는 데 큰 도움이 됩니다.</p>
+
+        <h2>패턴별 실무 적용 빈도</h2>
+        <p>GoF의 23가지 패턴 중 실제 JavaScript/TypeScript 프론트엔드 개발에서 자주 만나는 패턴과 그 사용 빈도를 정리했습니다. 자주 사용되는 패턴부터 먼저 익히면 학습 효율이 높아집니다.</p>
+        <p><strong>매우 자주 사용</strong> — 옵저버(이벤트 시스템, 상태 관리), 전략(폼 유효성 검사, 정렬), 데코레이터(로깅, 캐싱, 인증), 팩토리(UI 컴포넌트 생성)</p>
+        <p><strong>가끔 사용</strong> — 싱글턴(설정 관리, DB 연결), 퍼사드(복잡한 API 래핑), 커맨드(undo/redo), 이터레이터(컬렉션 탐색)</p>
+        <p><strong>특수 상황에서 사용</strong> — 프록시(지연 로딩, 접근 제어), 컴포지트(트리 구조 UI), 빌더(복잡한 객체 생성), 방문자(AST 처리)</p>
+        <p>React와 Vue 같은 현대 프레임워크 자체가 많은 패턴을 내장하고 있습니다. React의 Context API는 옵저버 패턴의 변형이고, Hooks는 전략 패턴을 함수형으로 구현한 것이라 볼 수 있습니다. 프레임워크가 제공하는 패턴을 먼저 충분히 활용하고, 그 이상이 필요할 때 추가 패턴을 도입하는 것이 바람직합니다.</p>
       </div>
 
   <!-- AdSense: 본문 하단 광고 -->

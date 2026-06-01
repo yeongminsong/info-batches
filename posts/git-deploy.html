@@ -211,6 +211,78 @@ echo "롤백 완료: $ROLLBACK_TO"</code></pre>
 
         <h2>마치며</h2>
         <p>GitHub Actions가 강력하지만, 소규모 프로젝트나 개인 서버 환경에서는 git hooks만으로도 충분한 자동화가 가능합니다. 롤백 스크립트도 함께 준비해두면 배포 사고 발생 시 빠르게 복구할 수 있습니다. 한번 설정해두면 이후 <code>git push production main</code> 한 줄로 배포가 끝납니다.</p>
+
+        <h2>GitHub Actions로 자동 배포 파이프라인 구축</h2>
+        <p>Git Hook은 로컬 개발자 환경에만 적용되지만, GitHub Actions는 팀 전체에 적용되는 서버 사이드 자동화입니다. 프로덕션 배포에는 GitHub Actions가 더 적합합니다.</p>
+        <pre><code class="language-yaml"># .github/workflows/deploy.yml
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Node.js 설정
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 의존성 설치 및 테스트
+        run: |
+          npm ci
+          npm test
+
+      - name: 빌드
+        run: npm run build
+
+      - name: 서버 배포 (SSH)
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/myapp
+            git pull origin main
+            npm ci --production
+            pm2 restart myapp</code></pre>
+
+        <h2>무중단 배포 (Zero-downtime Deployment)</h2>
+        <p>트래픽이 있는 서비스는 배포 중에도 서비스가 중단되지 않아야 합니다. PM2 클러스터 모드와 Nginx를 활용한 무중단 배포 방법입니다.</p>
+        <pre><code class="language-bash"># PM2 클러스터 모드로 무중단 재시작
+pm2 start app.js -i max   # CPU 코어 수만큼 프로세스 생성
+pm2 reload myapp           # 순차적으로 재시작 (무중단)
+
+# ecosystem.config.js
+module.exports = {
+  apps: [{
+    name: 'myapp',
+    script: 'server.js',
+    instances: 'max',
+    exec_mode: 'cluster',
+    wait_ready: true,       # 앱이 준비 신호를 보낼 때까지 대기
+    listen_timeout: 10000,
+  }]
+};</code></pre>
+        <p>Nginx upstream에 복수 서버를 구성하고 헬스체크를 추가하면 한 서버 업데이트 중에도 다른 서버가 요청을 처리합니다. 배포 후에는 에러율과 응답 시간을 모니터링해 이상 징후를 빠르게 감지하는 것이 중요합니다.</p>
+
+        <h2>배포 체크리스트</h2>
+        <p>배포 전후 반드시 확인해야 할 항목을 정리하면 실수를 크게 줄일 수 있습니다.</p>
+        <ul>
+          <li>✅ <strong>배포 전</strong> — 스테이징 환경에서 기능 검증 완료, 환경 변수 설정 확인, 데이터베이스 마이그레이션 스크립트 검토</li>
+          <li>✅ <strong>배포 중</strong> — 에러 로그 실시간 모니터링, 503 에러율 확인</li>
+          <li>✅ <strong>배포 후</strong> — 주요 기능 스모크 테스트, 응답 시간 정상 여부 확인, 롤백 커밋 해시 기록</li>
+        </ul>
+
+        <h2>Git 브랜치 전략과 배포 환경의 연결</h2>
+        <p>배포 파이프라인을 효과적으로 운영하려면 브랜치 전략과 배포 환경을 일관성 있게 연결해야 합니다. 가장 널리 쓰이는 방식은 세 환경 모델입니다. <code>develop</code> 브랜치에 푸시하면 개발(dev) 환경에 자동 배포, <code>staging</code> 브랜치 병합 시 스테이징 환경에 배포, <code>main</code> 브랜치 병합 시 프로덕션 배포가 되도록 설정합니다. 이렇게 하면 QA팀이 스테이징에서 검증한 것과 정확히 동일한 코드가 프로덕션에 올라가기 때문에 "내 환경에서는 됐는데"라는 문제가 줄어듭니다. 환경별로 다른 환경 변수를 주입하는 것도 중요합니다. 데이터베이스 연결 문자열, API 키, 기능 플래그 같은 값들은 코드에 하드코딩하지 말고 각 환경의 시크릿 관리 시스템(AWS Secrets Manager, GitHub Secrets 등)에서 불러와야 합니다.</p>
+        <p>핫픽스 상황도 브랜치 전략에 미리 포함해야 합니다. 프로덕션에서 긴급한 버그가 발생했을 때 개발 중인 미완성 기능이 섞인 <code>develop</code> 브랜치를 바로 배포하면 안 됩니다. <code>main</code>에서 직접 <code>hotfix</code> 브랜치를 만들고, 수정 후 <code>main</code>과 <code>develop</code> 양쪽에 병합하는 흐름이 Git Flow 방식의 표준입니다. 평소에 이 흐름을 팀 전체가 숙지하고 있어야 위기 상황에서도 침착하게 대응할 수 있습니다.</p>
       </div>
 
   <!-- AdSense: 본문 하단 광고 -->

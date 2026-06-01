@@ -229,6 +229,68 @@ SELECT * FROM posts WHERE user_id = 1 AND published = TRUE;</code></pre>
           <strong>핵심 정리</strong><br>
           SQL은 데이터 일관성과 복잡한 관계, NoSQL은 유연한 스키마와 수평 확장에 강합니다. 많은 실제 서비스는 둘을 함께 사용합니다: PostgreSQL로 핵심 비즈니스 데이터를 관리하고, Redis로 캐시/세션을 처리합니다. 인덱스 설계는 쿼리 성능에 결정적인 영향을 미치므로 반드시 EXPLAIN으로 검증하세요.
         </div>
+
+        <h2>쿼리 최적화 — EXPLAIN ANALYZE 활용</h2>
+        <p>느린 쿼리를 개선할 때는 먼저 <code>EXPLAIN ANALYZE</code>로 실행 계획을 확인해야 합니다. 추측보다 데이터가 우선입니다.</p>
+        <pre><code class="language-sql">-- 실행 계획 확인 (PostgreSQL)
+EXPLAIN ANALYZE
+SELECT u.name, COUNT(o.id) as order_count
+FROM users u
+LEFT JOIN orders o ON u.id = o.user_id
+WHERE u.created_at &gt; '2026-01-01'
+GROUP BY u.id, u.name
+ORDER BY order_count DESC
+LIMIT 10;
+
+-- 출력에서 확인할 항목:
+-- Seq Scan → 인덱스 없음 (풀 스캔)
+-- Index Scan → 인덱스 사용 중
+-- actual time=... rows=... → 실제 소요 시간과 행 수</code></pre>
+        <p><code>Seq Scan</code>이 보이면 인덱스 추가를 검토하세요. 단, 전체 데이터의 20% 이상을 조회하는 쿼리라면 인덱스보다 풀 스캔이 더 빠를 수 있습니다. 데이터 건수와 선택도(selectivity)를 함께 고려하세요.</p>
+
+        <h2>연결 풀링 (Connection Pooling)</h2>
+        <p>데이터베이스 연결은 비용이 큽니다. 요청마다 새 연결을 만들면 성능이 크게 저하됩니다. 연결 풀로 연결을 재사용하세요.</p>
+        <pre><code class="language-javascript">// Node.js - pg 라이브러리 연결 풀
+import { Pool } from 'pg';
+
+const pool = new Pool({
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  max: 20,                    // 최대 연결 수
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
+});
+
+async function getUser(id) {
+  const { rows } = await pool.query(
+    'SELECT * FROM users WHERE id = $1',
+    [id]  // SQL 인젝션 방지: 파라미터로 전달
+  );
+  return rows[0];
+}</code></pre>
+        <p>PgBouncer(PostgreSQL용), ProxySQL(MySQL용) 같은 전용 연결 풀러를 앞에 두면 수천 개의 앱 연결을 수십 개의 DB 연결로 집약할 수 있습니다. 트래픽이 많은 서비스에서 연결 풀링만으로도 데이터베이스 병목을 크게 줄일 수 있습니다.</p>
+
+        <h2>안전한 스키마 마이그레이션</h2>
+        <p>운영 중인 서비스에서 스키마를 변경하는 것은 매우 위험합니다. 특히 대용량 테이블에서 <code>ALTER TABLE</code>은 테이블 잠금을 유발할 수 있습니다.</p>
+        <pre><code class="language-sql">-- ❌ 위험: 대용량 테이블에서 테이블 잠금 유발
+ALTER TABLE users ADD COLUMN phone VARCHAR(20) NOT NULL DEFAULT '';
+
+-- ✅ 안전: 3단계로 나누기
+-- 1단계: NULL 허용으로 추가 (잠금 없음)
+ALTER TABLE users ADD COLUMN phone VARCHAR(20);
+
+-- 2단계: 기존 데이터 배치 업데이트
+UPDATE users SET phone = '' WHERE phone IS NULL;
+
+-- 3단계: NOT NULL 제약 추가
+ALTER TABLE users ALTER COLUMN phone SET NOT NULL;</code></pre>
+        <p>마이그레이션 도구로는 Node.js 환경에서 <strong>Prisma Migrate</strong>, <strong>Knex.js</strong>가 많이 쓰입니다. 마이그레이션 파일은 반드시 버전 관리(git)에 포함하고, 롤백 스크립트도 함께 작성해두세요.</p>
+
+        <h2>데이터베이스 선택이 서비스 아키텍처를 결정한다</h2>
+        <p>SQL이냐 NoSQL이냐의 선택은 단순한 기술 스택의 문제가 아니라, 데이터 모델과 서비스의 성격에 따라 결정되어야 합니다. 데이터 간 관계가 명확하고 복잡한 쿼리가 필요한 서비스라면 관계형 데이터베이스가 훨씬 강력합니다. 예를 들어 전자상거래 플랫폼에서 주문-상품-사용자-결제 간의 관계를 다루고, 특정 기간 매출 집계나 재구매율 분석 쿼리를 수시로 실행해야 한다면 PostgreSQL이나 MySQL이 적합합니다. 반면 사용자별 맞춤 데이터를 저장하거나, 데이터 구조가 서비스 성장에 따라 자주 변한다면 NoSQL의 유연성이 유리합니다. 소셜 미디어의 사용자 피드, IoT 센서 데이터, 게임 유저 상태 저장 같은 용도에서 MongoDB나 DynamoDB가 빛을 발합니다.</p>
+        <p>하나의 서비스에 여러 데이터베이스를 함께 쓰는 폴리글랏 퍼시스턴스(Polyglot Persistence)도 실무에서 점점 일반화되고 있습니다. 핵심 비즈니스 데이터는 PostgreSQL로 관리하면서, 검색 기능은 Elasticsearch, 세션 저장과 캐시는 Redis, 분석용 집계는 BigQuery로 처리하는 구조가 대표적인 예입니다. 각 저장소의 강점을 목적에 맞게 조합하면 단일 데이터베이스로 모든 것을 처리하려 할 때 생기는 성능 병목을 해소할 수 있습니다. 다만 운영 복잡도가 높아지므로, 작은 팀이나 초기 서비스라면 하나의 데이터베이스에서 시작해 병목이 생겼을 때 분리하는 점진적 접근이 현실적입니다.</p>
       </div>
 
   <!-- AdSense: 본문 하단 광고 -->

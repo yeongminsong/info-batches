@@ -204,6 +204,123 @@ type UserMap = Record&lt;string, User&gt;;</code></pre>
           <strong>핵심 정리</strong><br>
           TypeScript는 JavaScript의 상위집합으로, 기존 JS 코드를 그대로 사용하면서 점진적으로 타입을 추가할 수 있습니다. <code>any</code> 사용을 최소화하고, 인터페이스와 제네릭을 적극 활용하면 유지보수하기 쉬운 코드를 작성할 수 있습니다.
         </div>
+
+        <h2>타입 가드 (Type Guards)</h2>
+        <p>유니온 타입을 사용할 때 런타임에서 타입을 좁혀주는 <strong>타입 가드</strong>가 필요합니다. <code>typeof</code>, <code>instanceof</code>, 사용자 정의 타입 가드를 활용하면 안전한 타입 처리가 가능합니다.</p>
+        <pre><code class="language-typescript">// typeof 가드
+function processValue(value: string | number) {
+  if (typeof value === 'string') {
+    return value.toUpperCase(); // string 메서드 안전 사용
+  }
+  return value.toFixed(2); // number 메서드 안전 사용
+}
+
+// instanceof 가드
+function handleError(error: Error | string) {
+  if (error instanceof Error) {
+    console.error(error.message);
+  } else {
+    console.error(error);
+  }
+}
+
+// 사용자 정의 타입 가드 (is 키워드)
+interface Cat { meow(): void; }
+interface Dog { bark(): void; }
+
+function isCat(animal: Cat | Dog): animal is Cat {
+  return (animal as Cat).meow !== undefined;
+}
+
+function makeSound(animal: Cat | Dog) {
+  if (isCat(animal)) {
+    animal.meow(); // Cat으로 좁혀짐
+  } else {
+    animal.bark(); // Dog으로 좁혀짐
+  }
+}</code></pre>
+
+        <h2>tsconfig.json 핵심 설정</h2>
+        <p>TypeScript 프로젝트의 동작 방식은 <code>tsconfig.json</code>으로 제어합니다. 실무에서 자주 사용하는 핵심 옵션입니다.</p>
+        <pre><code class="language-json">{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "moduleResolution": "bundler",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}</code></pre>
+        <p><code>"strict": true</code>는 <code>noImplicitAny</code>, <code>strictNullChecks</code>, <code>strictFunctionTypes</code> 등 7가지 엄격 검사를 한꺼번에 활성화합니다. 신규 프로젝트에서는 처음부터 켜두는 것을 강력 권장합니다.</p>
+
+        <h2>조건부 타입 (Conditional Types)</h2>
+        <p>TypeScript의 조건부 타입은 입력 타입에 따라 다른 타입을 반환합니다. 타입 레벨의 if-else라고 이해하면 됩니다.</p>
+        <pre><code class="language-typescript">// T가 string이면 string[], 아니면 never
+type StringArray&lt;T&gt; = T extends string ? string[] : never;
+
+type A = StringArray&lt;string&gt;;  // string[]
+type B = StringArray&lt;number&gt;;  // never
+
+// 함수의 반환 타입 추출
+type ReturnType&lt;T&gt; = T extends (...args: any[]) =&gt; infer R ? R : never;
+
+function getUser() { return { id: 1, name: '홍길동' }; }
+type UserType = ReturnType&lt;typeof getUser&gt;;
+// 결과: { id: number; name: string }</code></pre>
+
+        <h2>클래스와 접근 제한자</h2>
+        <p>TypeScript의 클래스는 <code>public</code>, <code>private</code>, <code>protected</code>, <code>readonly</code> 접근 제한자를 지원합니다. 생성자 매개변수 앞에 접근 제한자를 붙이면 자동으로 속성이 생성됩니다.</p>
+        <pre><code class="language-typescript">class BankAccount {
+  constructor(
+    private readonly id: string,
+    private owner: string,
+    private balance: number = 0
+  ) {}
+
+  deposit(amount: number): void {
+    if (amount &lt;= 0) throw new Error('입금 금액은 양수여야 합니다');
+    this.balance += amount;
+  }
+
+  withdraw(amount: number): void {
+    if (amount &gt; this.balance) throw new Error('잔액이 부족합니다');
+    this.balance -= amount;
+  }
+
+  get currentBalance(): number {
+    return this.balance;
+  }
+}
+
+const account = new BankAccount('ACC001', '홍길동', 10000);
+account.deposit(5000);
+console.log(account.currentBalance); // 15000
+// account.balance; // 오류! private 속성에 외부 접근 불가</code></pre>
+
+        <h2>TypeScript 점진적 마이그레이션 전략</h2>
+        <p>기존 JavaScript 프로젝트를 TypeScript로 전환할 때는 단계적 접근이 현실적입니다.</p>
+        <ul>
+          <li><strong>1단계</strong> — <code>allowJs: true</code>로 JS와 TS 공존 허용, 빌드 확인</li>
+          <li><strong>2단계</strong> — 새 파일은 모두 <code>.ts</code>로 작성, 기존 파일은 유지</li>
+          <li><strong>3단계</strong> — 기존 <code>.js</code> 파일을 하나씩 <code>.ts</code>로 변환, 타입 오류가 많으면 <code>@ts-ignore</code> 주석으로 임시 처리</li>
+          <li><strong>4단계</strong> — <code>any</code> 타입 제거, <code>strict: true</code> 활성화</li>
+        </ul>
+        <p>핵심 비즈니스 로직이 담긴 파일부터 우선 변환하면 타입 안전성의 이점을 빠르게 체감할 수 있습니다. 테스트 파일, 설정 파일은 마지막에 변환해도 됩니다.</p>
+
+        <h2>TypeScript를 실무에 도입하면 달라지는 것들</h2>
+        <p>TypeScript를 처음 도입할 때는 생산성이 일시적으로 떨어지는 것처럼 느껴질 수 있습니다. 타입 오류를 고치는 데 시간이 걸리고, 간단한 코드도 타입 선언 때문에 길어지기 때문입니다. 하지만 프로젝트가 일정 규모 이상으로 성장하면 TypeScript의 진가가 드러납니다.</p>
+        <p>가장 큰 변화는 <strong>리팩터링에 대한 자신감</strong>입니다. 함수 이름을 바꾸거나 인터페이스를 수정할 때, TypeScript 컴파일러가 영향을 받는 모든 곳을 즉시 알려줍니다. JavaScript였다면 런타임에서 터지는 에러를 개발 단계에서 잡을 수 있습니다. 특히 팀 규모가 커지고 코드베이스가 복잡해질수록 이 이점이 더 두드러집니다.</p>
+        <p>두 번째 변화는 <strong>협업 품질 향상</strong>입니다. 타입이 곧 문서가 됩니다. 새로운 팀원이 합류했을 때, 함수의 매개변수와 반환 타입만 봐도 어떤 데이터를 주고받는지 파악할 수 있습니다. IDE 자동 완성도 훨씬 정확해져서 API를 일일이 문서에서 찾을 필요가 없어집니다.</p>
+        <p>세 번째로는 <strong>버그 발생 빈도 감소</strong>입니다. "Cannot read property of undefined" 같은 전형적인 런타임 에러의 상당 부분이 TypeScript 도입만으로 사라집니다. 2022년 Airbnb의 사례 연구에 따르면, TypeScript 도입 후 프론트엔드 버그의 약 38%를 TypeScript 에러로 사전에 방지할 수 있었다고 보고했습니다.</p>
+        <p>물론 TypeScript도 만능은 아닙니다. 외부 라이브러리의 타입 정의가 부정확한 경우, 복잡한 타입 추론으로 빌드 속도가 느려지는 경우도 있습니다. 그러나 중장기적으로 유지보수할 프로젝트라면 TypeScript 도입의 이점이 비용을 크게 상회합니다. 오늘날 대부분의 국내외 주요 프론트엔드 프로젝트가 TypeScript를 표준으로 채택하고 있는 이유입니다.</p>
       </div>
 
   <!-- AdSense: 본문 하단 광고 -->

@@ -222,6 +222,63 @@ addCommas(1234567);  // '1,234,567'</code></pre>
           <strong>실전 팁</strong><br>
           regex101.com 또는 regexr.com에서 실시간으로 패턴을 테스트하세요. 복잡한 정규표현식은 주석과 함께 명명된 그룹을 활용해 가독성을 높이세요. 이메일이나 URL 검증처럼 복잡한 케이스는 battle-tested 라이브러리(validator.js 등)를 사용하는 것이 안전하고, 중첩 수량자 패턴은 ReDoS 취약점을 유발할 수 있으므로 반드시 피하세요.
         </div>
+
+        <h2>명명된 캡처 그룹으로 가독성 높이기</h2>
+        <p>숫자 인덱스(<code>match[1]</code>, <code>match[2]</code>) 대신 이름으로 그룹을 참조하면 코드 가독성이 크게 향상됩니다.</p>
+        <pre><code class="language-javascript">// ❌ 숫자 인덱스 참조 — 의미 파악이 어려움
+const dateRegex = /(\d{4})-(\d{2})-(\d{2})/;
+const m = '2026-01-15'.match(dateRegex);
+console.log(m[1], m[2], m[3]); // 4개 중 어떤 게 뭔지 불명확
+
+// ✅ 명명된 그룹 — 의미가 명확
+const dateRegex = /(?&lt;year&gt;\d{4})-(?&lt;month&gt;\d{2})-(?&lt;day&gt;\d{2})/;
+const { groups: { year, month, day } } = '2026-01-15'.match(dateRegex);
+console.log(year, month, day); // 2026 01 15
+
+// URL 파싱 예시
+const urlPattern = /(?&lt;protocol&gt;https?):\/\/(?&lt;domain&gt;[^\/]+)(?&lt;path&gt;\/.*)?/;
+const { groups } = 'https://example.com/blog/post'.match(urlPattern);
+// groups.protocol = 'https'
+// groups.domain = 'example.com'
+// groups.path = '/blog/post'</code></pre>
+
+        <h2>자주 쓰는 실전 정규표현식 패턴</h2>
+        <pre><code class="language-javascript">// 한국 휴대폰 번호 (010-1234-5678 또는 01012345678)
+const phoneRegex = /^01[016789]-?\d{3,4}-?\d{4}$/;
+
+// 한국 주민등록번호 형식 검사 (실제 유효성은 추가 로직 필요)
+const rrnRegex = /^\d{6}-[1-4]\d{6}$/;
+
+// URL 슬러그 (소문자, 숫자, 하이픈만 허용)
+const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+// 비밀번호 강도 (8자 이상, 대소문자+숫자+특수문자 각 1개 이상)
+const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&amp;])[A-Za-z\d@$!%*?&amp;]{8,}$/;
+
+// HTML 태그 제거
+const stripHtmlRegex = /&lt;[^&gt;]*&gt;/g;
+const plainText = htmlString.replace(stripHtmlRegex, '');</code></pre>
+
+        <h2>String.matchAll — 여러 매치 처리</h2>
+        <p>정규표현식의 모든 매치를 처리할 때 <code>matchAll</code>이 <code>exec</code>보다 훨씬 편리합니다.</p>
+        <pre><code class="language-javascript">const text = '가격: ₩10,000 / ₩25,000 / ₩50,000';
+const pricePattern = /₩([\d,]+)/g;
+
+// matchAll — 모든 매치를 한 번에
+const matches = [...text.matchAll(pricePattern)];
+const prices = matches.map(m => parseInt(m[1].replace(',', '')));
+console.log(prices); // [10000, 25000, 50000]
+
+// 명명된 그룹과 함께 사용
+const logPattern = /\[(?&lt;level&gt;INFO|WARN|ERROR)\] (?&lt;message&gt;.+)/g;
+for (const match of logText.matchAll(logPattern)) {
+  const { level, message } = match.groups;
+  if (level === 'ERROR') alertTeam(message);
+}</code></pre>
+
+        <h2>정규식을 언제 쓰고 언제 쓰지 말아야 하는가</h2>
+        <p>정규식은 강력한 도구이지만, 모든 문자열 처리에 적합한 것은 아닙니다. 정규식을 쓰기 좋은 경우는 패턴이 명확하고 반복적으로 나타나는 문자열을 검색하거나 치환할 때입니다. 로그 파일에서 에러 패턴 추출, 폼 입력값 형식 검증, 코드에서 특정 함수 호출 패턴 검색 같은 작업이 여기에 해당합니다. 반면 정규식을 피해야 하는 경우도 있습니다. HTML 파싱이 대표적입니다. HTML의 중첩 구조와 다양한 예외 케이스를 정규식으로 다루려 하면 복잡성이 폭발적으로 늘어나고 예상치 못한 오류가 생깁니다. HTML 파싱에는 DOMParser나 Cheerio 같은 전용 파서를 사용하는 것이 훨씬 안전합니다. JSON, XML도 마찬가지입니다. 전용 파싱 라이브러리가 있다면 정규식보다 그것을 쓰는 것이 올바른 접근입니다.</p>
+        <p>가독성도 고려해야 합니다. 정규식은 짧지만 읽기 어렵습니다. 복잡한 정규식에는 반드시 설명 주석을 달고, 여러 부분으로 나눠 명명된 상수로 관리하는 것이 유지보수에 유리합니다. 팀 내에서 정규식을 잘 모르는 팀원도 이해할 수 있도록 간단한 언어로 무엇을 검증하는 패턴인지 설명을 남겨두는 습관이 중요합니다. 그리고 작성한 정규식은 반드시 엣지 케이스를 포함한 단위 테스트로 검증해야 합니다. 특정 입력에만 통과하고 실제 다양한 입력에서 오작동하는 정규식이 프로덕션에 숨어있는 경우가 생각보다 많습니다.</p>
       </div>
 
   <!-- AdSense: 본문 하단 광고 -->

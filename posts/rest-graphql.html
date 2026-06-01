@@ -193,6 +193,88 @@ const { data } = await fetch('/graphql', {
           <strong>결론</strong><br>
           REST와 GraphQL은 경쟁 관계가 아닙니다. 단순한 서비스는 REST로 빠르게 시작하고, 클라이언트가 다양하거나 데이터 관계가 복잡해질수록 GraphQL 전환을 고려하세요. 혼합 사용도 가능합니다.
         </div>
+
+        <h2>REST API 버전 관리 전략</h2>
+        <p>API를 외부에 공개했다면 기존 클라이언트를 깨뜨리지 않으면서 변경해야 합니다. 버전 관리 방법은 크게 세 가지입니다.</p>
+        <pre><code class="language-bash"># 1. URL 경로에 버전 포함 (가장 일반적)
+GET /api/v1/users
+GET /api/v2/users
+
+# 2. 쿼리 파라미터
+GET /api/users?version=2
+
+# 3. Accept 헤더 (REST 원칙에 가장 부합)
+Accept: application/vnd.myapp.v2+json</code></pre>
+        <p>URL 경로 버전 관리(<code>/v1/</code>, <code>/v2/</code>)가 가장 직관적이고 캐싱·로깅에도 유리합니다. 팀 규모와 API 복잡도에 따라 적합한 전략을 선택하세요.</p>
+
+        <h2>GraphQL Fragment와 Variables</h2>
+        <p>GraphQL의 Fragment로 반복되는 필드를 재사용하고, Variables로 안전하게 동적 값을 전달할 수 있습니다.</p>
+        <pre><code class="language-graphql">fragment UserFields on User {
+  id
+  name
+  email
+  avatar
+}
+
+query GetPostWithAuthor($postId: ID!) {
+  post(id: $postId) {
+    title
+    content
+    author {
+      ...UserFields
+    }
+    comments {
+      text
+      author {
+        ...UserFields
+      }
+    }
+  }
+}</code></pre>
+        <p>Variables를 사용하면 쿼리 문자열에 값을 직접 삽입하지 않으므로 인젝션 공격을 방지하고 쿼리 캐싱 효율도 높아집니다.</p>
+
+        <h2>GraphQL N+1 문제와 DataLoader</h2>
+        <p>GraphQL의 대표적인 성능 함정인 N+1 문제는, 목록을 조회할 때 각 항목의 연관 데이터를 개별 쿼리로 가져오는 현상입니다.</p>
+        <pre><code class="language-javascript">// N+1 문제 — posts 10개면 DB 쿼리 11번 발생
+const resolvers = {
+  Query: {
+    posts: () =&gt; db.posts.findAll(),         // 쿼리 1번
+  },
+  Post: {
+    author: (post) =&gt; db.users.findById(post.authorId), // 포스트 수만큼 반복!
+  },
+};
+
+// DataLoader로 해결 — 배치 처리
+import DataLoader from 'dataloader';
+
+const userLoader = new DataLoader(async (userIds) =&gt; {
+  const users = await db.users.findAll({ where: { id: userIds } });
+  return userIds.map(id =&gt; users.find(u =&gt; u.id === id));
+});
+
+Post: {
+  author: (post) =&gt; userLoader.load(post.authorId), // 자동 배치 처리
+}</code></pre>
+
+        <h2>REST API 보안 필수 체크리스트</h2>
+        <ul>
+          <li><strong>인증</strong> — JWT Bearer 토큰 또는 API Key. 토큰은 <code>Authorization: Bearer &lt;token&gt;</code> 헤더로 전달</li>
+          <li><strong>HTTPS 강제</strong> — HTTP 요청을 HTTPS로 리다이렉트, HSTS 헤더 설정</li>
+          <li><strong>Rate Limiting</strong> — IP 또는 사용자별 요청 횟수 제한</li>
+          <li><strong>입력 검증</strong> — 모든 요청 파라미터를 서버에서 검증. 클라이언트 검증만으로는 부족</li>
+          <li><strong>CORS 명시</strong> — <code>Access-Control-Allow-Origin: *</code>는 공개 API가 아니면 사용 금지</li>
+        </ul>
+
+        <h2>실제 서비스에서의 API 설계 사례</h2>
+        <p>이론적인 API 설계 원칙을 실제 서비스에 적용할 때는 다양한 현실적 제약이 따릅니다. 국내 주요 서비스들이 어떻게 API를 설계하고 발전시켜 왔는지 살펴보면 좋은 교훈을 얻을 수 있습니다.</p>
+        <p>대부분의 스타트업은 초기에 REST API로 시작합니다. 처음에는 단순한 CRUD 기능만 있고 클라이언트도 웹 하나뿐이라 REST가 충분히 효과적입니다. 그러나 서비스가 성장하면서 모바일 앱이 추가되고, 파트너사에 데이터를 제공해야 하며, 각 클라이언트마다 필요한 데이터의 형태가 달라지기 시작합니다. 바로 이 시점에서 GraphQL 도입을 검토하는 팀이 많습니다.</p>
+        <p>카카오, 라인, 쿠팡 같은 국내 주요 기업들도 내부적으로 REST와 GraphQL을 혼용하는 경우가 많습니다. 오래된 서비스의 핵심 API는 REST로 유지하면서, 새로운 기능이나 BFF(Backend For Frontend) 레이어에는 GraphQL을 도입하는 전략입니다. 이런 접근은 기존 시스템을 안정적으로 유지하면서 새 기술의 이점도 누릴 수 있어 실용적입니다.</p>
+        <p>API 설계에서 또 하나 중요한 것은 <strong>문서화</strong>입니다. REST API는 OpenAPI(Swagger) 사양으로, GraphQL은 내장된 스키마 시스템으로 자동 문서화가 가능합니다. 문서가 없는 API는 협업을 어렵게 만들고, 잘못된 사용을 유도할 수 있습니다. Swagger UI나 GraphQL Playground를 개발 환경에 제공하면 프론트엔드 개발자와의 협업 효율이 크게 높아집니다.</p>
+
+        <h2>API 버전 관리와 하위 호환성 유지하기</h2>
+        <p>서비스가 성장하면서 API를 변경해야 할 상황이 반드시 옵니다. 기존 클라이언트를 깨뜨리지 않으면서 API를 발전시키는 방법이 버전 관리입니다. 가장 간단한 방식은 URL 경로에 버전을 포함하는 것입니다. <code>/api/v1/users</code>와 <code>/api/v2/users</code>를 동시에 운영하면서 새 버전을 점진적으로 마이그레이션하는 방식입니다. 이 방식은 이해하기 쉽고 캐싱도 버전별로 명확히 구분됩니다. 하지만 여러 버전을 병렬로 유지해야 해 운영 비용이 높아진다는 단점이 있습니다.</p>
+        <p>GraphQL은 타입 시스템 덕분에 URL 버전 없이도 하위 호환성을 유지하며 발전할 수 있습니다. 기존 필드를 deprecated 처리하고 새 필드를 추가하는 방식으로 점진적 마이그레이션이 가능합니다. 그러나 필드가 누적되면 스키마가 지저분해지고, deprecated 필드를 언제 제거할지 결정하기 어려운 문제가 생깁니다. 어떤 전략을 쓰든 중요한 것은 변경 사항을 클라이언트 팀에 충분한 사전 공지와 함께 전달하고, 마이그레이션 기간 동안 구버전과 신버전을 함께 지원하는 것입니다. Sunset 헤더를 사용해 특정 API 버전의 지원 종료 일자를 클라이언트에게 알리는 방식을 표준화하면 마이그레이션 커뮤니케이션이 훨씬 체계적으로 관리됩니다.</p>
       </div>
 
   <!-- AdSense: 본문 하단 광고 -->

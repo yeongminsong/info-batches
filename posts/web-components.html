@@ -220,6 +220,82 @@ customElements.define('lunch-recommender', LunchRecommender);</code></pre>
         </div>
 
         <p>React나 Vue 같은 프레임워크와 함께 사용할 수도 있고, 단순한 위젯이나 디자인 시스템을 만들 때 특히 빛납니다. 브라우저 지원도 모든 모던 브라우저에서 완벽하게 동작하니 지금 바로 시작해보세요!</p>
+
+        <h2>라이프사이클 콜백 완전 정복</h2>
+        <p>Custom Element에는 4가지 라이프사이클 콜백이 있습니다. 각각의 호출 시점을 정확히 이해해야 메모리 누수 없는 컴포넌트를 만들 수 있습니다.</p>
+        <pre><code class="language-javascript">class MyWidget extends HTMLElement {
+  // DOM에 연결될 때 — 초기화, 이벤트 리스너 등록
+  connectedCallback() {
+    this._render();
+    this._button = this.shadowRoot.querySelector('button');
+    this._button.addEventListener('click', this._handleClick);
+  }
+
+  // DOM에서 제거될 때 — 반드시 정리 작업!
+  disconnectedCallback() {
+    this._button?.removeEventListener('click', this._handleClick);
+    clearInterval(this._timer); // 타이머 정리
+  }
+
+  // 관찰 중인 attribute가 변경될 때
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue !== newValue) this._render();
+  }
+
+  // 관찰할 attribute 목록
+  static get observedAttributes() {
+    return ['label', 'disabled'];
+  }
+}</code></pre>
+        <p><code>disconnectedCallback</code>에서 이벤트 리스너와 타이머를 반드시 정리해야 합니다. 이를 빠뜨리면 컴포넌트가 DOM에서 제거된 후에도 클로저가 메모리에 남아 메모리 누수가 발생합니다.</p>
+
+        <h2>Web Components vs React/Vue — 언제 무엇을 쓸까</h2>
+        <table>
+          <thead>
+            <tr><th>항목</th><th>Web Components</th><th>React/Vue</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>프레임워크 의존성</td><td>없음 (순수 브라우저 API)</td><td>프레임워크 필수</td></tr>
+            <tr><td>재사용성</td><td>모든 프레임워크에서 사용 가능</td><td>같은 프레임워크 내에서만</td></tr>
+            <tr><td>상태 관리</td><td>직접 구현 필요</td><td>풍부한 생태계 제공</td></tr>
+            <tr><td>SSR 지원</td><td>제한적</td><td>우수 (Next.js, Nuxt 등)</td></tr>
+            <tr><td>적합한 용도</td><td>디자인 시스템, 위젯, 마이크로 프론트엔드</td><td>SPA, 복잡한 앱</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Lit — 경량 Web Components 라이브러리</h2>
+        <p>Google이 만든 <strong>Lit</strong>은 Web Components를 더 쉽게 개발할 수 있는 경량 라이브러리입니다. 번들 크기가 약 5KB(gzip)이며 반응형 속성과 템플릿 업데이트를 자동으로 처리합니다.</p>
+        <pre><code class="language-javascript">import { LitElement, html, css } from 'lit';
+import { property } from 'lit/decorators.js';
+
+class CounterElement extends LitElement {
+  static styles = css`
+    button { padding: 8px 16px; font-size: 1rem; cursor: pointer; }
+    span { margin: 0 12px; font-weight: bold; }
+  `;
+
+  @property({ type: Number }) count = 0;
+
+  render() {
+    return html`
+      &lt;button @click=${() =&gt; this.count--}&gt;-&lt;/button&gt;
+      &lt;span&gt;${this.count}&lt;/span&gt;
+      &lt;button @click=${() =&gt; this.count++}&gt;+&lt;/button&gt;
+    `;
+  }
+}
+customElements.define('my-counter', CounterElement);</code></pre>
+        <p>프레임워크 없이 인터랙티브 컴포넌트를 만들어야 한다면 Lit이 첫 번째 선택지입니다. TypeScript와 데코레이터를 완벽히 지원하고, 모든 주요 프레임워크와 함께 사용할 수 있습니다.</p>
+
+        <h2>Web Components로 디자인 시스템 구축하기</h2>
+        <p>Web Components의 가장 강력한 활용 사례는 여러 프로젝트에서 공유하는 <strong>디자인 시스템</strong> 구축입니다. 한 번 만든 컴포넌트를 React 프로젝트, Vue 프로젝트, 순수 HTML 페이지 어디서든 동일하게 사용할 수 있기 때문입니다.</p>
+        <p>Google의 Material Web Components, Adobe의 Spectrum Web Components가 대표적인 사례입니다. 이들은 모두 Web Components 표준을 기반으로 만들어져 어떤 프레임워크 환경에서도 동작합니다. 국내에서도 대형 IT 기업들이 내부 디자인 시스템을 Web Components로 전환하는 사례가 늘고 있습니다.</p>
+        <p>디자인 시스템을 Web Components로 구축할 때는 몇 가지 핵심 원칙이 있습니다. 첫째, CSS 커스텀 속성(CSS Variables)을 통해 외부에서 스타일을 재정의할 수 있게 해야 합니다. Shadow DOM이 스타일을 캡슐화하지만, <code>:host</code>와 CSS 변수를 활용하면 테마 변경이 가능합니다. 둘째, ARIA 속성을 처음부터 설계에 반영해 접근성을 보장해야 합니다. 셋째, Storybook 같은 컴포넌트 문서화 도구와 연동해 팀원 모두가 쉽게 컴포넌트를 찾고 사용할 수 있도록 해야 합니다.</p>
+        <p>Web Components는 마이크로 프론트엔드 아키텍처에서도 각광받고 있습니다. 팀별로 독립적으로 개발한 기능 모듈을 Web Components로 패키징하면, 다른 팀의 앱에 프레임워크 충돌 없이 통합할 수 있습니다. 대규모 조직에서 여러 팀이 각자의 기술 스택으로 개발하면서도 일관된 사용자 경험을 제공해야 할 때 특히 유용합니다.</p>
+
+        <h2>Web Components를 언제 선택하고 언제 피해야 하는가</h2>
+        <p>Web Components가 강력한 도구이지만, 모든 상황에 적합한 것은 아닙니다. Web Components가 가장 빛을 발하는 상황은 다음과 같습니다. 여러 프레임워크나 기술 스택을 사용하는 팀들이 공통 UI 컴포넌트를 공유해야 할 때, 프레임워크에 종속되지 않는 독립적인 위젯을 배포해야 할 때(지도 위젯, 차트, 임베드 가능한 폼), 또는 수년간 유지해야 하는 컴포넌트 라이브러리를 만들 때 Web Components 표준이 특정 프레임워크보다 더 오랜 수명을 보장합니다.</p>
+        <p>반면 Web Components를 피해야 하는 경우도 있습니다. 단일 React나 Vue 프로젝트 내에서만 사용할 컴포넌트라면, 해당 프레임워크의 네이티브 컴포넌트가 더 나은 개발 경험과 도구 지원을 제공합니다. 서버 사이드 렌더링(SSR)이 중요한 SEO 페이지라면 Web Components의 Shadow DOM이 SSR과 완벽하게 통합되지 않을 수 있어 주의가 필요합니다. 또한 팀의 학습 비용도 고려해야 합니다. 생명주기, 슬롯, Shadow DOM의 개념을 익히는 데 시간이 필요하므로, 작은 프로젝트에서 학습 비용 대비 얻는 이점이 충분한지 판단해야 합니다. 결국 Web Components는 프레임워크를 대체하는 도구가 아니라, 프레임워크를 초월한 상호 운용성이 필요할 때 사용하는 도구입니다.</p>
       </div>
 
   <!-- AdSense: 본문 하단 광고 -->

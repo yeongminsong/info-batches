@@ -283,6 +283,72 @@ cancelAnimationFrame(rafId);</code></pre>
           <strong>성능 최적화의 황금 법칙</strong><br>
           <strong>측정 → 원인 파악 → 개선 → 재측정</strong>. 직관에 의존해 무작정 최적화하면 오히려 코드가 복잡해지고 유지보수만 어려워집니다. Chrome DevTools의 Performance 탭, Lighthouse, WebPageTest를 적극 활용하세요.
         </div>
+
+        <h2>메모리 누수 감지와 해결</h2>
+        <p>JavaScript의 GC(Garbage Collection)가 메모리를 자동으로 관리하지만, 참조가 남아있으면 메모리가 해제되지 않습니다. 흔한 메모리 누수 원인과 해결책입니다.</p>
+        <ul>
+          <li><strong>이벤트 리스너 누수</strong> — DOM이 제거될 때 리스너를 해제하지 않으면 DOM은 물론 관련 클로저까지 메모리에 남습니다. <code>removeEventListener</code> 또는 <code>AbortController</code>를 사용하세요.</li>
+          <li><strong>전역 변수 축적</strong> — 실수로 <code>var</code> 없이 선언한 변수나 전역 배열에 계속 추가만 하면 메모리가 증가합니다.</li>
+          <li><strong>클로저에서 큰 객체 참조</strong> — 타이머나 이벤트 핸들러의 클로저가 큰 객체를 캡처하면 해당 객체가 해제되지 않습니다.</li>
+        </ul>
+        <pre><code class="language-javascript">// ❌ 메모리 누수: 리스너를 제거하지 않음
+class DataFetcher {
+  start() {
+    window.addEventListener('resize', this.handleResize.bind(this));
+  }
+  // stop()에서 removeEventListener 없음
+}
+
+// ✅ AbortController로 리스너 일괄 해제
+class DataFetcher {
+  constructor() {
+    this.controller = new AbortController();
+  }
+  start() {
+    window.addEventListener('resize', this.handleResize, {
+      signal: this.controller.signal
+    });
+  }
+  stop() {
+    this.controller.abort(); // 모든 리스너 한 번에 해제
+  }
+}</code></pre>
+
+        <h2>성능 측정 API — PerformanceObserver</h2>
+        <p>Chrome DevTools는 개발 환경에서만 사용하고, 실제 사용자의 성능 데이터를 수집하려면 <code>PerformanceObserver</code>를 사용하세요.</p>
+        <pre><code class="language-javascript">// Long Task 감지 (50ms 이상 걸리는 작업)
+const observer = new PerformanceObserver((list) => {
+  for (const entry of list.getEntries()) {
+    if (entry.duration &gt; 50) {
+      console.warn(`Long Task: ${entry.duration.toFixed(2)}ms`, entry);
+      // 분석 서버로 전송
+      sendToAnalytics('long_task', entry.duration);
+    }
+  }
+});
+observer.observe({ entryTypes: ['longtask'] });
+
+// 성능 마킹으로 특정 코드 구간 측정
+performance.mark('feature-start');
+await loadHeavyFeature();
+performance.mark('feature-end');
+
+const measure = performance.measure('heavy-feature', 'feature-start', 'feature-end');
+console.log(`소요 시간: ${measure.duration.toFixed(2)}ms`);</code></pre>
+
+        <h2>JavaScript 성능 최적화 체크리스트</h2>
+        <ul>
+          <li>✅ <strong>측정 먼저</strong> — Chrome DevTools Performance 탭, Lighthouse로 실제 병목 파악 후 최적화</li>
+          <li>✅ <strong>번들 크기</strong> — Webpack Bundle Analyzer로 큰 의존성 파악, 동적 import로 코드 분할</li>
+          <li>✅ <strong>Long Tasks 분리</strong> — 50ms 이상 걸리는 작업은 <code>requestIdleCallback</code>이나 Web Worker로 분리</li>
+          <li>✅ <strong>DOM 조작 최소화</strong> — DocumentFragment나 가상 DOM 패턴으로 리플로우 횟수 감소</li>
+          <li>✅ <strong>이미지 최적화</strong> — WebP/AVIF 형식, 적절한 크기, 지연 로딩 적용</li>
+          <li>✅ <strong>메모리 누수</strong> — DevTools Memory 탭의 Heap Snapshot으로 누수 감지</li>
+        </ul>
+
+        <h2>성능 최적화의 역설 — 과도한 최적화를 피하는 법</h2>
+        <p>성능 최적화를 배우다 보면 모든 코드를 최적화하려는 욕구가 생깁니다. 하지만 실제로 사용자가 느끼지 못하는 수준의 최적화에 과도한 시간을 쓰는 것은 오히려 비생산적입니다. 도널드 크누스의 유명한 말처럼 "과도한 최적화는 모든 악의 근원"이라는 원칙이 여기에도 적용됩니다. 최적화는 항상 측정에서 시작해야 합니다. 실제로 느린 부분이 어디인지 Chrome DevTools나 Lighthouse로 확인하기 전에 직관으로 최적화하면 엉뚱한 곳에 시간을 낭비할 수 있습니다. 프로파일링 결과에서 실제 병목이 확인된 부분만 집중적으로 개선하는 것이 올바른 순서입니다.</p>
+        <p>코드 가독성과 성능은 때로 충돌합니다. 메모이제이션이나 웹 워커 분리처럼 복잡성을 높이는 최적화는, 그만한 성능 이득이 측정으로 확인될 때만 도입해야 합니다. 사용자가 실제로 체감할 수 있는 개선 — 페이지 초기 로딩 2초에서 1초로 단축, 스크롤 끊김 해소, 버튼 클릭 반응 개선 — 이런 것에 먼저 집중하는 것이 비즈니스와 사용자 경험 모두에 유리합니다. 성능 예산(Performance Budget)을 팀 차원에서 정의하고, 그 기준을 유지하는 것만으로도 대부분의 성능 문제를 예방할 수 있습니다.</p>
       </div>
 
   <!-- AdSense: 본문 하단 광고 -->

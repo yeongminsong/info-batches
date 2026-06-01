@@ -174,6 +174,70 @@
           <strong>핵심 정리</strong><br>
           @layer는 CSS 우선순위를 명시적으로 관리하는 도구입니다. 레이어 순서를 선언부에서 한 번에 제어하고, 외부 라이브러리는 레이어 안에 가두세요. <code>!important</code>와의 이별을 선언할 시간입니다.
         </div>
+
+        <h2>레이어 이름 규칙과 아키텍처</h2>
+        <p>@layer를 효과적으로 관리하려면 처음부터 명확한 이름 규칙과 레이어 순서를 정의해야 합니다. ITCSS(Inverted Triangle CSS) 방법론과 함께 사용하면 좋습니다.</p>
+        <pre><code class="language-css">/* 전역 styles/layers.css에서 레이어 순서 선언 (가장 먼저 임포트) */
+@layer
+  reset,          /* 브라우저 기본 스타일 초기화 */
+  tokens,         /* 디자인 토큰 (색상, 타이포, 간격) */
+  base,           /* 기본 HTML 요소 스타일 */
+  vendors,        /* 외부 라이브러리 */
+  layout,         /* 페이지 레이아웃 구조 */
+  components,     /* 재사용 UI 컴포넌트 */
+  utilities,      /* 유틸리티 클래스 */
+  overrides;      /* 일회성 덮어쓰기 */
+
+/* 각 레이어에서 선언 */
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; }
+}
+
+@layer tokens {
+  :root {
+    --color-primary: oklch(58% 0.22 264);
+    --space-4: 1rem;
+  }
+}</code></pre>
+
+        <h2>DevTools에서 레이어 디버깅</h2>
+        <p>Chrome DevTools 122+에서 @layer를 시각적으로 확인하고 디버깅할 수 있습니다.</p>
+        <ul>
+          <li><strong>Elements 패널 → Styles 탭</strong> — 적용된 스타일 옆에 레이어 이름이 표시됩니다. 어느 레이어의 규칙이 적용됐는지 한눈에 파악 가능</li>
+          <li><strong>레이어 순서 확인</strong> — "Cascade Layers" 섹션에서 현재 페이지의 레이어 순서와 각 레이어의 규칙 수 확인</li>
+          <li><strong>오버라이드 추적</strong> — 취소선이 그어진 스타일에서 어느 레이어가 어느 레이어를 덮어쓰는지 추적</li>
+        </ul>
+
+        <h2>@layer와 !important의 상호작용</h2>
+        <p><code>!important</code>는 레이어 시스템에서 예상과 반대로 동작합니다. 이 규칙을 이해하지 못하면 디버깅이 매우 어려워집니다.</p>
+        <pre><code class="language-css">@layer base, theme, utilities;
+
+@layer base {
+  p { color: blue !important; }   /* !important는 레이어 순서를 역전시킴 */
+}
+
+@layer utilities {
+  p { color: red; }               /* 일반 선언은 utilities가 이김 */
+}
+
+/* 결과: base의 !important가 utilities의 일반 선언을 이김
+   즉 p 색상 = blue */</code></pre>
+        <p>레이어 시스템에서 <code>!important</code>는 레이어 우선순위를 역전시킵니다. 낮은 레이어의 <code>!important</code>가 높은 레이어의 일반 선언을 이기게 됩니다. 이 때문에 레이어 내부에서 <code>!important</code> 사용은 최소화하는 것을 강력히 권장합니다.</p>
+
+        <h2>기존 프로젝트 마이그레이션 전략</h2>
+        <p>@layer 없이 운영 중인 기존 프로젝트를 단계적으로 마이그레이션하는 방법입니다.</p>
+        <ul>
+          <li><strong>1단계</strong> — 외부 라이브러리만 레이어로 감싸기: <code>@layer vendors { @import 'bootstrap.css'; }</code></li>
+          <li><strong>2단계</strong> — 기존 커스텀 CSS를 <code>@layer overrides { }</code>로 래핑 (레이어 없는 코드보다 낮은 우선순위)</li>
+          <li><strong>3단계</strong> — 새로 추가하는 코드는 적절한 레이어에 배치</li>
+          <li><strong>4단계</strong> — 기존 코드를 점진적으로 적절한 레이어로 분류</li>
+        </ul>
+        <p>한꺼번에 마이그레이션하면 예상치 못한 스타일 변경이 발생할 수 있습니다. 레이어 없는 코드는 레이어 있는 코드보다 항상 높은 우선순위를 가지므로, 기존 코드를 임의의 레이어에 넣으면 우선순위가 낮아질 수 있습니다.</p>
+
+        <h2>@layer가 실제로 해결하는 문제</h2>
+        <p>@layer가 도입되기 전, CSS 프로젝트가 커질수록 개발자들이 가장 자주 겪는 고통은 특이성(Specificity) 전쟁이었습니다. Bootstrap 같은 CSS 프레임워크를 사용하면서 특정 스타일을 덮어쓰려면 더 높은 특이성의 선택자를 작성하거나 <code>!important</code>를 남발해야 했습니다. 이것이 쌓이면 CSS는 점점 예측 불가능해지고, 한 곳을 수정하면 예상치 못한 곳이 깨지는 일이 반복됩니다. @layer는 이 문제를 구조적으로 해결합니다. 레이어 선언 순서가 곧 우선순위가 되기 때문에, 특이성이 낮은 선택자라도 더 높은 레이어에 있으면 이깁니다. 이 덕분에 컴포넌트 스타일을 단순하게 유지하면서도 필요한 곳에서 확실하게 재정의할 수 있습니다.</p>
+        <p>디자인 시스템을 구축하는 팀에서 @layer의 효과가 특히 큽니다. 기본 토큰 레이어, 컴포넌트 레이어, 테마 레이어, 페이지별 오버라이드 레이어처럼 계층을 명확히 나누면, 어떤 스타일이 어디서 오는지 즉시 파악할 수 있습니다. 새로운 팀원이 합류했을 때도 레이어 구조를 이해하면 전체 CSS 아키텍처를 빠르게 파악할 수 있어 온보딩이 쉬워집니다. 2024년 이후 모든 주요 브라우저에서 @layer를 지원하므로, 신규 프로젝트에서는 처음부터 레이어 아키텍처를 설계에 포함하는 것을 강력히 권장합니다.</p>
       </div>
 
   <!-- AdSense: 본문 하단 광고 -->

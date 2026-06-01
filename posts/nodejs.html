@@ -250,6 +250,88 @@ app.use((err, req, res, next) => {
           <strong>핵심 정리</strong><br>
           Node.js는 이벤트 루프 기반의 논블로킹 I/O로 고성능 API 서버를 구현할 수 있습니다. Express로 빠르게 REST API를 구성하고, 미들웨어 패턴으로 인증·로깅·에러 처리를 분리하세요. 실제 서비스라면 글로벌 에러 핸들러를 반드시 등록하고, 데이터베이스(MongoDB, PostgreSQL)와 연동해 데이터를 영속적으로 저장해야 합니다.
         </div>
+
+        <h2>클러스터 모드 — 다중 코어 활용</h2>
+        <p>Node.js는 기본적으로 단일 스레드입니다. CPU가 여러 코어를 가져도 하나만 사용합니다. <code>cluster</code> 모듈로 코어 수만큼 프로세스를 생성해 성능을 높일 수 있습니다.</p>
+        <pre><code class="language-javascript">import cluster from 'cluster';
+import os from 'os';
+
+if (cluster.isPrimary) {
+  const numCPUs = os.cpus().length;
+  console.log(`마스터 프로세스 시작. 워커 ${numCPUs}개 생성`);
+
+  for (let i = 0; i &lt; numCPUs; i++) {
+    cluster.fork();
+  }
+
+  cluster.on('exit', (worker) => {
+    console.log(`워커 ${worker.process.pid} 종료. 재시작...`);
+    cluster.fork(); // 자동 재시작
+  });
+} else {
+  // 각 워커에서 서버 시작
+  const app = express();
+  app.listen(3000, () => {
+    console.log(`워커 ${process.pid} 포트 3000에서 실행 중`);
+  });
+}</code></pre>
+        <p>실무에서는 <strong>PM2</strong>의 cluster 모드가 더 편리합니다. <code>pm2 start app.js -i max</code> 명령 하나로 모든 코어를 활용하고, 무중단 재시작과 모니터링까지 제공합니다.</p>
+
+        <h2>Node.js 보안 필수 체크리스트</h2>
+        <p>Express 앱을 프로덕션에 배포할 때 반드시 적용해야 할 보안 설정입니다.</p>
+        <pre><code class="language-javascript">import express from 'express';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import cors from 'cors';
+
+const app = express();
+
+// 1. 보안 헤더 설정 (XSS, clickjacking 방어)
+app.use(helmet());
+
+// 2. CORS — 허용할 출처를 명시적으로 지정
+app.use(cors({
+  origin: ['https://myapp.com', 'https://www.myapp.com'],
+  credentials: true,
+}));
+
+// 3. Rate Limiting — 분당 100요청으로 제한
+app.use(rateLimit({
+  windowMs: 60 * 1000,
+  max: 100,
+  message: '요청이 너무 많습니다. 잠시 후 다시 시도하세요.',
+}));
+
+// 4. 요청 크기 제한 (10MB)
+app.use(express.json({ limit: '10mb' }));
+
+// 5. 환경 변수로 시크릿 관리 (코드에 직접 하드코딩 금지)
+const JWT_SECRET = process.env.JWT_SECRET; // .env 파일에서 로드</code></pre>
+
+        <h2>Node.js 스트림 — 대용량 파일 처리</h2>
+        <p>대용량 파일을 통째로 메모리에 읽으면 서버가 다운될 수 있습니다. 스트림을 사용하면 청크 단위로 처리해 메모리 부담을 최소화합니다.</p>
+        <pre><code class="language-javascript">import fs from 'fs';
+import zlib from 'zlib';
+import { pipeline } from 'stream/promises';
+
+// 1GB 파일도 메모리 걱정 없이 압축
+await pipeline(
+  fs.createReadStream('big-file.csv'),
+  zlib.createGzip(),
+  fs.createWriteStream('big-file.csv.gz')
+);
+
+// HTTP 응답으로 파일 스트리밍
+app.get('/download/:file', (req, res) => {
+  const filePath = `/data/${req.params.file}`;
+  res.setHeader('Content-Disposition', 'attachment');
+  fs.createReadStream(filePath).pipe(res);
+});</code></pre>
+        <p>파일 다운로드, CSV 처리, 로그 분석 등 대용량 데이터를 다루는 API라면 스트림을 기본으로 사용해야 합니다. <code>pipeline</code>은 파이프라인의 에러 처리와 정리를 자동으로 해줘서 메모리 누수를 방지합니다.</p>
+
+        <h2>Node.js 서비스를 프로덕션에서 안정적으로 운영하기</h2>
+        <p>Node.js 애플리케이션을 개발 환경에서 잘 돌리는 것과 프로덕션에서 안정적으로 운영하는 것은 다른 차원의 문제입니다. 가장 먼저 신경 써야 할 것은 프로세스 관리입니다. 개발 시 <code>node server.js</code>로 실행하면 서버가 크래시될 때 자동으로 재시작되지 않습니다. PM2나 Forever 같은 프로세스 매니저를 사용하면 크래시 시 자동 재시작, 로그 관리, 프로세스 모니터링을 한 번에 처리할 수 있습니다. 두 번째로 중요한 것은 구조화된 로깅입니다. <code>console.log</code> 대신 Winston이나 Pino 같은 로깅 라이브러리를 사용해 JSON 포맷으로 로그를 출력하면, Datadog이나 CloudWatch 같은 로그 수집 시스템과 연동해 검색과 분석이 용이해집니다.</p>
+        <p>메모리 누수는 장기 운영 환경에서 자주 등장하는 문제입니다. Node.js 프로세스의 메모리 사용량이 시간이 지날수록 계속 늘어난다면 메모리 누수를 의심해야 합니다. 이벤트 리스너를 제거하지 않거나, 전역 변수에 데이터를 무제한으로 쌓거나, 클로저가 예상보다 큰 범위를 참조하는 것이 주요 원인입니다. Node.js의 <code>--inspect</code> 플래그와 Chrome DevTools 메모리 프로파일러를 조합하면 어느 객체가 메모리를 잡고 있는지 추적할 수 있습니다. 가비지 컬렉션이 정상적으로 동작하는 환경이라도 메모리 상한을 <code>--max-old-space-size</code>로 설정해두는 것이 서버 전체 메모리 고갈을 막는 안전망이 됩니다.</p>
       </div>
 
   <!-- AdSense: 본문 하단 광고 -->
