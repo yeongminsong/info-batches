@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CG5VPJWVEQ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CG5VPJWVEQ');
+  </script>
+  <meta charset="UTF-8"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#6891f8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>정보처리기사 실기 SQL 완전 정복 — SELECT부터 JOIN·서브쿼리까지 — 매일이슈</title>
+  <meta name="description" content="정보처리기사 실기 SQL 출제 유형을 완벽 정리했습니다. SELECT, WHERE, GROUP BY, JOIN, 서브쿼리, DDL/DML/DCL까지 예제 중심으로 쉽게 설명합니다.">
+  <meta property="og:title" content="정보처리기사 실기 SQL 완전 정복 — 매일이슈">
+  <meta property="og:description" content="정보처리기사 실기 SQL 출제 유형을 완벽 정리. SELECT부터 JOIN·서브쿼리까지 예제 중심으로 설명합니다.">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=1200&h=630&fit=crop">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://mailissue.co.kr/posts/gisa-sql-guide.html">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="매일이슈">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="정보처리기사 실기 SQL 완전 정복 — 매일이슈">
+  <meta name="twitter:description" content="정보처리기사 실기 SQL 출제 유형을 완벽 정리. SELECT부터 JOIN·서브쿼리까지 예제 중심으로 설명합니다.">
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=1200&h=630&fit=crop">
+  <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
+  <link rel="canonical" href="https://mailissue.co.kr/posts/gisa-sql-guide.html">
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "정보처리기사 실기 SQL 완전 정복 — SELECT부터 JOIN·서브쿼리까지",
+    "description": "정보처리기사 실기 SQL 출제 유형 완벽 정리. SELECT, WHERE, GROUP BY, JOIN, 서브쿼리, DDL/DML/DCL까지 예제 중심으로 쉽게 설명합니다.",
+    "image": "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=1200&h=630&fit=crop",
+    "url": "https://mailissue.co.kr/posts/gisa-sql-guide.html",
+    "datePublished": "2026-06-01",
+    "dateModified": "2026-06-01",
+    "author": {"@type": "Organization", "name": "매일이슈"},
+    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://mailissue.co.kr"}
+  }</script>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
+  <link href="../style.css" rel="stylesheet">
+  <meta name="google-adsense-account" content="ca-pub-5414405329595188">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5414405329595188" crossorigin="anonymous"></script>
+  <style>
+    .sql-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.2rem 0;
+      font-size: 0.93rem;
+    }
+    .sql-table th {
+      background: var(--primary, #6891f8);
+      color: #fff;
+      padding: 0.6rem 1rem;
+      text-align: left;
+      font-weight: 600;
+    }
+    .sql-table td {
+      padding: 0.55rem 1rem;
+      border-bottom: 1px solid var(--border, #e3e6ea);
+    }
+    .sql-table tr:nth-child(even) td {
+      background: var(--bg-gray, #f7f8fc);
+    }
+    .exam-box {
+      background: #fff8e1;
+      border-left: 4px solid #ffc107;
+      border-radius: 0 0.5rem 0.5rem 0;
+      padding: 1rem 1.2rem;
+      margin: 1.2rem 0;
+      font-size: 0.95rem;
+    }
+    .exam-box strong { color: #e65100; }
+    .tip-box {
+      background: #e8f5e9;
+      border-left: 4px solid #43a047;
+      border-radius: 0 0.5rem 0.5rem 0;
+      padding: 1rem 1.2rem;
+      margin: 1.2rem 0;
+      font-size: 0.95rem;
+    }
+    .tip-box strong { color: #1b5e20; }
+    .sql-keyword { color: #6891f8; font-weight: 700; }
+    .step-badge {
+      display: inline-block;
+      background: #6891f8;
+      color: #fff;
+      border-radius: 50%;
+      width: 1.6rem;
+      height: 1.6rem;
+      text-align: center;
+      line-height: 1.6rem;
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-right: 0.4rem;
+    }
+    .clause-order {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin: 1rem 0;
+      align-items: center;
+    }
+    .clause-tag {
+      background: #6891f8;
+      color: #fff;
+      border-radius: 0.4rem;
+      padding: 0.3rem 0.75rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+    .clause-arrow {
+      color: #999;
+      font-size: 1.1rem;
+    }
+    .join-visual {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+    .join-card {
+      flex: 1;
+      min-width: 140px;
+      border: 2px solid var(--border, #e3e6ea);
+      border-radius: 0.75rem;
+      padding: 0.8rem 1rem;
+      text-align: center;
+      font-size: 0.88rem;
+    }
+    .join-card .join-name {
+      font-weight: 700;
+      color: #6891f8;
+      margin-bottom: 0.3rem;
+    }
+    .join-venn {
+      font-size: 2rem;
+      line-height: 1.2;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/index.html" class="logo">매일이슈</a>
+      <nav class="nav">
+        <a href="/index.html">홈</a>
+        <a href="/category.html">카테고리</a>
+        <a href="/tags.html">태그</a>
+        <a href="/about.html">소개</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="테마 전환">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="post-hero-img" style="background-image:url('https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=1400&h=500&fit=crop&auto=format');"></div>
+
+  <div class="post-wrapper">
+    <a href="/index.html" class="post-back">← 목록으로</a>
+    <article class="post-article">
+      <header class="post-header">
+        <div class="post-tags">
+          <span class="tag">정보처리기사</span>
+          <span class="tag">SQL</span>
+          <span class="tag">실기</span>
+        </div>
+        <h1 class="post-h1">정보처리기사 실기 SQL 완전 정복</h1>
+        <div class="post-meta">
+          <span>📅 2026. 06. 01</span>
+          <span>⏱ 15분 읽기</span>
+        </div>
+      </header>
+
+      <div class="post-content">
+  <!-- AdSense: 본문 상단 광고 -->
+  <ins class="adsbygoogle ad-post-top"
+       style="display:block"
+       data-ad-client="ca-pub-5414405329595188"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+        <p>정보처리기사 실기에서 SQL은 <strong>매 회차 반드시 출제</strong>되는 핵심 파트입니다. 다행히 나오는 유형이 어느 정도 정해져 있어서, 패턴만 잡으면 확실하게 점수를 챙길 수 있어요. 이 글에서는 실제 시험에 나오는 SQL 유형을 처음부터 차근차근 정리해드릴게요.</p>
+
+        <div class="exam-box">
+          <strong>📌 실기 SQL 출제 비중</strong><br>
+          SQL 관련 문제는 실기 배점의 약 <strong>20~30%</strong>를 차지합니다. DDL·DML·DCL 개념 서술부터 직접 쿼리를 작성하거나 결과를 예측하는 문제까지 다양하게 나옵니다.
+        </div>
+
+        <h2>📦 SQL 명령어 4가지 분류부터 잡자</h2>
+        <p>SQL은 역할에 따라 4가지로 나뉩니다. 시험에서 "다음 중 DDL에 해당하는 명령어는?" 식으로 분류 자체를 묻는 문제가 자주 나오니까 먼저 외워두세요.</p>
+
+        <table class="sql-table">
+          <thead>
+            <tr>
+              <th>분류</th>
+              <th>이름</th>
+              <th>대표 명령어</th>
+              <th>하는 일</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>DDL</strong></td>
+              <td>데이터 정의어</td>
+              <td>CREATE, ALTER, DROP, TRUNCATE</td>
+              <td>테이블·구조 생성·수정·삭제</td>
+            </tr>
+            <tr>
+              <td><strong>DML</strong></td>
+              <td>데이터 조작어</td>
+              <td>SELECT, INSERT, UPDATE, DELETE</td>
+              <td>데이터 조회·삽입·수정·삭제</td>
+            </tr>
+            <tr>
+              <td><strong>DCL</strong></td>
+              <td>데이터 제어어</td>
+              <td>GRANT, REVOKE</td>
+              <td>사용자 권한 부여·회수</td>
+            </tr>
+            <tr>
+              <td><strong>TCL</strong></td>
+              <td>트랜잭션 제어어</td>
+              <td>COMMIT, ROLLBACK, SAVEPOINT</td>
+              <td>트랜잭션 확정·취소·저장점</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box">
+          <strong>💡 암기 꿀팁</strong><br>
+          <strong>DDL</strong>은 <u>구조</u>를 다루고, <strong>DML</strong>은 <u>데이터</u>를 다룹니다. DDL은 자동 COMMIT이 되지만, DML은 명시적으로 COMMIT해야 반영됩니다. 이 차이를 꼭 기억하세요!
+        </div>
+
+        <h2>🏗️ DDL — 테이블 만들고 바꾸는 명령어</h2>
+        <p>DDL은 테이블의 틀(구조)을 만들거나 수정하는 명령어예요. 직접 쿼리를 쓰라는 문제보다는 문법 빈칸 채우기 형태로 자주 출제됩니다.</p>
+
+        <h3>CREATE TABLE — 테이블 생성</h3>
+        <pre><code>CREATE TABLE 학생 (
+    학번    CHAR(8)      PRIMARY KEY,
+    이름    VARCHAR(20)  NOT NULL,
+    학과    VARCHAR(30),
+    학년    INT          DEFAULT 1,
+    성적    FLOAT,
+    FOREIGN KEY (학과) REFERENCES 학과정보(학과명)
+);</code></pre>
+
+        <table class="sql-table">
+          <thead>
+            <tr><th>제약조건</th><th>의미</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>PRIMARY KEY</td><td>기본키 — 중복 불가 + NULL 불가</td></tr>
+            <tr><td>FOREIGN KEY</td><td>외래키 — 다른 테이블의 기본키 참조</td></tr>
+            <tr><td>NOT NULL</td><td>NULL 값 입력 금지</td></tr>
+            <tr><td>UNIQUE</td><td>중복 불가 (NULL은 허용)</td></tr>
+            <tr><td>DEFAULT</td><td>값을 안 넣으면 자동으로 들어가는 기본값</td></tr>
+            <tr><td>CHECK</td><td>특정 조건을 만족하는 값만 허용</td></tr>
+          </tbody>
+        </table>
+
+        <h3>ALTER TABLE — 테이블 구조 변경</h3>
+        <pre><code>-- 컬럼 추가
+ALTER TABLE 학생 ADD 이메일 VARCHAR(50);
+
+-- 컬럼 타입 변경
+ALTER TABLE 학생 MODIFY 이름 VARCHAR(30);
+
+-- 컬럼 삭제
+ALTER TABLE 학생 DROP COLUMN 이메일;
+
+-- 제약조건 추가
+ALTER TABLE 학생 ADD CONSTRAINT 성적_범위 CHECK (성적 BETWEEN 0 AND 100);</code></pre>
+
+        <h3>DROP vs TRUNCATE vs DELETE 차이</h3>
+        <table class="sql-table">
+          <thead>
+            <tr><th>명령어</th><th>분류</th><th>롤백 가능?</th><th>결과</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>DROP TABLE</td><td>DDL</td><td>❌ 불가</td><td>테이블 구조 + 데이터 모두 삭제</td></tr>
+            <tr><td>TRUNCATE</td><td>DDL</td><td>❌ 불가</td><td>데이터만 전체 삭제 (구조는 유지)</td></tr>
+            <tr><td>DELETE</td><td>DML</td><td>✅ 가능</td><td>조건에 맞는 행만 삭제</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 자주 나오는 시험 포인트</strong><br>
+          "ROLLBACK으로 복구할 수 없는 명령어는?" → <strong>DROP, TRUNCATE</strong> (DDL은 자동 COMMIT)<br>
+          "테이블 구조는 남기고 데이터만 전부 지우는 명령어는?" → <strong>TRUNCATE</strong>
+        </div>
+
+        <h2>🔍 SELECT — 데이터 조회의 핵심</h2>
+        <p>실기에서 가장 많이 나오는 부분입니다. SELECT 문의 실행 순서와 각 절의 역할을 정확히 이해해야 해요.</p>
+
+        <h3>SELECT 실행 순서 (이게 제일 중요!)</h3>
+        <p>SQL은 작성 순서와 <strong>실제 실행 순서가 다릅니다</strong>. 이걸 모르면 GROUP BY, HAVING, WHERE 문제에서 자꾸 틀려요.</p>
+
+        <div class="clause-order">
+          <span class="clause-tag">① FROM</span>
+          <span class="clause-arrow">→</span>
+          <span class="clause-tag">② WHERE</span>
+          <span class="clause-arrow">→</span>
+          <span class="clause-tag">③ GROUP BY</span>
+          <span class="clause-arrow">→</span>
+          <span class="clause-tag">④ HAVING</span>
+          <span class="clause-arrow">→</span>
+          <span class="clause-tag">⑤ SELECT</span>
+          <span class="clause-arrow">→</span>
+          <span class="clause-tag">⑥ ORDER BY</span>
+        </div>
+
+        <p><strong>기억법:</strong> <em>"프~ 윙 그 하 셀 오(FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY)"</em></p>
+
+        <h3>기본 SELECT 문법</h3>
+        <pre><code>SELECT [DISTINCT] 컬럼1, 컬럼2, ...
+FROM   테이블명
+WHERE  조건
+GROUP BY 그룹기준컬럼
+HAVING 그룹조건
+ORDER BY 정렬기준 [ASC | DESC];</code></pre>
+
+        <p>아래 예시 테이블로 실제 문제 느낌을 익혀봅시다.</p>
+
+        <table class="sql-table">
+          <thead>
+            <tr><th colspan="5" style="text-align:center; background:#4a6cf7;">📋 학생(STUDENT) 테이블</th></tr>
+            <tr><th>학번</th><th>이름</th><th>학과</th><th>학년</th><th>성적</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>2021001</td><td>김민준</td><td>컴퓨터공학</td><td>3</td><td>88</td></tr>
+            <tr><td>2021002</td><td>이서연</td><td>정보통신</td><td>2</td><td>92</td></tr>
+            <tr><td>2022003</td><td>박지호</td><td>컴퓨터공학</td><td>2</td><td>75</td></tr>
+            <tr><td>2022004</td><td>최수아</td><td>소프트웨어</td><td>1</td><td>95</td></tr>
+            <tr><td>2023005</td><td>정우진</td><td>컴퓨터공학</td><td>1</td><td>82</td></tr>
+          </tbody>
+        </table>
+
+        <h3>WHERE — 조건 필터링</h3>
+        <pre><code>-- 성적이 85점 이상인 학생 조회
+SELECT 이름, 성적
+FROM   학생
+WHERE  성적 >= 85;
+
+-- 컴퓨터공학과이고 학년이 2학년 이상
+SELECT *
+FROM   학생
+WHERE  학과 = '컴퓨터공학' AND 학년 >= 2;
+
+-- 성적이 80~90 사이 (BETWEEN)
+SELECT 이름, 성적
+FROM   학생
+WHERE  성적 BETWEEN 80 AND 90;
+
+-- 학과가 컴퓨터공학 또는 정보통신 (IN)
+SELECT 이름, 학과
+FROM   학생
+WHERE  학과 IN ('컴퓨터공학', '정보통신');</code></pre>
+
+        <h3>GROUP BY + HAVING — 그룹 집계</h3>
+        <p>GROUP BY는 특정 컬럼 기준으로 행을 묶어서 집계함수(COUNT, SUM, AVG, MAX, MIN)를 적용할 때 씁니다. <strong>HAVING은 GROUP BY 이후의 그룹에 조건을 거는 것</strong>이고, WHERE는 그룹화 전에 개별 행에 조건을 거는 것입니다.</p>
+
+        <pre><code>-- 학과별 학생 수와 평균 성적 조회
+SELECT   학과, COUNT(*) AS 학생수, AVG(성적) AS 평균성적
+FROM     학생
+GROUP BY 학과;
+
+-- 평균 성적이 80점 이상인 학과만 출력 (HAVING 사용)
+SELECT   학과, AVG(성적) AS 평균성적
+FROM     학생
+GROUP BY 학과
+HAVING   AVG(성적) >= 80;</code></pre>
+
+        <div class="exam-box">
+          <strong>🎯 WHERE vs HAVING 헷갈리면 이것만!</strong><br>
+          ✔ <strong>WHERE</strong> — 개별 행(row)에 조건 → GROUP BY 전에 실행<br>
+          ✔ <strong>HAVING</strong> — 그룹에 조건 → GROUP BY 후에 실행<br><br>
+          "WHERE에는 집계함수를 쓸 수 없다"는 것도 자주 출제됩니다.
+        </div>
+
+        <h3>집계함수 정리</h3>
+        <table class="sql-table">
+          <thead>
+            <tr><th>함수</th><th>의미</th><th>NULL 처리</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>COUNT(*)</td><td>전체 행 개수</td><td>NULL 포함</td></tr>
+            <tr><td>COUNT(컬럼)</td><td>해당 컬럼 값이 있는 행 개수</td><td>NULL 제외</td></tr>
+            <tr><td>SUM(컬럼)</td><td>합계</td><td>NULL 제외</td></tr>
+            <tr><td>AVG(컬럼)</td><td>평균</td><td>NULL 제외</td></tr>
+            <tr><td>MAX(컬럼)</td><td>최댓값</td><td>NULL 제외</td></tr>
+            <tr><td>MIN(컬럼)</td><td>최솟값</td><td>NULL 제외</td></tr>
+          </tbody>
+        </table>
+
+        <h3>ORDER BY — 정렬</h3>
+        <pre><code>-- 성적 내림차순 정렬 (높은 순)
+SELECT 이름, 성적
+FROM   학생
+ORDER BY 성적 DESC;
+
+-- 학과 오름차순, 같은 학과면 성적 내림차순
+SELECT 이름, 학과, 성적
+FROM   학생
+ORDER BY 학과 ASC, 성적 DESC;</code></pre>
+
+        <h2>🔗 JOIN — 여러 테이블 합치기</h2>
+        <p>JOIN은 두 개 이상의 테이블을 연결해서 하나의 결과로 보여주는 것입니다. 실기에서 결과 예측이나 쿼리 작성 문제로 자주 나옵니다.</p>
+
+        <div class="join-visual">
+          <div class="join-card">
+            <div class="join-venn">🔵🟢</div>
+            <div class="join-name">INNER JOIN</div>
+            <div>두 테이블 모두 일치하는 행만</div>
+          </div>
+          <div class="join-card">
+            <div class="join-venn">🔵⬜</div>
+            <div class="join-name">LEFT JOIN</div>
+            <div>왼쪽 테이블 전체 + 오른쪽 일치 행</div>
+          </div>
+          <div class="join-card">
+            <div class="join-venn">⬜🟢</div>
+            <div class="join-name">RIGHT JOIN</div>
+            <div>오른쪽 테이블 전체 + 왼쪽 일치 행</div>
+          </div>
+          <div class="join-card">
+            <div class="join-venn">🔵🟢🔵</div>
+            <div class="join-name">FULL OUTER JOIN</div>
+            <div>양쪽 테이블 모두 (불일치는 NULL)</div>
+          </div>
+        </div>
+
+        <p>예시로 두 테이블을 만들어 보겠습니다.</p>
+
+        <table class="sql-table">
+          <thead>
+            <tr><th colspan="3" style="text-align:center; background:#4a6cf7;">📋 수강(ENROLLMENT) 테이블</th></tr>
+            <tr><th>학번</th><th>과목코드</th><th>점수</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>2021001</td><td>CS101</td><td>90</td></tr>
+            <tr><td>2021002</td><td>CS101</td><td>85</td></tr>
+            <tr><td>2021001</td><td>CS202</td><td>78</td></tr>
+            <tr><td>2099999</td><td>CS303</td><td>95</td></tr>
+          </tbody>
+        </table>
+
+        <pre><code>-- INNER JOIN: 학생 테이블과 수강 테이블에서 모두 존재하는 학생만
+SELECT S.이름, E.과목코드, E.점수
+FROM   학생 S
+INNER JOIN 수강 E ON S.학번 = E.학번;
+
+-- LEFT JOIN: 학생 테이블 전체 (수강 안 한 학생도 포함)
+SELECT S.이름, E.과목코드, E.점수
+FROM   학생 S
+LEFT JOIN 수강 E ON S.학번 = E.학번;</code></pre>
+
+        <div class="exam-box">
+          <strong>🎯 JOIN 결과 예측 문제 풀이 법</strong><br>
+          1. 기준 테이블이 어딘지 파악 (LEFT면 왼쪽이 기준)<br>
+          2. ON 조건이 일치하는 행끼리 연결<br>
+          3. 일치하지 않는 행은 NULL로 채움<br>
+          4. 위 학번 <strong>2099999</strong>는 학생 테이블에 없으므로 INNER JOIN 결과에서 제외됨
+        </div>
+
+        <h2>🪆 서브쿼리 — 쿼리 안의 쿼리</h2>
+        <p>서브쿼리는 SELECT 문 안에 또 다른 SELECT 문이 들어가는 형태입니다. 위치에 따라 이름이 달라지고, 시험에서도 종류를 묻는 문제가 나옵니다.</p>
+
+        <table class="sql-table">
+          <thead>
+            <tr><th>위치</th><th>이름</th><th>특징</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>WHERE 절</td><td>중첩 서브쿼리</td><td>가장 자주 출제. 조건값을 동적으로 구함</td></tr>
+            <tr><td>FROM 절</td><td>인라인 뷰</td><td>서브쿼리 결과를 임시 테이블처럼 사용</td></tr>
+            <tr><td>SELECT 절</td><td>스칼라 서브쿼리</td><td>컬럼 자리에 단일 값 반환</td></tr>
+          </tbody>
+        </table>
+
+        <h3>WHERE절 서브쿼리 (가장 자주 출제)</h3>
+        <pre><code>-- 평균 성적보다 높은 학생 조회
+SELECT 이름, 성적
+FROM   학생
+WHERE  성적 > (SELECT AVG(성적) FROM 학생);
+
+-- 컴퓨터공학과 학생 중 최고 성적과 동일한 학생 조회
+SELECT 이름, 성적
+FROM   학생
+WHERE  성적 = (SELECT MAX(성적) FROM 학생 WHERE 학과 = '컴퓨터공학');</code></pre>
+
+        <h3>IN / ANY / ALL 서브쿼리</h3>
+        <pre><code>-- IN: 서브쿼리 결과 목록 중 하나와 일치
+SELECT 이름
+FROM   학생
+WHERE  학번 IN (SELECT 학번 FROM 수강 WHERE 과목코드 = 'CS101');
+
+-- ALL: 서브쿼리 결과 모두보다 크거나 작은 경우
+-- 모든 정보통신과 학생보다 성적이 높은 학생
+SELECT 이름, 성적
+FROM   학생
+WHERE  성적 > ALL (SELECT 성적 FROM 학생 WHERE 학과 = '정보통신');
+
+-- ANY: 서브쿼리 결과 중 하나라도 만족
+SELECT 이름, 성적
+FROM   학생
+WHERE  성적 > ANY (SELECT 성적 FROM 학생 WHERE 학과 = '정보통신');</code></pre>
+
+        <div class="tip-box">
+          <strong>💡 ANY vs ALL 직관적 이해</strong><br>
+          <strong>ALL</strong>은 "전부 다 이겨야 통과" → 최댓값보다 크면 ALL보다 크다<br>
+          <strong>ANY</strong>는 "하나만 이겨도 통과" → 최솟값보다 크면 ANY보다 크다<br><br>
+          <code>> ALL</code> ≈ <code>> MAX(서브쿼리)</code><br>
+          <code>> ANY</code> ≈ <code>> MIN(서브쿼리)</code>
+        </div>
+
+        <h3>FROM절 서브쿼리 — 인라인 뷰</h3>
+        <pre><code>-- 학과별 평균 성적을 구한 뒤, 평균이 85 이상인 학과만 출력
+SELECT 학과, 평균성적
+FROM   (SELECT 학과, AVG(성적) AS 평균성적
+        FROM   학생
+        GROUP BY 학과) AS 학과별평균
+WHERE  평균성적 >= 85;</code></pre>
+
+        <h2>🔐 DCL — 권한 관리</h2>
+        <p>DCL은 사용자에게 권한을 주거나 뺏는 명령어입니다. 개념 암기 위주로 출제됩니다.</p>
+
+        <pre><code>-- GRANT: 권한 부여
+GRANT SELECT, INSERT ON 학생 TO 홍길동;
+GRANT ALL ON 학생 TO 홍길동 WITH GRANT OPTION;
+--         ↑ WITH GRANT OPTION: 홍길동이 다른 사람에게 권한을 재부여할 수 있음
+
+-- REVOKE: 권한 회수
+REVOKE SELECT ON 학생 FROM 홍길동;
+REVOKE SELECT ON 학생 FROM 홍길동 CASCADE;
+--                             ↑ CASCADE: 홍길동이 부여한 다른 사람 권한도 함께 회수</code></pre>
+
+        <table class="sql-table">
+          <thead>
+            <tr><th>옵션</th><th>의미</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>WITH GRANT OPTION</td><td>받은 권한을 다른 사용자에게 재부여 가능</td></tr>
+            <tr><td>CASCADE</td><td>권한 회수 시 연쇄적으로 재부여된 권한도 회수</td></tr>
+          </tbody>
+        </table>
+
+        <h2>🔄 TCL — 트랜잭션 제어</h2>
+        <p>트랜잭션은 하나의 논리적 작업 단위입니다. 은행 이체처럼 "전부 되거나 전부 안 되거나"를 보장하는 개념이에요.</p>
+
+        <pre><code>-- 작업 확정
+COMMIT;
+
+-- 작업 취소 (마지막 COMMIT 시점으로 되돌아감)
+ROLLBACK;
+
+-- 저장점 설정 후 부분 취소
+SAVEPOINT sp1;
+-- ... 작업 ...
+ROLLBACK TO sp1;  -- sp1 이후 작업만 취소</code></pre>
+
+        <div class="exam-box">
+          <strong>🎯 트랜잭션 4가지 특성 (ACID)</strong><br>
+          ✔ <strong>원자성(Atomicity)</strong> — 전부 실행되거나 전부 취소<br>
+          ✔ <strong>일관성(Consistency)</strong> — 트랜잭션 전후 데이터 일관성 유지<br>
+          ✔ <strong>격리성(Isolation)</strong> — 다른 트랜잭션에 영향 받지 않음<br>
+          ✔ <strong>지속성(Durability)</strong> — COMMIT된 결과는 영구 반영
+        </div>
+
+        <h2>🧩 실전 문제 풀어보기</h2>
+        <p>위에서 배운 내용을 종합해서 아래 문제를 풀어보세요.</p>
+
+        <div class="exam-box">
+          <strong>📝 문제 1</strong><br>
+          학생 테이블에서 학과별 학생 수를 구하되, 학생 수가 2명 이상인 학과의 학과명과 학생 수를 학생 수 내림차순으로 출력하시오.
+        </div>
+
+        <pre><code>-- 정답
+SELECT   학과, COUNT(*) AS 학생수
+FROM     학생
+GROUP BY 학과
+HAVING   COUNT(*) >= 2
+ORDER BY 학생수 DESC;</code></pre>
+
+        <div class="exam-box">
+          <strong>📝 문제 2</strong><br>
+          학생 테이블에서 이름과 성적을 조회하되, 자신이 속한 학과의 평균 성적보다 높은 학생만 출력하시오.
+        </div>
+
+        <pre><code>-- 정답 (상관 서브쿼리)
+SELECT 이름, 성적, 학과
+FROM   학생 A
+WHERE  성적 > (SELECT AVG(성적)
+               FROM   학생 B
+               WHERE  B.학과 = A.학과);</code></pre>
+
+        <div class="callout">
+          <strong>📚 정리 — SQL 실기 고득점 전략 3가지</strong><br><br>
+          <strong>① SELECT 실행 순서를 암기하세요.</strong> FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY. 이걸 모르면 HAVING과 WHERE 문제를 계속 틀립니다.<br><br>
+          <strong>② WHERE vs HAVING 구분을 확실히 하세요.</strong> 집계함수가 조건에 있으면 HAVING, 없으면 WHERE입니다.<br><br>
+          <strong>③ JOIN 결과는 직접 표를 그려서 확인하는 연습을 하세요.</strong> 머릿속으로 계산하려다가 실수하는 경우가 많습니다. 시험지 여백에 테이블 그리는 습관을 들이세요.
+        </div>
+      </div>
+
+  <!-- AdSense: 본문 하단 광고 -->
+  <ins class="adsbygoogle ad-post-bottom"
+       style="display:block"
+       data-ad-client="ca-pub-5414405329595188"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </article>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p>© 2026 매일이슈. 매일 조금씩, 더 나은 내일.</p>
+      <nav class="footer-nav">
+        <a href="/about.html">소개</a>
+        <a href="/privacy.html">개인정보처리방침</a>
+        <a href="/terms.html">이용약관</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="../main.js"></script>
+</body>
+</html>
