@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CG5VPJWVEQ"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-CG5VPJWVEQ');</script>
+  <meta charset="UTF-8"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#6891f8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>빅데이터 분석기사 필기 3과목 빅데이터 모델링 핵심 요약 — 회귀·분류·군집·연관·딥러닝 — 매일이슈</title>
+  <meta name="description" content="빅데이터 분석기사 필기 3과목 빅데이터 모델링 핵심 요약. 지도학습(회귀·분류), 비지도학습(군집·연관), 앙상블, 딥러닝 개념까지 시험에 나오는 머신러닝 알고리즘을 정리했습니다.">
+  <meta property="og:title" content="빅데이터 분석기사 필기 3과목 빅데이터 모델링 핵심 요약 — 매일이슈">
+  <meta property="og:description" content="지도학습, 비지도학습, 앙상블, 딥러닝 개념까지 필기 3과목 머신러닝 핵심만 정리.">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1527474305487-b87b222841cc?w=1200&h=630&fit=crop">
+  <meta property="og:url" content="https://mailissue.co.kr/posts/bigdata-subject3-modeling.html">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="매일이슈">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
+  <link rel="canonical" href="https://mailissue.co.kr/posts/bigdata-subject3-modeling.html">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"빅데이터 분석기사 필기 3과목 빅데이터 모델링 핵심 요약","description":"지도학습, 비지도학습, 앙상블, 딥러닝 개념까지 필기 3과목 머신러닝 핵심만 정리.","image":"https://images.unsplash.com/photo-1527474305487-b87b222841cc?w=1200&h=630&fit=crop","url":"https://mailissue.co.kr/posts/bigdata-subject3-modeling.html","datePublished":"2026-06-02","dateModified":"2026-06-02","author":{"@type":"Organization","name":"매일이슈"},"publisher":{"@type":"Organization","name":"매일이슈","url":"https://mailissue.co.kr"}}</script>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
+  <link href="../style.css" rel="stylesheet">
+  <meta name="google-adsense-account" content="ca-pub-5414405329595188">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5414405329595188" crossorigin="anonymous"></script>
+  <style>
+    .g-table{width:100%;border-collapse:collapse;margin:1.2rem 0;font-size:.93rem}
+    .g-table th{background:var(--primary,#6891f8);color:#fff;padding:.6rem 1rem;text-align:left;font-weight:600}
+    .g-table td{padding:.55rem 1rem;border-bottom:1px solid var(--border,#e3e6ea);vertical-align:top}
+    .g-table tr:nth-child(even) td{background:var(--bg-gray,#f7f8fc)}
+    .exam-box{background:#fff8e1;border-left:4px solid #ffc107;border-radius:0 .5rem .5rem 0;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.7}
+    .exam-box strong{color:#e65100}
+    .tip-box{background:#e8f5e9;border-left:4px solid #43a047;border-radius:0 .5rem .5rem 0;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.7}
+    .tip-box strong{color:#1b5e20}
+    .toc-box{background:var(--bg-gray,#f7f8fc);border:1px solid var(--border,#e3e6ea);border-radius:.75rem;padding:1rem 1.4rem;margin:1.5rem 0;font-size:.93rem}
+    .toc-box ol{margin:.5rem 0 0;padding-left:1.4rem}
+    .toc-box li{margin:.3rem 0}
+    .toc-box a{color:#6891f8;text-decoration:none}
+    .section-anchor{scroll-margin-top:80px}
+    .nav-links{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+    .nav-links a{background:var(--bg-gray,#f7f8fc);border:1px solid var(--border,#e3e6ea);border-radius:.5rem;padding:.4rem .9rem;font-size:.88rem;color:#6891f8;text-decoration:none}
+    .algo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.75rem;margin:1rem 0}
+    .algo-card{border:1.5px solid var(--border,#e3e6ea);border-radius:.6rem;padding:.8rem 1rem;font-size:.88rem}
+    .algo-card .aname{font-weight:700;color:#6891f8;margin-bottom:.3rem}
+    .algo-card .atype{font-size:.76rem;color:#888;margin-bottom:.3rem}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/index.html" class="logo">매일이슈</a>
+      <nav class="nav"><a href="/index.html">홈</a><a href="/category.html">카테고리</a><a href="/tags.html">태그</a><a href="/about.html">소개</a></nav>
+      <div class="header-actions"><button class="theme-toggle" id="themeToggle" aria-label="테마 전환">🌙</button></div>
+    </div>
+  </header>
+
+  <div class="post-hero-img" style="background-image:url('https://images.unsplash.com/photo-1527474305487-b87b222841cc?w=1400&h=500&fit=crop&auto=format');"></div>
+
+  <div class="post-wrapper">
+    <a href="/index.html" class="post-back">← 목록으로</a>
+    <article class="post-article">
+      <header class="post-header">
+        <div class="post-tags"><span class="tag">빅데이터분석기사</span><span class="tag">필기</span><span class="tag">3과목</span><span class="tag">머신러닝</span></div>
+        <h1 class="post-h1">빅데이터 분석기사 필기 3과목 — 빅데이터 모델링 핵심 요약</h1>
+        <div class="post-meta"><span>📅 2026. 06. 02</span><span>⏱ 22분 읽기</span></div>
+      </header>
+
+      <div class="post-content">
+  <ins class="adsbygoogle ad-post-top" style="display:block" data-ad-client="ca-pub-5414405329595188" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+        <p>빅데이터 분석기사 필기 3과목 <strong>빅데이터 모델링</strong>은 머신러닝 알고리즘의 원리와 특성을 다룹니다. 4과목 중 가장 어렵게 느껴지는 과목이지만, 각 알고리즘의 "<strong>어떤 문제에 쓰는가</strong>"와 "<strong>핵심 특징</strong>"을 정리하면 충분히 합격 점수를 얻을 수 있습니다.</p>
+
+        <div class="toc-box">
+          <strong>📋 목차</strong>
+          <ol>
+            <li><a href="#ml-overview">머신러닝 분류 체계</a></li>
+            <li><a href="#supervised">지도학습 — 회귀 알고리즘</a></li>
+            <li><a href="#classification">지도학습 — 분류 알고리즘</a></li>
+            <li><a href="#unsupervised">비지도학습 — 군집·연관분석</a></li>
+            <li><a href="#ensemble">앙상블 학습</a></li>
+            <li><a href="#deeplearning">딥러닝 기초 개념</a></li>
+          </ol>
+        </div>
+
+        <div class="nav-links">
+          <span style="font-size:.85rem;color:#888;align-self:center;">필기 과목 →</span>
+          <a href="/posts/bigdata-subject1-planning.html">1과목</a>
+          <a href="/posts/bigdata-subject2-exploration.html">2과목</a>
+          <a href="/posts/bigdata-subject3-modeling.html">3과목</a>
+          <a href="/posts/bigdata-subject4-interpretation.html">4과목</a>
+        </div>
+
+        <h2 id="ml-overview" class="section-anchor">1. 머신러닝 분류 체계</h2>
+        <table class="g-table">
+          <thead><tr><th>분류</th><th>정의</th><th>대표 알고리즘</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>지도학습<br>(Supervised)</strong></td>
+              <td>정답(레이블)이 있는 데이터로 학습. 입력-출력 관계를 학습</td>
+              <td>선형회귀, 로지스틱 회귀, 결정 트리, SVM, KNN, 나이브 베이즈, 신경망</td>
+            </tr>
+            <tr>
+              <td><strong>비지도학습<br>(Unsupervised)</strong></td>
+              <td>정답 없이 데이터의 패턴·구조를 스스로 발견</td>
+              <td>K-Means, DBSCAN, 계층적 군집, Apriori(연관규칙), PCA</td>
+            </tr>
+            <tr>
+              <td><strong>강화학습<br>(Reinforcement)</strong></td>
+              <td>환경과 상호작용하며 보상을 최대화하는 행동을 학습</td>
+              <td>Q-Learning, DQN, AlphaGo</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 지도 vs 비지도 구분 핵심</strong><br>
+          ✔ <strong>지도학습</strong>: 레이블(정답) 있음 → 회귀(연속값 예측), 분류(범주 예측)<br>
+          ✔ <strong>비지도학습</strong>: 레이블 없음 → 군집(그룹화), 연관(패턴 발견), 차원 축소
+        </div>
+
+        <h2 id="supervised" class="section-anchor">2. 지도학습 — 회귀 알고리즘</h2>
+
+        <table class="g-table">
+          <thead><tr><th>알고리즘</th><th>핵심 개념</th><th>특징</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>선형 회귀<br>(Linear Regression)</strong></td>
+              <td>독립변수와 종속변수 간 선형 관계를 학습. 최소제곱법으로 최적 직선 도출</td>
+              <td>해석 쉬움. 선형 관계 가정. 이상치에 민감</td>
+            </tr>
+            <tr>
+              <td><strong>릿지 회귀 (Ridge)</strong></td>
+              <td>선형 회귀 + L2 규제(가중치 제곱합 패널티). 다중공선성 문제 완화</td>
+              <td>계수를 0에 가깝게 축소. 특성 제거 없음</td>
+            </tr>
+            <tr>
+              <td><strong>라쏘 회귀 (Lasso)</strong></td>
+              <td>선형 회귀 + L1 규제(가중치 절댓값 합 패널티). 변수 선택 기능</td>
+              <td>일부 계수를 정확히 0으로 만들어 변수 선택</td>
+            </tr>
+            <tr>
+              <td><strong>엘라스틱넷<br>(ElasticNet)</strong></td>
+              <td>Ridge(L2) + Lasso(L1) 규제를 동시에 적용</td>
+              <td>Ridge와 Lasso의 장점을 결합</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box">
+          <strong>💡 규제(Regularization) 목적</strong><br>
+          규제는 모델이 과적합(Overfitting)되는 것을 방지합니다.<br>
+          <strong>L1(Lasso)</strong>: 일부 변수를 완전히 제거 → 희소 모델, 변수 선택 효과<br>
+          <strong>L2(Ridge)</strong>: 모든 변수의 계수를 줄임 → 안정적, 다중공선성 완화
+        </div>
+
+        <h2 id="classification" class="section-anchor">3. 지도학습 — 분류 알고리즘</h2>
+
+        <div class="algo-grid">
+          <div class="algo-card">
+            <div class="aname">로지스틱 회귀</div>
+            <div class="atype">분류 · 확률 기반</div>
+            이름은 회귀지만 분류 알고리즘. 시그모이드 함수로 0~1 확률 출력. 이진 분류에 주로 사용
+          </div>
+          <div class="algo-card">
+            <div class="aname">결정 트리 (Decision Tree)</div>
+            <div class="atype">분류·회귀 · 트리 기반</div>
+            조건을 트리 형태로 분기하며 분류. 해석 쉬움. 과적합 발생 쉬움. 가지치기(Pruning)로 조절
+          </div>
+          <div class="algo-card">
+            <div class="aname">K-최근접 이웃 (KNN)</div>
+            <div class="atype">분류·회귀 · 인스턴스 기반</div>
+            새 데이터 포인트와 가장 가까운 K개 이웃의 다수결로 분류. K값 선택이 중요. 학습 비용 없음
+          </div>
+          <div class="algo-card">
+            <div class="aname">서포트 벡터 머신 (SVM)</div>
+            <div class="atype">분류·회귀 · 마진 기반</div>
+            클래스를 최대 마진으로 분리하는 초평면 학습. 커널 트릭으로 비선형 분류 가능
+          </div>
+          <div class="algo-card">
+            <div class="aname">나이브 베이즈</div>
+            <div class="atype">분류 · 확률 기반</div>
+            베이즈 정리 기반. 변수 간 독립 가정. 텍스트 분류(스팸 필터)에 효과적. 빠르고 단순
+          </div>
+          <div class="algo-card">
+            <div class="aname">랜덤 포레스트</div>
+            <div class="atype">분류·회귀 · 앙상블</div>
+            여러 결정 트리의 예측을 다수결로 결합. 과적합 방지. 변수 중요도 계산 가능
+          </div>
+        </div>
+
+        <h2 id="unsupervised" class="section-anchor">4. 비지도학습 — 군집·연관분석</h2>
+
+        <h3>군집 분석 (Clustering)</h3>
+        <table class="g-table">
+          <thead><tr><th>알고리즘</th><th>방식</th><th>특징</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>K-Means</strong></td>
+              <td>K개의 중심(센트로이드)을 반복 업데이트하며 군집 형성</td>
+              <td>K 사전 지정 필요. 구형 군집에 적합. 이상치에 민감</td>
+            </tr>
+            <tr>
+              <td><strong>계층적 군집<br>(Hierarchical)</strong></td>
+              <td>거리가 가까운 데이터를 순서대로 병합(병합 방식) 또는 분할(분할 방식)</td>
+              <td>K 사전 지정 불필요. 덴드로그램으로 시각화. 대용량에 느림</td>
+            </tr>
+            <tr>
+              <td><strong>DBSCAN</strong></td>
+              <td>밀도 기반 군집. 밀도가 높은 영역을 군집으로 인식</td>
+              <td>K 사전 지정 불필요. 비구형 군집 가능. 이상치를 노이즈로 분류</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 군집 알고리즘 선택 기준</strong><br>
+          ✔ 군집 수를 미리 알 수 없음 → <strong>계층적 군집</strong> 또는 <strong>DBSCAN</strong><br>
+          ✔ 이상치를 자동으로 처리하고 싶음 → <strong>DBSCAN</strong><br>
+          ✔ 빠르고 단순한 군집이 필요 → <strong>K-Means</strong>
+        </div>
+
+        <h3>연관 분석 (Association Analysis)</h3>
+        <p>데이터에서 함께 자주 발생하는 항목 간의 규칙을 발견합니다. 장바구니 분석이 대표 예입니다.</p>
+
+        <table class="g-table">
+          <thead><tr><th>지표</th><th>공식</th><th>의미</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>지지도 (Support)</strong></td>
+              <td>P(A ∩ B) = A와 B가 함께 등장하는 거래 수 / 전체 거래 수</td>
+              <td>규칙이 전체 데이터에서 얼마나 자주 등장하는가</td>
+            </tr>
+            <tr>
+              <td><strong>신뢰도 (Confidence)</strong></td>
+              <td>P(B|A) = A와 B가 함께 등장 / A가 등장하는 거래 수</td>
+              <td>A를 구매한 경우 B도 구매할 확률</td>
+            </tr>
+            <tr>
+              <td><strong>향상도 (Lift)</strong></td>
+              <td>신뢰도 / P(B)</td>
+              <td>1보다 크면 양의 연관, 1이면 독립, 1보다 작으면 음의 연관</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box">
+          <strong>💡 Apriori 알고리즘</strong><br>
+          연관 규칙 마이닝의 대표 알고리즘. 최소 지지도·신뢰도 기준을 설정하고 그것을 만족하는 항목 집합만 탐색합니다.<br>
+          <strong>핵심 원리</strong>: 빈발 항목 집합의 부분 집합은 반드시 빈발합니다 (Apriori 속성)
+        </div>
+
+        <h3>차원 축소 (Dimensionality Reduction)</h3>
+        <table class="g-table">
+          <thead><tr><th>기법</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>PCA (주성분 분석)</strong></td>
+              <td>데이터의 분산을 최대한 보존하는 새로운 축(주성분)으로 변환하여 차원 축소. 선형 기법</td>
+            </tr>
+            <tr>
+              <td><strong>t-SNE</strong></td>
+              <td>고차원 데이터를 2~3차원으로 시각화. 비선형 기법. 군집 구조 시각화에 효과적</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2 id="ensemble" class="section-anchor">5. 앙상블 학습</h2>
+        <p>여러 모델의 예측을 결합하여 단일 모델보다 더 좋은 성능을 내는 방법입니다.</p>
+
+        <table class="g-table">
+          <thead><tr><th>방법</th><th>설명</th><th>대표 알고리즘</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>배깅 (Bagging)</strong></td>
+              <td>훈련 데이터를 무작위 복원 샘플링하여 여러 모델 학습 후 다수결/평균으로 결합. 분산 감소</td>
+              <td>랜덤 포레스트</td>
+            </tr>
+            <tr>
+              <td><strong>부스팅 (Boosting)</strong></td>
+              <td>이전 모델이 틀린 데이터에 더 가중치를 두어 순차적으로 모델 학습. 편향 감소</td>
+              <td>AdaBoost, GBM, XGBoost, LightGBM</td>
+            </tr>
+            <tr>
+              <td><strong>스태킹 (Stacking)</strong></td>
+              <td>여러 모델의 예측을 입력으로 받는 메타 모델로 최종 예측. 가장 복잡</td>
+              <td>다양한 모델 조합</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 앙상블 빈출 포인트</strong><br>
+          ✔ "병렬로 여러 모델을 학습하는 앙상블 방법은?" → <strong>배깅 (Bagging)</strong><br>
+          ✔ "순차적으로 이전 모델의 오류를 보완하는 앙상블은?" → <strong>부스팅 (Boosting)</strong><br>
+          ✔ "배깅의 대표 알고리즘은?" → <strong>랜덤 포레스트</strong><br>
+          ✔ "부스팅의 대표 알고리즘은?" → <strong>XGBoost, LightGBM</strong>
+        </div>
+
+        <h2 id="deeplearning" class="section-anchor">6. 딥러닝 기초 개념</h2>
+
+        <table class="g-table">
+          <thead><tr><th>개념</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>인공 신경망 (ANN)</strong></td><td>인간 뇌의 뉴런을 모방한 모델. 입력층·은닉층·출력층으로 구성</td></tr>
+            <tr><td><strong>활성화 함수</strong></td><td>뉴런의 출력을 결정하는 함수. ReLU(주로 사용), Sigmoid, Tanh</td></tr>
+            <tr><td><strong>역전파 (Backpropagation)</strong></td><td>출력 오류를 역방향으로 전파하며 가중치를 업데이트. 경사하강법 사용</td></tr>
+            <tr><td><strong>CNN (합성곱 신경망)</strong></td><td>이미지 인식에 특화. 합성곱·풀링 레이어로 특징 추출</td></tr>
+            <tr><td><strong>RNN (순환 신경망)</strong></td><td>순차 데이터(시계열, 텍스트) 처리에 특화. 이전 상태를 기억</td></tr>
+            <tr><td><strong>LSTM</strong></td><td>RNN의 장기 의존성 문제(기울기 소실) 개선. 게이트 구조로 정보 선택적 기억</td></tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box">
+          <strong>💡 딥러닝 모델 선택 가이드</strong><br>
+          <strong>이미지 분류·인식</strong> → CNN<br>
+          <strong>텍스트·시계열·음성</strong> → RNN, LSTM, Transformer<br>
+          <strong>일반 분류·회귀</strong> → MLP(다층 퍼셉트론)
+        </div>
+
+        <div class="callout">
+          <strong>📚 3과목 고득점 전략</strong><br><br>
+          <strong>① 지도학습(회귀·분류)과 비지도학습(군집·연관)을 먼저 구분하고, 각 범주의 대표 알고리즘을 정리하세요.</strong><br><br>
+          <strong>② 각 알고리즘의 "어떤 문제에 쓰는가"와 "핵심 특징 1~2가지"를 키워드로 암기하세요.</strong> 전체 수식을 외울 필요는 없습니다.<br><br>
+          <strong>③ 앙상블의 배깅 vs 부스팅 차이(병렬 vs 순차)는 자주 출제됩니다.</strong><br><br>
+          <strong>④ 연관 분석의 지지도·신뢰도·향상도 공식과 의미를 암기하세요.</strong> 계산 문제로도 나옵니다.
+        </div>
+
+        <div class="tip-box">
+          <strong>🔗 함께 보면 좋은 글</strong><br>
+          · <a href="/posts/bigdata-subject2-exploration.html">빅데이터 분석기사 필기 2과목 — 빅데이터 탐색</a><br>
+          · <a href="/posts/bigdata-subject4-interpretation.html">빅데이터 분석기사 필기 4과목 — 빅데이터 결과 해석</a>
+        </div>
+      </div>
+
+  <ins class="adsbygoogle ad-post-bottom" style="display:block" data-ad-client="ca-pub-5414405329595188" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </article>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p>© 2026 매일이슈. 매일 조금씩, 더 나은 내일.</p>
+      <nav class="footer-nav"><a href="/about.html">소개</a><a href="/privacy.html">개인정보처리방침</a><a href="/terms.html">이용약관</a></nav>
+    </div>
+  </footer>
+  <script src="../main.js"></script>
+</body>
+</html>

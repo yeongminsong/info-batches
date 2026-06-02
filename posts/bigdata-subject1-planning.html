@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CG5VPJWVEQ"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-CG5VPJWVEQ');</script>
+  <meta charset="UTF-8"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#6891f8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>빅데이터 분석기사 필기 1과목 빅데이터 분석 기획 핵심 요약 — 3V·방법론·하둡·NoSQL — 매일이슈</title>
+  <meta name="description" content="빅데이터 분석기사 필기 1과목 빅데이터 분석 기획 핵심 요약. 빅데이터 3V·5V, 분석 방법론, 하둡·스파크·NoSQL, 데이터 거버넌스까지 시험에 나오는 것만 정리했습니다.">
+  <meta property="og:title" content="빅데이터 분석기사 필기 1과목 빅데이터 분석 기획 핵심 요약 — 매일이슈">
+  <meta property="og:description" content="빅데이터 3V·5V, 분석 방법론, 하둡·스파크·NoSQL, 데이터 거버넌스까지 필기 1과목 핵심만 정리.">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=1200&h=630&fit=crop">
+  <meta property="og:url" content="https://mailissue.co.kr/posts/bigdata-subject1-planning.html">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="매일이슈">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
+  <link rel="canonical" href="https://mailissue.co.kr/posts/bigdata-subject1-planning.html">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"빅데이터 분석기사 필기 1과목 빅데이터 분석 기획 핵심 요약","description":"빅데이터 3V·5V, 분석 방법론, 하둡·스파크·NoSQL, 데이터 거버넌스까지 필기 1과목 핵심만 정리.","image":"https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=1200&h=630&fit=crop","url":"https://mailissue.co.kr/posts/bigdata-subject1-planning.html","datePublished":"2026-06-02","dateModified":"2026-06-02","author":{"@type":"Organization","name":"매일이슈"},"publisher":{"@type":"Organization","name":"매일이슈","url":"https://mailissue.co.kr"}}</script>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
+  <link href="../style.css" rel="stylesheet">
+  <meta name="google-adsense-account" content="ca-pub-5414405329595188">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5414405329595188" crossorigin="anonymous"></script>
+  <style>
+    .g-table{width:100%;border-collapse:collapse;margin:1.2rem 0;font-size:.93rem}
+    .g-table th{background:var(--primary,#6891f8);color:#fff;padding:.6rem 1rem;text-align:left;font-weight:600}
+    .g-table td{padding:.55rem 1rem;border-bottom:1px solid var(--border,#e3e6ea);vertical-align:top}
+    .g-table tr:nth-child(even) td{background:var(--bg-gray,#f7f8fc)}
+    .exam-box{background:#fff8e1;border-left:4px solid #ffc107;border-radius:0 .5rem .5rem 0;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.7}
+    .exam-box strong{color:#e65100}
+    .tip-box{background:#e8f5e9;border-left:4px solid #43a047;border-radius:0 .5rem .5rem 0;padding:1rem 1.2rem;margin:1.2rem 0;font-size:.95rem;line-height:1.7}
+    .tip-box strong{color:#1b5e20}
+    .toc-box{background:var(--bg-gray,#f7f8fc);border:1px solid var(--border,#e3e6ea);border-radius:.75rem;padding:1rem 1.4rem;margin:1.5rem 0;font-size:.93rem}
+    .toc-box ol{margin:.5rem 0 0;padding-left:1.4rem}
+    .toc-box li{margin:.3rem 0}
+    .toc-box a{color:#6891f8;text-decoration:none}
+    .section-anchor{scroll-margin-top:80px}
+    .nav-links{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.5rem 0}
+    .nav-links a{background:var(--bg-gray,#f7f8fc);border:1px solid var(--border,#e3e6ea);border-radius:.5rem;padding:.4rem .9rem;font-size:.88rem;color:#6891f8;text-decoration:none}
+    .v-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.75rem;margin:1rem 0}
+    .v-card{border:2px solid #6891f8;border-radius:.65rem;padding:.8rem 1rem;text-align:center}
+    .v-card .v-title{font-weight:700;color:#6891f8;font-size:1.05rem}
+    .v-card .v-eng{font-size:.8rem;color:#888;margin:.2rem 0}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/index.html" class="logo">매일이슈</a>
+      <nav class="nav"><a href="/index.html">홈</a><a href="/category.html">카테고리</a><a href="/tags.html">태그</a><a href="/about.html">소개</a></nav>
+      <div class="header-actions"><button class="theme-toggle" id="themeToggle" aria-label="테마 전환">🌙</button></div>
+    </div>
+  </header>
+
+  <div class="post-hero-img" style="background-image:url('https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=1400&h=500&fit=crop&auto=format');"></div>
+
+  <div class="post-wrapper">
+    <a href="/index.html" class="post-back">← 목록으로</a>
+    <article class="post-article">
+      <header class="post-header">
+        <div class="post-tags"><span class="tag">빅데이터분석기사</span><span class="tag">필기</span><span class="tag">1과목</span></div>
+        <h1 class="post-h1">빅데이터 분석기사 필기 1과목 — 빅데이터 분석 기획 핵심 요약</h1>
+        <div class="post-meta"><span>📅 2026. 06. 02</span><span>⏱ 18분 읽기</span></div>
+      </header>
+
+      <div class="post-content">
+  <ins class="adsbygoogle ad-post-top" style="display:block" data-ad-client="ca-pub-5414405329595188" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+        <p>빅데이터 분석기사 필기 1과목 <strong>빅데이터 분석 기획</strong>은 빅데이터의 개념·특성·기술 생태계와 분석 방법론·계획을 다룹니다. 암기 비중이 높고 기술 용어가 많지만 출제 패턴이 일정해서 정리만 잘 되어 있으면 고득점이 가능합니다.</p>
+
+        <div class="toc-box">
+          <strong>📋 목차</strong>
+          <ol>
+            <li><a href="#bigdata-concept">빅데이터의 이해 — 3V와 5V</a></li>
+            <li><a href="#methodology">데이터 분석 방법론</a></li>
+            <li><a href="#collection">데이터 수집·저장 기술</a></li>
+            <li><a href="#infra">빅데이터 처리 인프라</a></li>
+            <li><a href="#governance">데이터 거버넌스</a></li>
+          </ol>
+        </div>
+
+        <div class="nav-links">
+          <span style="font-size:.85rem;color:#888;align-self:center;">필기 과목 →</span>
+          <a href="/posts/bigdata-subject1-planning.html">1과목</a>
+          <a href="/posts/bigdata-subject2-exploration.html">2과목</a>
+          <a href="/posts/bigdata-subject3-modeling.html">3과목</a>
+          <a href="/posts/bigdata-subject4-interpretation.html">4과목</a>
+        </div>
+
+        <h2 id="bigdata-concept" class="section-anchor">1. 빅데이터의 이해 — 3V와 5V</h2>
+
+        <h3>빅데이터 3V (기본 특성)</h3>
+        <div class="v-cards">
+          <div class="v-card">
+            <div class="v-title">Volume</div>
+            <div class="v-eng">규모</div>
+            데이터의 양이 기존과 비교할 수 없을 만큼 방대함. TB·PB 단위
+          </div>
+          <div class="v-card">
+            <div class="v-title">Variety</div>
+            <div class="v-eng">다양성</div>
+            정형·반정형·비정형 데이터가 혼재. 텍스트·영상·음성·로그 등
+          </div>
+          <div class="v-card">
+            <div class="v-title">Velocity</div>
+            <div class="v-eng">속도</div>
+            데이터가 생성·수집·처리되는 속도가 매우 빠름. 실시간 처리 요구
+          </div>
+        </div>
+
+        <h3>빅데이터 5V (확장 특성)</h3>
+        <table class="g-table">
+          <thead><tr><th>특성</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Volume (규모)</strong></td><td>방대한 데이터 양</td></tr>
+            <tr><td><strong>Variety (다양성)</strong></td><td>정형·비정형 등 다양한 데이터 유형</td></tr>
+            <tr><td><strong>Velocity (속도)</strong></td><td>빠른 생성 및 처리 속도</td></tr>
+            <tr><td><strong>Veracity (정확성)</strong></td><td>데이터의 신뢰성·정확성. 노이즈와 불확실성 관리</td></tr>
+            <tr><td><strong>Value (가치)</strong></td><td>데이터에서 추출하는 비즈니스 가치</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 빈출 포인트</strong><br>
+          ✔ "빅데이터의 기본 3가지 특성은?" → <strong>Volume·Variety·Velocity</strong><br>
+          ✔ "빅데이터의 5V 중 데이터의 신뢰성과 관련된 특성은?" → <strong>Veracity</strong><br>
+          ✔ 데이터 유형: <strong>정형</strong>(DB 테이블), <strong>반정형</strong>(JSON·XML·HTML), <strong>비정형</strong>(텍스트·영상·음성)
+        </div>
+
+        <h3>데이터 유형 분류</h3>
+        <table class="g-table">
+          <thead><tr><th>유형</th><th>특징</th><th>예시</th></tr></thead>
+          <tbody>
+            <tr><td><strong>정형 데이터</strong></td><td>행과 열로 구성된 스키마 고정 데이터. SQL로 처리</td><td>관계형 DB, 엑셀, CSV</td></tr>
+            <tr><td><strong>반정형 데이터</strong></td><td>스키마가 있지만 유연함. 태그·마커로 구조 표현</td><td>JSON, XML, HTML, 로그 파일</td></tr>
+            <tr><td><strong>비정형 데이터</strong></td><td>정해진 형식 없음. 전체 데이터의 약 80% 차지</td><td>SNS 텍스트, 이미지, 동영상, 음성</td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="methodology" class="section-anchor">2. 데이터 분석 방법론</h2>
+
+        <h3>KDD (Knowledge Discovery in Databases)</h3>
+        <p>데이터베이스에서 지식을 발견하는 과정입니다. 순서를 외우는 것이 핵심입니다.</p>
+        <table class="g-table">
+          <thead><tr><th>단계</th><th>활동</th></tr></thead>
+          <tbody>
+            <tr><td><strong>① 선택 (Selection)</strong></td><td>분석 목적에 맞는 데이터를 원본 데이터에서 선택</td></tr>
+            <tr><td><strong>② 전처리 (Preprocessing)</strong></td><td>결측치·이상치 처리, 노이즈 제거</td></tr>
+            <tr><td><strong>③ 변환 (Transformation)</strong></td><td>분석에 적합한 형태로 데이터 변환·통합</td></tr>
+            <tr><td><strong>④ 데이터 마이닝 (Data Mining)</strong></td><td>알고리즘 적용으로 패턴·규칙·모델 발견</td></tr>
+            <tr><td><strong>⑤ 해석·평가 (Interpretation/Evaluation)</strong></td><td>발견된 패턴을 평가하고 지식으로 표현</td></tr>
+          </tbody>
+        </table>
+
+        <h3>CRISP-DM (Cross Industry Standard Process for Data Mining)</h3>
+        <p>산업 표준 데이터 마이닝 프로세스입니다. KDD보다 실무적인 관점의 방법론이에요.</p>
+        <table class="g-table">
+          <thead><tr><th>단계</th><th>활동</th></tr></thead>
+          <tbody>
+            <tr><td><strong>① 업무 이해 (Business Understanding)</strong></td><td>비즈니스 목표 파악, 분석 목표 정의</td></tr>
+            <tr><td><strong>② 데이터 이해 (Data Understanding)</strong></td><td>데이터 수집, 탐색적 분석, 품질 평가</td></tr>
+            <tr><td><strong>③ 데이터 준비 (Data Preparation)</strong></td><td>전처리, 변수 선택, 데이터 변환</td></tr>
+            <tr><td><strong>④ 모델링 (Modeling)</strong></td><td>분석 기법 선택, 모델 학습</td></tr>
+            <tr><td><strong>⑤ 평가 (Evaluation)</strong></td><td>모델 성능 평가, 업무 목표 충족 여부 확인</td></tr>
+            <tr><td><strong>⑥ 전개 (Deployment)</strong></td><td>모델 배포, 모니터링, 최종 보고</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 KDD vs CRISP-DM 빈출 포인트</strong><br>
+          ✔ KDD 5단계: <strong>선택→전처리→변환→데이터마이닝→해석·평가</strong><br>
+          ✔ CRISP-DM 6단계: <strong>업무이해→데이터이해→데이터준비→모델링→평가→전개</strong><br>
+          ✔ CRISP-DM의 특징: 단계 간 피드백 루프 존재. 비선형적 반복 가능
+        </div>
+
+        <h3>분석 방법 — 목적에 따른 분류</h3>
+        <table class="g-table">
+          <thead><tr><th>분류</th><th>목적</th><th>예시</th></tr></thead>
+          <tbody>
+            <tr><td><strong>기술 분석 (Descriptive)</strong></td><td>과거 데이터를 요약·기술. "무슨 일이 있었나?"</td><td>매출 현황 리포트, 평균·분산 계산</td></tr>
+            <tr><td><strong>진단 분석 (Diagnostic)</strong></td><td>원인 파악. "왜 그런 일이 있었나?"</td><td>매출 감소 원인 분석</td></tr>
+            <tr><td><strong>예측 분석 (Predictive)</strong></td><td>미래 예측. "앞으로 어떻게 될 것인가?"</td><td>이탈 고객 예측, 수요 예측</td></tr>
+            <tr><td><strong>처방 분석 (Prescriptive)</strong></td><td>최적 행동 제안. "어떻게 해야 하나?"</td><td>추천 시스템, 최적화 알고리즘</td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="collection" class="section-anchor">3. 데이터 수집·저장 기술</h2>
+
+        <h3>데이터 수집 방식</h3>
+        <table class="g-table">
+          <thead><tr><th>방식</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>크롤링 (Crawling)</strong></td><td>웹 페이지를 자동으로 탐색하며 데이터 수집. 구조화되지 않은 웹 데이터 수집</td></tr>
+            <tr><td><strong>API 수집</strong></td><td>공개 API(SNS, 공공 데이터 등)를 통해 정형화된 데이터 수집. JSON 형태</td></tr>
+            <tr><td><strong>로그 수집</strong></td><td>서버·애플리케이션의 로그 파일을 실시간으로 수집. Fluentd, Logstash</td></tr>
+            <tr><td><strong>스트리밍 수집</strong></td><td>실시간 데이터를 연속으로 수집·처리. Apache Kafka, Spark Streaming</td></tr>
+          </tbody>
+        </table>
+
+        <h3>NoSQL 데이터베이스</h3>
+        <p>빅데이터 저장에 특화된 비관계형 데이터베이스입니다. 스키마가 유연하고 수평 확장이 용이해요.</p>
+        <table class="g-table">
+          <thead><tr><th>유형</th><th>특징</th><th>대표 제품</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Key-Value 저장소</strong></td><td>키-값 쌍으로 저장. 단순하고 빠름. 캐싱에 적합</td><td>Redis, DynamoDB</td></tr>
+            <tr><td><strong>문서형 DB</strong></td><td>JSON·BSON 형태의 문서 저장. 유연한 스키마</td><td>MongoDB, CouchDB</td></tr>
+            <tr><td><strong>컬럼형 DB</strong></td><td>컬럼 단위로 데이터 저장. 대용량 분석에 최적화</td><td>HBase, Cassandra</td></tr>
+            <tr><td><strong>그래프 DB</strong></td><td>노드-엣지 구조. 관계 중심 데이터에 최적</td><td>Neo4j</td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="infra" class="section-anchor">4. 빅데이터 처리 인프라</h2>
+
+        <h3>하둡 (Hadoop) 에코시스템</h3>
+        <table class="g-table">
+          <thead><tr><th>구성 요소</th><th>역할</th></tr></thead>
+          <tbody>
+            <tr><td><strong>HDFS (Hadoop Distributed File System)</strong></td><td>대용량 파일을 블록 단위로 분산 저장. 복제(기본 3개)로 내고장성 보장</td></tr>
+            <tr><td><strong>MapReduce</strong></td><td>분산 처리 프레임워크. Map(분류)→Shuffle→Reduce(집계) 단계</td></tr>
+            <tr><td><strong>YARN</strong></td><td>클러스터 자원 관리 및 작업 스케줄링. Hadoop 2.0부터 도입</td></tr>
+            <tr><td><strong>Hive</strong></td><td>SQL과 유사한 HiveQL로 HDFS 데이터를 쿼리. 배치 분석</td></tr>
+            <tr><td><strong>HBase</strong></td><td>HDFS 위에 구축된 컬럼형 NoSQL DB. 실시간 읽기·쓰기</td></tr>
+            <tr><td><strong>Sqoop</strong></td><td>관계형 DB와 Hadoop 간 데이터 전송 도구</td></tr>
+            <tr><td><strong>Flume</strong></td><td>로그 데이터를 실시간으로 수집해 HDFS에 저장</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Apache Spark</h3>
+        <p>Hadoop MapReduce의 단점(디스크 I/O 빈번)을 개선한 인메모리(In-Memory) 분산 처리 프레임워크입니다.</p>
+        <table class="g-table">
+          <thead><tr><th>특징</th><th>내용</th></tr></thead>
+          <tbody>
+            <tr><td><strong>처리 속도</strong></td><td>메모리 내 처리로 Hadoop MapReduce 대비 최대 100배 빠름</td></tr>
+            <tr><td><strong>핵심 구조</strong></td><td>RDD(Resilient Distributed Dataset) — 불변·분산 데이터 컬렉션</td></tr>
+            <tr><td><strong>언어 지원</strong></td><td>Scala(기본), Python(PySpark), Java, R</td></tr>
+            <tr><td><strong>구성 요소</strong></td><td>Spark SQL, Spark Streaming, MLlib(머신러닝), GraphX</td></tr>
+            <tr><td><strong>처리 방식</strong></td><td>배치 처리 + 실시간 스트리밍 모두 지원</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 하둡 vs 스파크 빈출 비교</strong><br>
+          ✔ 하둡: 디스크 기반, MapReduce, 배치 처리 중심<br>
+          ✔ 스파크: <strong>메모리 기반</strong>, RDD, 배치+실시간 모두 처리<br>
+          ✔ "하둡보다 최대 100배 빠른 인메모리 분산 처리 프레임워크는?" → <strong>Apache Spark</strong>
+        </div>
+
+        <h3>데이터 웨어하우스 vs 데이터 레이크</h3>
+        <table class="g-table">
+          <thead><tr><th>항목</th><th>데이터 웨어하우스</th><th>데이터 레이크</th></tr></thead>
+          <tbody>
+            <tr><td>데이터 형태</td><td>정형 데이터 (정제·구조화)</td><td>원시 데이터 (정형·비정형 모두)</td></tr>
+            <tr><td>스키마</td><td>저장 전 스키마 정의 (Schema-on-Write)</td><td>조회 시 스키마 정의 (Schema-on-Read)</td></tr>
+            <tr><td>비용</td><td>높음</td><td>낮음 (저렴한 스토리지)</td></tr>
+            <tr><td>사용자</td><td>비즈니스 분석가</td><td>데이터 과학자, 엔지니어</td></tr>
+            <tr><td>대표 예</td><td>Oracle DW, AWS Redshift</td><td>AWS S3, Azure Data Lake</td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="governance" class="section-anchor">5. 데이터 거버넌스</h2>
+        <p>데이터 거버넌스는 조직 내 데이터를 체계적으로 관리·활용하기 위한 원칙·정책·프로세스의 총체입니다.</p>
+
+        <table class="g-table">
+          <thead><tr><th>구성 요소</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>데이터 품질 관리</strong></td><td>데이터의 정확성·완전성·일관성·시의성을 확보하는 활동</td></tr>
+            <tr><td><strong>메타데이터 관리</strong></td><td>데이터에 대한 데이터(데이터의 의미·출처·형식·관계 등) 관리</td></tr>
+            <tr><td><strong>데이터 표준화</strong></td><td>조직 전반의 데이터 형식·용어·코드를 일관되게 정의</td></tr>
+            <tr><td><strong>데이터 보안·프라이버시</strong></td><td>개인정보 보호, 접근 권한 통제, 데이터 유출 방지</td></tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box">
+          <strong>💡 개인정보 비식별화 기법</strong><br>
+          <strong>가명 처리</strong>: 이름 대신 가명 사용 (홍길동 → A 씨)<br>
+          <strong>총계 처리</strong>: 개인 데이터를 집계값으로 대체 (개별 급여 → 평균 급여)<br>
+          <strong>데이터 마스킹</strong>: 일부 정보를 '*'으로 대체 (010-1234-***)<br>
+          <strong>데이터 범주화</strong>: 정확한 값 대신 범주로 표현 (나이 35 → 30대)
+        </div>
+
+        <div class="callout">
+          <strong>📚 1과목 고득점 전략</strong><br><br>
+          <strong>① 빅데이터 3V와 5V는 영문 용어까지 완벽히 외우세요.</strong> Veracity(정확성)와 Value(가치)는 자주 틀리는 부분입니다.<br><br>
+          <strong>② KDD 5단계와 CRISP-DM 6단계 순서를 각각 외우고 서로 어떻게 다른지 비교해두세요.</strong><br><br>
+          <strong>③ 하둡과 스파크의 핵심 차이(디스크 vs 메모리)와 구성 요소를 표로 정리해두면 관련 문제를 쉽게 풀 수 있습니다.</strong><br><br>
+          <strong>④ NoSQL 4가지 유형(Key-Value·문서·컬럼·그래프)과 대표 제품은 세트로 암기하세요.</strong>
+        </div>
+
+        <div class="tip-box">
+          <strong>🔗 함께 보면 좋은 글</strong><br>
+          · <a href="/posts/bigdata-exam-overview.html">빅데이터 분석기사 시험 완벽 가이드</a><br>
+          · <a href="/posts/bigdata-subject2-exploration.html">빅데이터 분석기사 필기 2과목 — 빅데이터 탐색</a><br>
+          · <a href="/posts/gisa-subject3-database.html">정보처리기사 필기 3과목 — 데이터베이스 구축</a>
+        </div>
+      </div>
+
+  <ins class="adsbygoogle ad-post-bottom" style="display:block" data-ad-client="ca-pub-5414405329595188" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </article>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p>© 2026 매일이슈. 매일 조금씩, 더 나은 내일.</p>
+      <nav class="footer-nav"><a href="/about.html">소개</a><a href="/privacy.html">개인정보처리방침</a><a href="/terms.html">이용약관</a></nav>
+    </div>
+  </footer>
+  <script src="../main.js"></script>
+</body>
+</html>
