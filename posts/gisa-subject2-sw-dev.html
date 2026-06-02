@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CG5VPJWVEQ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CG5VPJWVEQ');
+  </script>
+  <meta charset="UTF-8"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#6891f8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>정보처리기사 필기 2과목 소프트웨어 개발 핵심 요약 — 테스트·버전관리·패키징·클린코드 — 매일이슈</title>
+  <meta name="description" content="정보처리기사 필기 2과목 소프트웨어 개발 핵심 요약. 테스트 종류와 커버리지, 형상 관리(Git/SVN), 제품 패키징, 클린코드와 리팩토링, 애플리케이션 성능까지 시험에 나오는 것만 정리.">
+  <meta property="og:title" content="정보처리기사 필기 2과목 소프트웨어 개발 핵심 요약 — 매일이슈">
+  <meta property="og:description" content="테스트 종류와 커버리지, 형상 관리, 제품 패키징, 클린코드까지 필기 2과목 핵심만 정리.">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&h=630&fit=crop">
+  <meta property="og:url" content="https://mailissue.co.kr/posts/gisa-subject2-sw-dev.html">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="매일이슈">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
+  <link rel="canonical" href="https://mailissue.co.kr/posts/gisa-subject2-sw-dev.html">
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "정보처리기사 필기 2과목 소프트웨어 개발 핵심 요약",
+    "description": "테스트 종류와 커버리지, 형상 관리, 제품 패키징, 클린코드까지 필기 2과목 핵심만 정리.",
+    "image": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&h=630&fit=crop",
+    "url": "https://mailissue.co.kr/posts/gisa-subject2-sw-dev.html",
+    "datePublished": "2026-06-02",
+    "dateModified": "2026-06-02",
+    "author": {"@type": "Organization", "name": "매일이슈"},
+    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://mailissue.co.kr"}
+  }</script>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
+  <link href="../style.css" rel="stylesheet">
+  <meta name="google-adsense-account" content="ca-pub-5414405329595188">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5414405329595188" crossorigin="anonymous"></script>
+  <style>
+    .g-table { width:100%; border-collapse:collapse; margin:1.2rem 0; font-size:0.93rem; }
+    .g-table th { background:var(--primary,#6891f8); color:#fff; padding:0.6rem 1rem; text-align:left; font-weight:600; }
+    .g-table td { padding:0.55rem 1rem; border-bottom:1px solid var(--border,#e3e6ea); vertical-align:top; }
+    .g-table tr:nth-child(even) td { background:var(--bg-gray,#f7f8fc); }
+    .exam-box { background:#fff8e1; border-left:4px solid #ffc107; border-radius:0 0.5rem 0.5rem 0; padding:1rem 1.2rem; margin:1.2rem 0; font-size:0.95rem; line-height:1.7; }
+    .exam-box strong { color:#e65100; }
+    .tip-box { background:#e8f5e9; border-left:4px solid #43a047; border-radius:0 0.5rem 0.5rem 0; padding:1rem 1.2rem; margin:1.2rem 0; font-size:0.95rem; line-height:1.7; }
+    .tip-box strong { color:#1b5e20; }
+    .toc-box { background:var(--bg-gray,#f7f8fc); border:1px solid var(--border,#e3e6ea); border-radius:0.75rem; padding:1rem 1.4rem; margin:1.5rem 0; font-size:0.93rem; }
+    .toc-box ol { margin:0.5rem 0 0; padding-left:1.4rem; }
+    .toc-box li { margin:0.3rem 0; }
+    .toc-box a { color:#6891f8; text-decoration:none; }
+    .section-anchor { scroll-margin-top:80px; }
+    .nav-links { display:flex; flex-wrap:wrap; gap:0.5rem; margin:1.5rem 0; }
+    .nav-links a { background:var(--bg-gray,#f7f8fc); border:1px solid var(--border,#e3e6ea); border-radius:0.5rem; padding:0.4rem 0.9rem; font-size:0.88rem; color:#6891f8; text-decoration:none; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/index.html" class="logo">매일이슈</a>
+      <nav class="nav">
+        <a href="/index.html">홈</a>
+        <a href="/category.html">카테고리</a>
+        <a href="/tags.html">태그</a>
+        <a href="/about.html">소개</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="테마 전환">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="post-hero-img" style="background-image:url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1400&h=500&fit=crop&auto=format');"></div>
+
+  <div class="post-wrapper">
+    <a href="/index.html" class="post-back">← 목록으로</a>
+    <article class="post-article">
+      <header class="post-header">
+        <div class="post-tags">
+          <span class="tag">정보처리기사</span>
+          <span class="tag">필기</span>
+          <span class="tag">2과목</span>
+          <span class="tag">소프트웨어개발</span>
+        </div>
+        <h1 class="post-h1">정보처리기사 필기 2과목 — 소프트웨어 개발 핵심 요약</h1>
+        <div class="post-meta">
+          <span>📅 2026. 06. 02</span>
+          <span>⏱ 18분 읽기</span>
+        </div>
+      </header>
+
+      <div class="post-content">
+  <ins class="adsbygoogle ad-post-top" style="display:block" data-ad-client="ca-pub-5414405329595188" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+        <p>정보처리기사 필기 2과목 <strong>소프트웨어 개발</strong>은 실제로 코드를 만들고 검증하는 전 과정을 다룹니다. 테스트 기법, 형상 관리(Git), 클린코드, 패키징까지 실무와 직결되는 내용이 많아서 이해하면 외우기 쉬운 과목입니다.</p>
+
+        <div class="toc-box">
+          <strong>📋 목차</strong>
+          <ol>
+            <li><a href="#test">소프트웨어 테스트</a></li>
+            <li><a href="#coverage">테스트 커버리지</a></li>
+            <li><a href="#config">형상 관리</a></li>
+            <li><a href="#clean">클린코드와 리팩토링</a></li>
+            <li><a href="#packaging">제품 소프트웨어 패키징</a></li>
+            <li><a href="#performance">애플리케이션 성능</a></li>
+          </ol>
+        </div>
+
+        <div class="nav-links">
+          <span style="font-size:0.85rem;color:#888;align-self:center;">필기 과목 바로가기 →</span>
+          <a href="/posts/gisa-subject1-sw-design.html">1과목</a>
+          <a href="/posts/gisa-subject2-sw-dev.html">2과목</a>
+          <a href="/posts/gisa-subject3-database.html">3과목</a>
+          <a href="/posts/gisa-subject4-programming.html">4과목</a>
+          <a href="/posts/gisa-subject5-system-mgmt.html">5과목</a>
+        </div>
+
+        <h2 id="test" class="section-anchor">1. 소프트웨어 테스트</h2>
+
+        <h3>테스트의 기본 원칙 7가지</h3>
+        <table class="g-table">
+          <thead><tr><th>원칙</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>결함 존재 증명</strong></td><td>테스트는 결함이 있음을 보여주는 것. 결함이 없음을 증명할 수 없음</td></tr>
+            <tr><td><strong>완벽 테스트 불가능</strong></td><td>무한한 경우의 수로 완전한 테스트는 불가능</td></tr>
+            <tr><td><strong>조기 테스트</strong></td><td>개발 초기부터 테스트 시작. 결함은 초기에 발견할수록 수정 비용 낮음</td></tr>
+            <tr><td><strong>결함 집중(파레토 법칙)</strong></td><td>결함의 80%는 전체 모듈의 20%에 집중되어 있음</td></tr>
+            <tr><td><strong>살충제 역설</strong></td><td>동일한 테스트를 반복하면 새 결함 발견 능력이 떨어짐 → 주기적으로 테스트 케이스를 변경해야 함</td></tr>
+            <tr><td><strong>테스트는 정황에 의존</strong></td><td>소프트웨어 특성에 따라 테스트 방식이 달라짐</td></tr>
+            <tr><td><strong>오류 부재의 궤변</strong></td><td>결함이 없어도 사용자 요구사항을 충족하지 못하면 좋은 소프트웨어가 아님</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 빈출 포인트</strong><br>
+          ✔ "같은 테스트를 반복하면 결함 발견 능력이 저하되는 현상은?" → <strong>살충제 역설</strong><br>
+          ✔ "결함의 80%가 20% 모듈에 집중된다는 원칙은?" → <strong>결함 집중(파레토 법칙)</strong>
+        </div>
+
+        <h3>화이트박스 vs 블랙박스 테스트</h3>
+        <table class="g-table">
+          <thead><tr><th>구분</th><th>화이트박스</th><th>블랙박스</th></tr></thead>
+          <tbody>
+            <tr><td>관점</td><td>내부 코드 구조를 알고 테스트</td><td>내부 구조를 모르고 입출력만 테스트</td></tr>
+            <tr><td>기법</td><td>구문·결정·조건·경로 커버리지</td><td>동치 분할, 경계값 분석, 원인-결과 그래프</td></tr>
+            <tr><td>수행자</td><td>주로 개발자</td><td>주로 QA/사용자</td></tr>
+          </tbody>
+        </table>
+
+        <h3>테스트 단계</h3>
+        <table class="g-table">
+          <thead><tr><th>단계</th><th>대상</th><th>방법</th></tr></thead>
+          <tbody>
+            <tr><td><strong>단위 테스트</strong></td><td>개별 모듈·함수</td><td>화이트박스 위주. 드라이버/스텁 사용</td></tr>
+            <tr><td><strong>통합 테스트</strong></td><td>모듈 결합 인터페이스</td><td>상향식(드라이버), 하향식(스텁), 빅뱅</td></tr>
+            <tr><td><strong>시스템 테스트</strong></td><td>완성된 전체 시스템</td><td>기능·비기능 요구사항 검증</td></tr>
+            <tr><td><strong>인수 테스트</strong></td><td>사용자 관점</td><td>알파(내부), 베타(외부) 테스트</td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="coverage" class="section-anchor">2. 테스트 커버리지</h2>
+        <p>코드가 얼마나 테스트됐는지 나타내는 지표입니다. 강도가 높을수록 더 꼼꼼하게 검사하지만 그만큼 테스트 케이스가 많아집니다.</p>
+
+        <table class="g-table">
+          <thead><tr><th>커버리지</th><th>측정 기준</th><th>강도</th></tr></thead>
+          <tbody>
+            <tr><td><strong>구문(Statement)</strong></td><td>모든 명령문 최소 1회 실행</td><td>★☆☆☆☆</td></tr>
+            <tr><td><strong>결정(Decision/Branch)</strong></td><td>모든 분기의 참·거짓 각 1회 이상</td><td>★★☆☆☆</td></tr>
+            <tr><td><strong>조건(Condition)</strong></td><td>각 조건식의 참·거짓 각 1회 이상</td><td>★★★☆☆</td></tr>
+            <tr><td><strong>조건/결정</strong></td><td>조건 + 결정 커버리지 동시 만족</td><td>★★★★☆</td></tr>
+            <tr><td><strong>변경 조건/결정 (MC/DC)</strong></td><td>각 조건이 독립적으로 결과에 영향. 항공 소프트웨어 표준</td><td>★★★★★</td></tr>
+            <tr><td><strong>다중 조건</strong></td><td>모든 조건 조합 실행. 가장 완전하지만 지수적 증가</td><td>★★★★★+</td></tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box">
+          <strong>💡 커버리지 강도 순서 암기</strong><br>
+          구문 → 결정 → 조건 → 조건/결정 → MC/DC → 다중 조건<br>
+          <em>"구결조조MC다"</em> 로 외우면 편합니다.
+        </div>
+
+        <h2 id="config" class="section-anchor">3. 형상 관리(Configuration Management)</h2>
+
+        <h3>형상 관리 도구 비교</h3>
+        <table class="g-table">
+          <thead><tr><th>도구</th><th>유형</th><th>핵심 특징</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Git</strong></td><td>분산형</td><td>로컬 저장소 보유. 오프라인 작업 가능. 브랜치 전략 유연. 현재 업계 표준</td></tr>
+            <tr><td><strong>SVN (Subversion)</strong></td><td>중앙집중형</td><td>중앙 서버에 이력 저장. 파일·디렉터리 이름 변경 지원. 접근 권한 명확</td></tr>
+            <tr><td><strong>CVS</strong></td><td>중앙집중형</td><td>SVN의 전신. 파일 단위 버전 관리. 디렉터리 이동·이름 변경 불가</td></tr>
+            <tr><td><strong>RCS</strong></td><td>로컬</td><td>로컬 파일 단위 버전 관리. 단일 사용자 환경에서 사용</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Git 주요 명령어 — 필기 출제 포인트</h3>
+        <table class="g-table">
+          <thead><tr><th>명령어</th><th>기능</th></tr></thead>
+          <tbody>
+            <tr><td><code>git init</code></td><td>새 저장소 초기화</td></tr>
+            <tr><td><code>git clone</code></td><td>원격 저장소를 로컬로 복사</td></tr>
+            <tr><td><code>git add</code></td><td>변경 파일을 스테이징 영역에 추가</td></tr>
+            <tr><td><code>git commit</code></td><td>스테이징 영역의 변경사항을 로컬 저장소에 저장</td></tr>
+            <tr><td><code>git push</code></td><td>로컬 커밋을 원격 저장소에 업로드</td></tr>
+            <tr><td><code>git pull</code></td><td>원격 저장소의 변경사항을 로컬에 가져와 병합</td></tr>
+            <tr><td><code>git branch</code></td><td>브랜치 생성·조회</td></tr>
+            <tr><td><code>git merge</code></td><td>브랜치를 현재 브랜치에 병합</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 형상 관리 빈출 문제</strong><br>
+          ✔ "분산형 버전 관리 시스템으로 로컬 저장소를 가지는 도구는?" → <strong>Git</strong><br>
+          ✔ "중앙집중형 버전 관리 시스템으로 Git의 이전 표준은?" → <strong>SVN</strong><br>
+          ✔ 형상 관리 4단계: <strong>형상 식별 → 형상 통제 → 형상 감사 → 형상 기록</strong>
+        </div>
+
+        <h2 id="clean" class="section-anchor">4. 클린코드와 리팩토링</h2>
+
+        <h3>클린코드 작성 원칙</h3>
+        <table class="g-table">
+          <thead><tr><th>원칙</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>가독성</strong></td><td>이해하기 쉽게 코드를 작성. 명확한 네이밍, 들여쓰기 통일</td></tr>
+            <tr><td><strong>단순성</strong></td><td>한 함수는 하나의 기능만 수행. 불필요한 복잡성 제거</td></tr>
+            <tr><td><strong>의존성 최소화</strong></td><td>모듈 간 결합도를 낮추어 변경 영향 최소화</td></tr>
+            <tr><td><strong>중복 제거</strong></td><td>DRY(Don't Repeat Yourself) 원칙. 같은 코드를 여러 곳에 두지 않음</td></tr>
+            <tr><td><strong>추상화</strong></td><td>공통 기능을 함수·클래스로 묶어 세부 구현을 숨김</td></tr>
+          </tbody>
+        </table>
+
+        <h3>리팩토링(Refactoring)</h3>
+        <p>외부 동작은 그대로 유지하면서 내부 코드 구조를 개선하는 작업입니다. 버그를 수정하는 것이 아니라 <strong>코드의 품질을 높이는 것</strong>이 목적입니다.</p>
+
+        <table class="g-table">
+          <thead><tr><th>리팩토링 기법</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>메서드 추출 (Extract Method)</strong></td><td>긴 메서드의 일부를 새 메서드로 분리</td></tr>
+            <tr><td><strong>메서드 이동 (Move Method)</strong></td><td>메서드를 더 적절한 클래스로 이동</td></tr>
+            <tr><td><strong>변수 이름 변경</strong></td><td>의미 없는 변수명을 의미 있는 이름으로 변경 (i → studentCount)</td></tr>
+            <tr><td><strong>중복 코드 제거</strong></td><td>반복되는 코드를 공통 메서드로 추출</td></tr>
+            <tr><td><strong>조건문 분해</strong></td><td>복잡한 조건문을 읽기 쉬운 형태로 분해</td></tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box">
+          <strong>💡 리팩토링 vs 최적화 차이</strong><br>
+          <strong>리팩토링</strong>: 코드 구조 개선 (가독성·유지보수성). 기능 변화 없음<br>
+          <strong>최적화</strong>: 성능 향상 (속도·메모리). 내부 구조 변경<br>
+          둘 다 외부 동작은 동일하게 유지합니다.
+        </div>
+
+        <h3>코드 악취(Code Smell) — 리팩토링이 필요한 신호</h3>
+        <table class="g-table">
+          <thead><tr><th>코드 악취</th><th>증상</th></tr></thead>
+          <tbody>
+            <tr><td><strong>긴 메서드</strong></td><td>하나의 함수가 너무 많은 일을 함 → 메서드 추출 필요</td></tr>
+            <tr><td><strong>중복 코드</strong></td><td>같은 코드가 여러 곳에 반복 → 공통 메서드 추출</td></tr>
+            <tr><td><strong>거대 클래스</strong></td><td>하나의 클래스가 너무 많은 책임 → 클래스 분리</td></tr>
+            <tr><td><strong>긴 파라미터 목록</strong></td><td>함수 파라미터가 4개 이상 → 파라미터 객체 도입</td></tr>
+            <tr><td><strong>산탄총 수술</strong></td><td>하나 바꾸면 여러 클래스를 수정해야 함 → 결합도 높음</td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="packaging" class="section-anchor">5. 제품 소프트웨어 패키징</h2>
+
+        <h3>패키징 관련 개념</h3>
+        <table class="g-table">
+          <thead><tr><th>용어</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>DRM (Digital Rights Management)</strong></td><td>디지털 콘텐츠의 저작권을 보호하는 기술. 무단 복사·배포 방지</td></tr>
+            <tr><td><strong>워터마킹</strong></td><td>콘텐츠에 보이지 않는 저작권 정보를 삽입하는 기술</td></tr>
+            <tr><td><strong>핑거프린팅</strong></td><td>구매자 정보를 콘텐츠에 삽입. 불법 유포 시 유포자 추적 가능</td></tr>
+            <tr><td><strong>패키지 다이어그램</strong></td><td>UML의 구조 다이어그램 중 하나. 모듈·패키지를 그룹화하여 표현</td></tr>
+          </tbody>
+        </table>
+
+        <h3>소프트웨어 버전 관리 전략 (브랜치 전략)</h3>
+        <table class="g-table">
+          <thead><tr><th>브랜치</th><th>역할</th></tr></thead>
+          <tbody>
+            <tr><td><strong>main/master</strong></td><td>배포 가능한 안정적인 코드</td></tr>
+            <tr><td><strong>develop</strong></td><td>개발 통합 브랜치. 기능 브랜치들이 이곳에 병합</td></tr>
+            <tr><td><strong>feature</strong></td><td>기능 개발 브랜치. develop에서 분기, 완료 후 develop에 병합</td></tr>
+            <tr><td><strong>release</strong></td><td>배포 준비 브랜치. 최종 버그 수정 후 main에 병합</td></tr>
+            <tr><td><strong>hotfix</strong></td><td>운영 중 긴급 버그 수정. main에서 직접 분기</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 패키징 빈출 포인트</strong><br>
+          ✔ "디지털 콘텐츠 저작권 보호 기술은?" → <strong>DRM</strong><br>
+          ✔ "콘텐츠에 보이지 않는 저작권 정보를 삽입하는 기술은?" → <strong>워터마킹</strong><br>
+          ✔ "구매자 정보를 삽입하여 불법 유포 추적이 가능한 기술은?" → <strong>핑거프린팅</strong>
+        </div>
+
+        <h2 id="performance" class="section-anchor">6. 애플리케이션 성능</h2>
+
+        <h3>성능 측정 지표</h3>
+        <table class="g-table">
+          <thead><tr><th>지표</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>처리량(Throughput)</strong></td><td>단위 시간에 처리 가능한 트랜잭션 수. 클수록 좋음</td></tr>
+            <tr><td><strong>응답 시간(Response Time)</strong></td><td>요청 후 첫 응답까지 걸리는 시간. 짧을수록 좋음</td></tr>
+            <tr><td><strong>경과 시간(Turnaround Time)</strong></td><td>요청 후 최종 결과 받기까지의 전체 시간</td></tr>
+            <tr><td><strong>자원 사용률(Resource Usage)</strong></td><td>CPU·메모리·디스크·네트워크 사용 비율</td></tr>
+          </tbody>
+        </table>
+
+        <h3>성능 개선 기법</h3>
+        <table class="g-table">
+          <thead><tr><th>기법</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>캐싱(Caching)</strong></td><td>자주 쓰는 데이터를 메모리에 저장하여 DB 접근 최소화</td></tr>
+            <tr><td><strong>DB 인덱싱</strong></td><td>검색 속도 향상을 위해 인덱스(목차)를 생성</td></tr>
+            <tr><td><strong>커넥션 풀(Connection Pool)</strong></td><td>DB 연결을 미리 만들어 두고 재사용. 연결 생성 비용 절감</td></tr>
+            <tr><td><strong>로드 밸런싱</strong></td><td>여러 서버에 요청을 분산하여 부하 균등 처리</td></tr>
+            <tr><td><strong>비동기 처리</strong></td><td>작업 완료를 기다리지 않고 다음 작업을 진행하여 응답 속도 향상</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <strong>📚 2과목 필기 고득점 전략</strong><br><br>
+          <strong>① 테스트 7가지 원칙은 설명을 읽고 해당 원칙 이름을 맞히는 연습이 핵심입니다.</strong> 특히 "살충제 역설"과 "결함 집중"은 매 회차 출제 수준입니다.<br><br>
+          <strong>② 형상 관리 도구의 분산형(Git) vs 중앙집중형(SVN, CVS) 구분을 명확히 하세요.</strong> "오프라인 커밋 가능 = 분산형 = Git"으로 연결하면 됩니다.<br><br>
+          <strong>③ DRM·워터마킹·핑거프린팅의 차이를 표로 정리해두면 헷갈리지 않습니다.</strong><br><br>
+          <strong>④ 커버리지 강도 순서는 반드시 암기하세요.</strong> "구결조조MC다"로 소리 내어 외우는 것이 효과적입니다.
+        </div>
+
+        <div class="tip-box">
+          <strong>🔗 함께 보면 좋은 글</strong><br>
+          · <a href="/posts/gisa-subject1-sw-design.html">정보처리기사 필기 1과목 — 소프트웨어 설계</a><br>
+          · <a href="/posts/gisa-subject3-database.html">정보처리기사 필기 3과목 — 데이터베이스 구축</a><br>
+          · <a href="/posts/gisa-software-engineering.html">정보처리기사 실기 소프트웨어 공학 완전 정복</a>
+        </div>
+      </div>
+
+  <ins class="adsbygoogle ad-post-bottom" style="display:block" data-ad-client="ca-pub-5414405329595188" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </article>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p>© 2026 매일이슈. 매일 조금씩, 더 나은 내일.</p>
+      <nav class="footer-nav">
+        <a href="/about.html">소개</a>
+        <a href="/privacy.html">개인정보처리방침</a>
+        <a href="/terms.html">이용약관</a>
+      </nav>
+    </div>
+  </footer>
+  <script src="../main.js"></script>
+</body>
+</html>

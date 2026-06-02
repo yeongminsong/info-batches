@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CG5VPJWVEQ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CG5VPJWVEQ');
+  </script>
+  <meta charset="UTF-8"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#6891f8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>정보처리기사 필기 3과목 데이터베이스 구축 핵심 요약 — 정규화·트랜잭션·인덱스·SQL — 매일이슈</title>
+  <meta name="description" content="정보처리기사 필기 3과목 데이터베이스 구축 핵심 요약. 관계형 DB 개념, 정규화 1~3NF·BCNF, 트랜잭션 ACID, 인덱스, 뷰, 회복 기법까지 시험에 나오는 것만 정리했습니다.">
+  <meta property="og:title" content="정보처리기사 필기 3과목 데이터베이스 구축 핵심 요약 — 매일이슈">
+  <meta property="og:description" content="정규화 1~3NF·BCNF, 트랜잭션 ACID, 인덱스, 뷰, 회복 기법까지 필기 3과목 핵심만 정리.">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=1200&h=630&fit=crop">
+  <meta property="og:url" content="https://mailissue.co.kr/posts/gisa-subject3-database.html">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="매일이슈">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
+  <link rel="canonical" href="https://mailissue.co.kr/posts/gisa-subject3-database.html">
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "정보처리기사 필기 3과목 데이터베이스 구축 핵심 요약",
+    "description": "정규화 1~3NF·BCNF, 트랜잭션 ACID, 인덱스, 뷰, 회복 기법까지 필기 3과목 핵심만 정리.",
+    "image": "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=1200&h=630&fit=crop",
+    "url": "https://mailissue.co.kr/posts/gisa-subject3-database.html",
+    "datePublished": "2026-06-02",
+    "dateModified": "2026-06-02",
+    "author": {"@type": "Organization", "name": "매일이슈"},
+    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://mailissue.co.kr"}
+  }</script>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
+  <link href="../style.css" rel="stylesheet">
+  <meta name="google-adsense-account" content="ca-pub-5414405329595188">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5414405329595188" crossorigin="anonymous"></script>
+  <style>
+    .g-table { width:100%; border-collapse:collapse; margin:1.2rem 0; font-size:0.93rem; }
+    .g-table th { background:var(--primary,#6891f8); color:#fff; padding:0.6rem 1rem; text-align:left; font-weight:600; }
+    .g-table td { padding:0.55rem 1rem; border-bottom:1px solid var(--border,#e3e6ea); vertical-align:top; }
+    .g-table tr:nth-child(even) td { background:var(--bg-gray,#f7f8fc); }
+    .exam-box { background:#fff8e1; border-left:4px solid #ffc107; border-radius:0 0.5rem 0.5rem 0; padding:1rem 1.2rem; margin:1.2rem 0; font-size:0.95rem; line-height:1.7; }
+    .exam-box strong { color:#e65100; }
+    .tip-box { background:#e8f5e9; border-left:4px solid #43a047; border-radius:0 0.5rem 0.5rem 0; padding:1rem 1.2rem; margin:1.2rem 0; font-size:0.95rem; line-height:1.7; }
+    .tip-box strong { color:#1b5e20; }
+    .toc-box { background:var(--bg-gray,#f7f8fc); border:1px solid var(--border,#e3e6ea); border-radius:0.75rem; padding:1rem 1.4rem; margin:1.5rem 0; font-size:0.93rem; }
+    .toc-box ol { margin:0.5rem 0 0; padding-left:1.4rem; }
+    .toc-box li { margin:0.3rem 0; }
+    .toc-box a { color:#6891f8; text-decoration:none; }
+    .section-anchor { scroll-margin-top:80px; }
+    .nav-links { display:flex; flex-wrap:wrap; gap:0.5rem; margin:1.5rem 0; }
+    .nav-links a { background:var(--bg-gray,#f7f8fc); border:1px solid var(--border,#e3e6ea); border-radius:0.5rem; padding:0.4rem 0.9rem; font-size:0.88rem; color:#6891f8; text-decoration:none; }
+    .nf-box { border:2px solid #6891f8; border-radius:0.75rem; padding:1rem 1.2rem; margin:1rem 0; }
+    .nf-box .nf-title { font-weight:700; color:#6891f8; font-size:1.05rem; margin-bottom:0.5rem; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/index.html" class="logo">매일이슈</a>
+      <nav class="nav">
+        <a href="/index.html">홈</a>
+        <a href="/category.html">카테고리</a>
+        <a href="/tags.html">태그</a>
+        <a href="/about.html">소개</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="테마 전환">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="post-hero-img" style="background-image:url('https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=1400&h=500&fit=crop&auto=format');"></div>
+
+  <div class="post-wrapper">
+    <a href="/index.html" class="post-back">← 목록으로</a>
+    <article class="post-article">
+      <header class="post-header">
+        <div class="post-tags">
+          <span class="tag">정보처리기사</span>
+          <span class="tag">필기</span>
+          <span class="tag">3과목</span>
+          <span class="tag">데이터베이스</span>
+        </div>
+        <h1 class="post-h1">정보처리기사 필기 3과목 — 데이터베이스 구축 핵심 요약</h1>
+        <div class="post-meta">
+          <span>📅 2026. 06. 02</span>
+          <span>⏱ 20분 읽기</span>
+        </div>
+      </header>
+
+      <div class="post-content">
+  <ins class="adsbygoogle ad-post-top" style="display:block" data-ad-client="ca-pub-5414405329595188" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+        <p>정보처리기사 필기 3과목 <strong>데이터베이스 구축</strong>은 암기 비중이 높고 실기와 연계가 많아 이중으로 중요한 과목입니다. 특히 <strong>정규화, 트랜잭션 ACID, 인덱스, 회복 기법</strong>은 거의 매 회차 나오니 확실히 잡아두세요.</p>
+
+        <div class="toc-box">
+          <strong>📋 목차</strong>
+          <ol>
+            <li><a href="#rdb">관계형 데이터베이스 기본 개념</a></li>
+            <li><a href="#normalization">정규화 (1NF ~ BCNF)</a></li>
+            <li><a href="#transaction">트랜잭션과 ACID</a></li>
+            <li><a href="#concurrency">동시성 제어와 로킹</a></li>
+            <li><a href="#recovery">회복 기법</a></li>
+            <li><a href="#index">인덱스와 뷰</a></li>
+          </ol>
+        </div>
+
+        <div class="nav-links">
+          <span style="font-size:0.85rem;color:#888;align-self:center;">필기 과목 바로가기 →</span>
+          <a href="/posts/gisa-subject1-sw-design.html">1과목</a>
+          <a href="/posts/gisa-subject2-sw-dev.html">2과목</a>
+          <a href="/posts/gisa-subject3-database.html">3과목</a>
+          <a href="/posts/gisa-subject4-programming.html">4과목</a>
+          <a href="/posts/gisa-subject5-system-mgmt.html">5과목</a>
+        </div>
+
+        <h2 id="rdb" class="section-anchor">1. 관계형 데이터베이스 기본 개념</h2>
+
+        <h3>핵심 용어 정리</h3>
+        <table class="g-table">
+          <thead><tr><th>용어</th><th>설명</th><th>다른 표현</th></tr></thead>
+          <tbody>
+            <tr><td><strong>릴레이션(Relation)</strong></td><td>데이터를 저장하는 2차원 표 구조</td><td>테이블(Table)</td></tr>
+            <tr><td><strong>튜플(Tuple)</strong></td><td>릴레이션의 각 행(가로 줄) — 하나의 레코드</td><td>행(Row), 레코드</td></tr>
+            <tr><td><strong>속성(Attribute)</strong></td><td>릴레이션의 각 열(세로 줄) — 데이터의 특성</td><td>열(Column), 필드</td></tr>
+            <tr><td><strong>도메인(Domain)</strong></td><td>속성이 가질 수 있는 값의 범위</td><td>값의 집합</td></tr>
+            <tr><td><strong>차수(Degree)</strong></td><td>속성(열)의 수</td><td>Column 수</td></tr>
+            <tr><td><strong>카디널리티(Cardinality)</strong></td><td>튜플(행)의 수</td><td>Row 수</td></tr>
+          </tbody>
+        </table>
+
+        <h3>키(Key)의 종류</h3>
+        <table class="g-table">
+          <thead><tr><th>키 종류</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>슈퍼키(Super Key)</strong></td><td>튜플을 유일하게 식별할 수 있는 속성 집합. 유일성 O, 최소성 X</td></tr>
+            <tr><td><strong>후보키(Candidate Key)</strong></td><td>유일성 + 최소성을 모두 만족하는 키. 기본키가 될 수 있는 후보</td></tr>
+            <tr><td><strong>기본키(Primary Key)</strong></td><td>후보키 중 선택된 대표키. NULL 불가, 중복 불가</td></tr>
+            <tr><td><strong>대체키(Alternate Key)</strong></td><td>후보키 중 기본키가 되지 못한 키</td></tr>
+            <tr><td><strong>외래키(Foreign Key)</strong></td><td>다른 테이블의 기본키를 참조하는 키. 참조 무결성 보장</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 키 관련 빈출 포인트</strong><br>
+          ✔ "유일성과 최소성을 모두 만족하는 키는?" → <strong>후보키</strong><br>
+          ✔ "NULL 값을 가질 수 없고 중복이 불가능한 키는?" → <strong>기본키</strong><br>
+          ✔ "슈퍼키는 유일성O, 최소성X" / "후보키는 유일성O, 최소성O"
+        </div>
+
+        <h3>무결성 제약 조건</h3>
+        <table class="g-table">
+          <thead><tr><th>무결성</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>개체 무결성</strong></td><td>기본키는 NULL이거나 중복될 수 없음</td></tr>
+            <tr><td><strong>참조 무결성</strong></td><td>외래키 값은 참조하는 테이블의 기본키에 존재하거나 NULL이어야 함</td></tr>
+            <tr><td><strong>도메인 무결성</strong></td><td>속성 값은 해당 도메인(정의된 범위) 안에 있어야 함</td></tr>
+            <tr><td><strong>NULL 무결성</strong></td><td>NOT NULL로 지정된 속성은 NULL 불가</td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="normalization" class="section-anchor">2. 정규화 (1NF ~ BCNF)</h2>
+        <p>정규화는 데이터 중복을 제거하고 이상 현상(삽입·삭제·갱신 이상)을 방지하기 위해 테이블을 분리하는 과정입니다. 1NF부터 순서대로 높은 정규형을 만족해가며 진행합니다.</p>
+
+        <h3>이상 현상 (Anomaly) — 정규화를 해야 하는 이유</h3>
+        <table class="g-table">
+          <thead><tr><th>이상 현상</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>삽입 이상</strong></td><td>데이터 삽입 시 불필요한 데이터도 함께 삽입해야 하는 경우</td></tr>
+            <tr><td><strong>삭제 이상</strong></td><td>데이터 삭제 시 의도하지 않은 다른 데이터도 함께 삭제되는 경우</td></tr>
+            <tr><td><strong>갱신 이상</strong></td><td>중복된 데이터 중 일부만 수정하여 데이터 불일치가 발생하는 경우</td></tr>
+          </tbody>
+        </table>
+
+        <h3>정규형 단계</h3>
+
+        <div class="nf-box">
+          <div class="nf-title">제1정규형 (1NF) — 원자값</div>
+          <strong>조건:</strong> 모든 속성 값이 원자값(더 이상 분해할 수 없는 값)이어야 한다.<br>
+          <strong>위반 예:</strong> 취미 컬럼에 "독서, 영화, 게임"처럼 복수 값이 저장된 경우<br>
+          <strong>해결:</strong> 하나의 행에 값 하나만 저장하도록 분리
+        </div>
+
+        <div class="nf-box">
+          <div class="nf-title">제2정규형 (2NF) — 부분 함수 종속 제거</div>
+          <strong>조건:</strong> 1NF를 만족하고, 기본키가 복합키일 때 기본키의 일부에만 종속되는 속성(부분 함수 종속)이 없어야 한다.<br>
+          <strong>위반 예:</strong> (학번, 과목코드)가 기본키인데, 학생이름은 학번에만 종속<br>
+          <strong>해결:</strong> 학생 테이블과 수강 테이블로 분리
+        </div>
+
+        <div class="nf-box">
+          <div class="nf-title">제3정규형 (3NF) — 이행 함수 종속 제거</div>
+          <strong>조건:</strong> 2NF를 만족하고, 기본키가 아닌 속성이 다른 비키 속성에 종속(이행 함수 종속)되지 않아야 한다.<br>
+          <strong>위반 예:</strong> 학번 → 학과코드 → 학과명 (학번→학과명이 학과코드를 거쳐 종속)<br>
+          <strong>해결:</strong> 학과 정보를 별도 테이블로 분리
+        </div>
+
+        <div class="nf-box">
+          <div class="nf-title">BCNF (Boyce-Codd Normal Form) — 모든 결정자가 후보키</div>
+          <strong>조건:</strong> 3NF를 만족하고, 모든 결정자(X → Y에서 X)가 후보키여야 한다.<br>
+          <strong>위반 예:</strong> 후보키가 아닌 속성이 다른 속성을 결정하는 경우<br>
+          <strong>특징:</strong> 3NF보다 엄격. 3NF를 만족해도 BCNF를 만족 못 할 수 있음
+        </div>
+
+        <div class="exam-box">
+          <strong>🎯 정규화 빈출 포인트</strong><br>
+          ✔ "원자값이 아닌 속성 제거" → <strong>1NF</strong><br>
+          ✔ "부분 함수 종속 제거" → <strong>2NF</strong><br>
+          ✔ "이행 함수 종속 제거" → <strong>3NF</strong><br>
+          ✔ "모든 결정자가 후보키" → <strong>BCNF</strong><br>
+          정규화 순서: <strong>1NF → 2NF → 3NF → BCNF → 4NF → 5NF</strong>
+        </div>
+
+        <div class="tip-box">
+          <strong>💡 함수 종속 개념 이해하기</strong><br>
+          "A → B" = "A를 알면 B를 결정할 수 있다"<br>
+          학번 → 학생이름 (학번을 알면 이름을 알 수 있음)<br>
+          <strong>부분 함수 종속</strong>: 복합키(A,B)에서 A만으로 C를 결정 → (A,B) → C가 아닌 A → C<br>
+          <strong>이행 함수 종속</strong>: A→B이고 B→C이면 A→C (B를 거쳐 C가 종속)
+        </div>
+
+        <h2 id="transaction" class="section-anchor">3. 트랜잭션과 ACID</h2>
+        <p>트랜잭션은 데이터베이스에서 하나의 논리적 작업 단위입니다. "모두 실행되거나, 모두 실행되지 않는" 원자적 단위예요.</p>
+
+        <h3>ACID 특성 — 트랜잭션의 4가지 특성</h3>
+        <table class="g-table">
+          <thead><tr><th>특성</th><th>설명</th><th>위반 예시</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>원자성 (Atomicity)</strong></td>
+              <td>트랜잭션의 연산은 모두 실행되거나 전혀 실행되지 않아야 한다</td>
+              <td>이체 시 출금은 됐는데 입금이 안 된 상태</td>
+            </tr>
+            <tr>
+              <td><strong>일관성 (Consistency)</strong></td>
+              <td>트랜잭션 완료 후에도 데이터베이스가 일관된 상태를 유지해야 한다</td>
+              <td>이체 전후 두 계좌 잔액 합계가 달라지는 경우</td>
+            </tr>
+            <tr>
+              <td><strong>격리성 (Isolation)</strong></td>
+              <td>실행 중인 트랜잭션이 다른 트랜잭션의 연산에 영향을 받지 않아야 한다</td>
+              <td>두 트랜잭션이 동시에 같은 데이터를 수정하는 경우</td>
+            </tr>
+            <tr>
+              <td><strong>지속성 (Durability)</strong></td>
+              <td>COMMIT된 결과는 시스템 장애가 발생해도 영구적으로 유지되어야 한다</td>
+              <td>COMMIT 후 시스템 다운 시 데이터가 사라지는 경우</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 ACID 암기 포인트</strong><br>
+          <strong>Atomicity(원자성)</strong> — All or Nothing<br>
+          <strong>Consistency(일관성)</strong> — 규칙 유지<br>
+          <strong>Isolation(격리성)</strong> — 독립 실행<br>
+          <strong>Durability(지속성)</strong> — COMMIT 후 영구 보존
+        </div>
+
+        <h2 id="concurrency" class="section-anchor">4. 동시성 제어와 로킹</h2>
+        <p>여러 트랜잭션이 동시에 같은 데이터에 접근할 때 생기는 문제를 제어하는 기법입니다.</p>
+
+        <h3>동시성 제어 문제 유형</h3>
+        <table class="g-table">
+          <thead><tr><th>문제</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>갱신 분실 (Lost Update)</strong></td><td>두 트랜잭션이 같은 데이터를 읽고 수정할 때, 나중에 수정한 값이 먼저 수정한 값을 덮어쓰는 문제</td></tr>
+            <tr><td><strong>오염된 읽기 (Dirty Read)</strong></td><td>COMMIT되지 않은 데이터를 다른 트랜잭션이 읽는 문제</td></tr>
+            <tr><td><strong>반복 불가능한 읽기 (Non-repeatable Read)</strong></td><td>같은 트랜잭션에서 같은 데이터를 두 번 읽었을 때 값이 달라지는 문제</td></tr>
+            <tr><td><strong>유령 읽기 (Phantom Read)</strong></td><td>트랜잭션 실행 중 없던 행이 새로 나타나는(다른 트랜잭션이 삽입) 문제</td></tr>
+          </tbody>
+        </table>
+
+        <h3>로킹(Locking)</h3>
+        <table class="g-table">
+          <thead><tr><th>락 종류</th><th>설명</th><th>다른 트랜잭션 접근</th></tr></thead>
+          <tbody>
+            <tr><td><strong>공유 락 (Shared Lock, S-Lock)</strong></td><td>읽기 전용 락. 여러 트랜잭션이 동시에 공유 락 획득 가능</td><td>읽기 가능, 쓰기 불가</td></tr>
+            <tr><td><strong>배타 락 (Exclusive Lock, X-Lock)</strong></td><td>쓰기 락. 하나의 트랜잭션만 획득 가능</td><td>읽기·쓰기 모두 불가</td></tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box">
+          <strong>💡 교착 상태(Deadlock) 발생 조건</strong><br>
+          두 트랜잭션이 서로 상대방이 가진 락을 기다리며 무한히 대기하는 상황<br>
+          해결 방법: <strong>타임아웃</strong>(일정 시간 후 강제 종료), <strong>교착 상태 탐지 후 롤백</strong>
+        </div>
+
+        <h2 id="recovery" class="section-anchor">5. 회복 기법</h2>
+        <p>시스템 장애 발생 시 데이터베이스를 일관된 상태로 복원하는 기법입니다. 로그(Log)를 사용하는 것이 핵심입니다.</p>
+
+        <table class="g-table">
+          <thead><tr><th>회복 기법</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>로그 기반 회복</strong><br>(Redo / Undo)</td>
+              <td>
+                <strong>Redo (재실행)</strong>: COMMIT된 트랜잭션의 변경을 다시 실행. 장애 전 COMMIT된 데이터 복원<br>
+                <strong>Undo (취소)</strong>: COMMIT되지 않은 트랜잭션의 변경을 취소. 미완료 트랜잭션 되돌리기
+              </td>
+            </tr>
+            <tr>
+              <td><strong>체크포인트(Checkpoint)</strong></td>
+              <td>일정 시점에 디스크에 저장된 데이터와 로그를 동기화. 회복 시 체크포인트 이후 로그만 분석하면 됨</td>
+            </tr>
+            <tr>
+              <td><strong>그림자 페이지 대체</strong></td>
+              <td>변경 전 원본 페이지를 그림자로 보관. 장애 시 그림자 페이지로 복원</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 회복 기법 빈출 포인트</strong><br>
+          ✔ "COMMIT된 트랜잭션을 재실행하는 회복 연산은?" → <strong>Redo</strong><br>
+          ✔ "COMMIT되지 않은 트랜잭션을 취소하는 회복 연산은?" → <strong>Undo</strong><br>
+          ✔ "회복 시 모든 로그를 분석하지 않아도 되게 하는 기법은?" → <strong>체크포인트</strong>
+        </div>
+
+        <h2 id="index" class="section-anchor">6. 인덱스(Index)와 뷰(View)</h2>
+
+        <h3>인덱스</h3>
+        <p>인덱스는 데이터 검색 속도를 높이기 위해 만드는 목차입니다. 책의 목차처럼 원하는 데이터의 위치를 빠르게 찾을 수 있게 합니다.</p>
+
+        <table class="g-table">
+          <thead><tr><th>인덱스 종류</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>클러스터드 인덱스</strong></td><td>테이블의 데이터가 인덱스 순서대로 물리적으로 저장. 테이블당 1개만 가능. 범위 검색에 유리</td></tr>
+            <tr><td><strong>비클러스터드 인덱스</strong></td><td>인덱스와 실제 데이터 위치가 별도 저장. 여러 개 가능. 포인터로 실제 데이터 접근</td></tr>
+            <tr><td><strong>B-Tree 인덱스</strong></td><td>가장 일반적. 균형 이진 트리 구조. 범위 검색·정렬 지원</td></tr>
+            <tr><td><strong>해시 인덱스</strong></td><td>해시 함수로 위치를 결정. 등치(=) 검색에 O(1) 성능. 범위 검색 불가</td></tr>
+          </tbody>
+        </table>
+
+        <h3>뷰(View)</h3>
+        <p>뷰는 하나 이상의 테이블을 기반으로 만든 <strong>가상 테이블</strong>입니다. 실제 데이터는 기본 테이블에 저장되고, 뷰는 SELECT 쿼리의 결과를 보여주는 창구 역할을 합니다.</p>
+
+        <table class="g-table">
+          <thead><tr><th>특징</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>독립성</strong></td><td>기본 테이블 구조 변경 시 응용 프로그램 영향 최소화</td></tr>
+            <tr><td><strong>보안성</strong></td><td>민감한 컬럼을 숨기고 필요한 데이터만 노출</td></tr>
+            <tr><td><strong>편의성</strong></td><td>복잡한 쿼리를 뷰로 단순화하여 재사용</td></tr>
+            <tr><td><strong>물리적 독립성</strong></td><td>뷰 자체에 데이터를 저장하지 않음 → 저장 공간 절약</td></tr>
+          </tbody>
+        </table>
+
+        <pre><code>-- 뷰 생성
+CREATE VIEW 컴퓨터공학_학생 AS
+SELECT 학번, 이름, 성적
+FROM   학생
+WHERE  학과 = '컴퓨터공학';
+
+-- 뷰 삭제
+DROP VIEW 컴퓨터공학_학생;</code></pre>
+
+        <div class="callout">
+          <strong>📚 3과목 필기 고득점 전략</strong><br><br>
+          <strong>① 정규화 단계(1NF→2NF→3NF→BCNF)와 각 단계의 제거 대상을 반드시 암기하세요.</strong> "부분 함수 종속은 2NF에서 제거", "이행 함수 종속은 3NF에서 제거"가 핵심입니다.<br><br>
+          <strong>② ACID 4가지 특성은 영문 약자와 한국어 이름, 그 의미까지 세트로 외우세요.</strong> 매 회차 출제 수준입니다.<br><br>
+          <strong>③ Redo와 Undo의 차이를 명확히 하세요.</strong> "COMMIT됐으면 Redo(재실행), 안 됐으면 Undo(취소)"가 핵심 구분 기준입니다.<br><br>
+          <strong>④ 키의 종류(슈퍼·후보·기본·대체·외래)와 각 조건(유일성·최소성·NULL 허용 여부)을 표로 정리해두세요.</strong>
+        </div>
+
+        <div class="tip-box">
+          <strong>🔗 함께 보면 좋은 글</strong><br>
+          · <a href="/posts/gisa-sql-guide.html">정보처리기사 실기 SQL 완전 정복</a><br>
+          · <a href="/posts/gisa-subject2-sw-dev.html">정보처리기사 필기 2과목 — 소프트웨어 개발</a><br>
+          · <a href="/posts/gisa-subject4-programming.html">정보처리기사 필기 4과목 — 프로그래밍 언어 활용</a>
+        </div>
+      </div>
+
+  <ins class="adsbygoogle ad-post-bottom" style="display:block" data-ad-client="ca-pub-5414405329595188" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </article>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p>© 2026 매일이슈. 매일 조금씩, 더 나은 내일.</p>
+      <nav class="footer-nav">
+        <a href="/about.html">소개</a>
+        <a href="/privacy.html">개인정보처리방침</a>
+        <a href="/terms.html">이용약관</a>
+      </nav>
+    </div>
+  </footer>
+  <script src="../main.js"></script>
+</body>
+</html>

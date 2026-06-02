@@ -1,0 +1,863 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CG5VPJWVEQ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CG5VPJWVEQ');
+  </script>
+  <meta charset="UTF-8"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#6891f8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>정보처리기사 실기 소프트웨어 공학 완전 정복 — 방법론·UML·디자인패턴·테스트 총정리 — 매일이슈</title>
+  <meta name="description" content="정보처리기사 실기 소프트웨어 공학 핵심 요약. 개발 방법론, UML 다이어그램 14종, GoF 디자인 패턴 23개, 테스트 종류와 커버리지까지 시험에 나오는 것만 정리했습니다.">
+  <meta property="og:title" content="정보처리기사 실기 소프트웨어 공학 완전 정복 — 매일이슈">
+  <meta property="og:description" content="개발 방법론, UML 14종, GoF 디자인 패턴 23개, 테스트 커버리지까지 실기 소프트웨어 공학 핵심만 정리.">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&h=630&fit=crop">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://mailissue.co.kr/posts/gisa-software-engineering.html">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="매일이슈">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="정보처리기사 실기 소프트웨어 공학 완전 정복 — 매일이슈">
+  <meta name="twitter:description" content="개발 방법론, UML 14종, GoF 디자인 패턴 23개, 테스트 커버리지까지 실기 소프트웨어 공학 핵심만 정리.">
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&h=630&fit=crop">
+  <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
+  <link rel="canonical" href="https://mailissue.co.kr/posts/gisa-software-engineering.html">
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "정보처리기사 실기 소프트웨어 공학 완전 정복 — 방법론·UML·디자인패턴·테스트 총정리",
+    "description": "정보처리기사 실기 소프트웨어 공학 핵심 요약. 개발 방법론, UML 다이어그램 14종, GoF 디자인 패턴 23개, 테스트 종류와 커버리지까지 시험에 나오는 것만 정리했습니다.",
+    "image": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&h=630&fit=crop",
+    "url": "https://mailissue.co.kr/posts/gisa-software-engineering.html",
+    "datePublished": "2026-06-02",
+    "dateModified": "2026-06-02",
+    "author": {"@type": "Organization", "name": "매일이슈"},
+    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://mailissue.co.kr"}
+  }</script>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
+  <link href="../style.css" rel="stylesheet">
+  <meta name="google-adsense-account" content="ca-pub-5414405329595188">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5414405329595188" crossorigin="anonymous"></script>
+  <style>
+    .sw-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.2rem 0;
+      font-size: 0.93rem;
+    }
+    .sw-table th {
+      background: var(--primary, #6891f8);
+      color: #fff;
+      padding: 0.6rem 1rem;
+      text-align: left;
+      font-weight: 600;
+    }
+    .sw-table td {
+      padding: 0.55rem 1rem;
+      border-bottom: 1px solid var(--border, #e3e6ea);
+      vertical-align: top;
+    }
+    .sw-table tr:nth-child(even) td {
+      background: var(--bg-gray, #f7f8fc);
+    }
+    .exam-box {
+      background: #fff8e1;
+      border-left: 4px solid #ffc107;
+      border-radius: 0 0.5rem 0.5rem 0;
+      padding: 1rem 1.2rem;
+      margin: 1.2rem 0;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+    .exam-box strong { color: #e65100; }
+    .tip-box {
+      background: #e8f5e9;
+      border-left: 4px solid #43a047;
+      border-radius: 0 0.5rem 0.5rem 0;
+      padding: 1rem 1.2rem;
+      margin: 1.2rem 0;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+    .tip-box strong { color: #1b5e20; }
+    .warn-box {
+      background: #fce4ec;
+      border-left: 4px solid #e53935;
+      border-radius: 0 0.5rem 0.5rem 0;
+      padding: 1rem 1.2rem;
+      margin: 1.2rem 0;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+    .warn-box strong { color: #b71c1c; }
+    .pattern-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+    .pattern-card {
+      border: 1.5px solid var(--border, #e3e6ea);
+      border-radius: 0.6rem;
+      padding: 0.7rem 1rem;
+      font-size: 0.88rem;
+    }
+    .pattern-card .pname {
+      font-weight: 700;
+      color: #6891f8;
+      margin-bottom: 0.2rem;
+    }
+    .pattern-card .ptype {
+      font-size: 0.78rem;
+      color: #888;
+    }
+    .uml-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 0.8rem 0;
+    }
+    .uml-tag {
+      background: #6891f8;
+      color: #fff;
+      border-radius: 0.4rem;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.87rem;
+      font-weight: 600;
+    }
+    .uml-tag.behavior {
+      background: #43a047;
+    }
+    .coverage-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0.4rem 0;
+      font-size: 0.9rem;
+    }
+    .coverage-label {
+      min-width: 180px;
+      font-weight: 600;
+    }
+    .coverage-dots {
+      display: flex;
+      gap: 3px;
+    }
+    .dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #6891f8;
+    }
+    .dot.empty {
+      background: #e3e6ea;
+    }
+    .toc-box {
+      background: var(--bg-gray, #f7f8fc);
+      border: 1px solid var(--border, #e3e6ea);
+      border-radius: 0.75rem;
+      padding: 1rem 1.4rem;
+      margin: 1.5rem 0;
+      font-size: 0.93rem;
+    }
+    .toc-box ol {
+      margin: 0.5rem 0 0;
+      padding-left: 1.4rem;
+    }
+    .toc-box li {
+      margin: 0.3rem 0;
+    }
+    .toc-box a {
+      color: #6891f8;
+      text-decoration: none;
+    }
+    .toc-box a:hover { text-decoration: underline; }
+    .section-anchor { scroll-margin-top: 80px; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/index.html" class="logo">매일이슈</a>
+      <nav class="nav">
+        <a href="/index.html">홈</a>
+        <a href="/category.html">카테고리</a>
+        <a href="/tags.html">태그</a>
+        <a href="/about.html">소개</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="테마 전환">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="post-hero-img" style="background-image:url('https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1400&h=500&fit=crop&auto=format');"></div>
+
+  <div class="post-wrapper">
+    <a href="/index.html" class="post-back">← 목록으로</a>
+    <article class="post-article">
+      <header class="post-header">
+        <div class="post-tags">
+          <span class="tag">정보처리기사</span>
+          <span class="tag">소프트웨어공학</span>
+          <span class="tag">실기</span>
+        </div>
+        <h1 class="post-h1">정보처리기사 실기 소프트웨어 공학 완전 정복</h1>
+        <div class="post-meta">
+          <span>📅 2026. 06. 02</span>
+          <span>⏱ 20분 읽기</span>
+        </div>
+      </header>
+
+      <div class="post-content">
+
+  <!-- AdSense: 본문 상단 광고 -->
+  <ins class="adsbygoogle ad-post-top"
+       style="display:block"
+       data-ad-client="ca-pub-5414405329595188"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+        <p>정보처리기사 실기에서 소프트웨어 공학은 <strong>전체 20문항 중 4~6문항</strong>을 차지하는 핵심 영역입니다. SQL·프로그래밍처럼 코드를 직접 작성하는 파트가 아니라 개념·용어를 정확히 쓰는 파트라 암기 비중이 높아요. 하지만 범위가 넓어서 어디서부터 공부해야 할지 막막한 분이 많습니다.</p>
+        <p>이 글에서는 <strong>실제 시험에 반복 출제되는 주제만</strong> 골라 정리했습니다. 방법론 → UML → 디자인 패턴 → 테스트 순서로 읽으면 됩니다.</p>
+
+        <div class="toc-box">
+          <strong>📋 목차</strong>
+          <ol>
+            <li><a href="#methodology">소프트웨어 개발 방법론과 SDLC 모델</a></li>
+            <li><a href="#uml">UML 다이어그램 14종</a></li>
+            <li><a href="#design-pattern">GoF 디자인 패턴 23개</a></li>
+            <li><a href="#test">소프트웨어 테스트</a></li>
+            <li><a href="#quality">소프트웨어 품질과 형상 관리</a></li>
+            <li><a href="#practice">실전 문제 풀어보기</a></li>
+          </ol>
+        </div>
+
+        <h2 id="methodology" class="section-anchor">1. 소프트웨어 개발 방법론과 SDLC 모델</h2>
+
+        <h3>SDLC 모델 — 4가지 핵심 모델</h3>
+        <p>소프트웨어 개발 생명주기(SDLC) 모델은 어떤 순서와 방식으로 소프트웨어를 만드느냐에 대한 틀입니다. 시험에서는 모델의 이름과 특징·장단점을 서술하는 문제가 나옵니다.</p>
+
+        <table class="sw-table">
+          <thead>
+            <tr><th>모델</th><th>특징</th><th>장점</th><th>단점</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>폭포수 모델</strong><br>(Waterfall)</td>
+              <td>요구분석 → 설계 → 구현 → 테스트 → 유지보수 순서대로 진행. 이전 단계로 돌아갈 수 없음</td>
+              <td>단계가 명확, 관리 쉬움</td>
+              <td>요구사항 변경 어려움, 완성 전까지 결과 확인 불가</td>
+            </tr>
+            <tr>
+              <td><strong>프로토타입 모델</strong></td>
+              <td>요구사항이 불명확할 때 시제품(프로토타입)을 먼저 만들어 사용자 피드백 반영</td>
+              <td>요구사항 명확화, 사용자 만족도 높음</td>
+              <td>관리 어려움, 프로토타입을 실제 제품으로 오해할 수 있음</td>
+            </tr>
+            <tr>
+              <td><strong>나선형 모델</strong><br>(Spiral)</td>
+              <td>계획 → 위험분석 → 개발 → 평가를 반복. 위험 분석이 핵심</td>
+              <td>위험 최소화, 대규모 프로젝트에 적합</td>
+              <td>관리 복잡, 위험 분석 전문가 필요, 비용 높음</td>
+            </tr>
+            <tr>
+              <td><strong>반복적 모델</strong><br>(Iterative)</td>
+              <td>시스템 일부를 반복적으로 개발·확장. 애자일의 기반이 됨</td>
+              <td>조기에 일부 기능 제공 가능, 변경 유연</td>
+              <td>전체 설계가 미리 명확하지 않으면 관리 어려움</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 자주 나오는 시험 포인트</strong><br>
+          ✔ "위험 분석을 포함한 SDLC 모델은?" → <strong>나선형 모델</strong><br>
+          ✔ "요구사항이 불명확할 때 적합한 모델은?" → <strong>프로토타입 모델</strong><br>
+          ✔ "단계 간 되돌아갈 수 없는 선형 순차 모델은?" → <strong>폭포수 모델</strong>
+        </div>
+
+        <h3>소프트웨어 개발 방법론</h3>
+        <p>SDLC 모델이 "순서"라면, 방법론은 "어떻게 만드느냐"에 대한 구체적인 접근법입니다.</p>
+
+        <table class="sw-table">
+          <thead>
+            <tr><th>방법론</th><th>핵심 개념</th><th>키워드</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>구조적 방법론</strong></td>
+              <td>기능 중심. 자료 흐름도(DFD), 구조적 차트 사용. 프로세스를 분해하여 개발</td>
+              <td>DFD, 프로세스 분해, 절차 지향</td>
+            </tr>
+            <tr>
+              <td><strong>정보공학 방법론</strong></td>
+              <td>데이터 중심. 기업 전체 정보 시스템을 대상으로 계획→분석→설계→구축</td>
+              <td>데이터 중심, 기업 전략, ISP</td>
+            </tr>
+            <tr>
+              <td><strong>객체지향 방법론</strong></td>
+              <td>객체(데이터+행위) 중심. UML 사용. 재사용성·유지보수성 높음</td>
+              <td>객체, 클래스, 캡슐화, UML</td>
+            </tr>
+            <tr>
+              <td><strong>CBD 방법론</strong></td>
+              <td>컴포넌트(독립 기능 단위) 조합으로 개발. 재사용성 극대화</td>
+              <td>컴포넌트, 재사용, 인터페이스</td>
+            </tr>
+            <tr>
+              <td><strong>애자일 방법론</strong></td>
+              <td>짧은 반복(스프린트) 단위로 작동 소프트웨어 우선. 변화에 유연하게 대응</td>
+              <td>스프린트, 협업, 변화 수용</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>애자일 방법론 — 스크럼 vs XP</h3>
+        <p>애자일 중 <strong>스크럼(Scrum)</strong>과 <strong>XP(Extreme Programming)</strong>는 각각 출제 빈도가 높습니다. 핵심 개념을 혼동하지 않도록 구분해서 외우세요.</p>
+
+        <table class="sw-table">
+          <thead>
+            <tr><th>항목</th><th>스크럼(Scrum)</th><th>XP(Extreme Programming)</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>핵심 초점</td>
+              <td>프로젝트 <strong>관리</strong> 프레임워크</td>
+              <td>개발 <strong>기술</strong> 실천법</td>
+            </tr>
+            <tr>
+              <td>반복 주기</td>
+              <td><strong>스프린트</strong> (보통 2~4주)</td>
+              <td><strong>이터레이션</strong> (1~2주)</td>
+            </tr>
+            <tr>
+              <td>핵심 역할</td>
+              <td>제품 책임자(PO), 스크럼 마스터, 개발팀</td>
+              <td>고객, 개발자, 코치</td>
+            </tr>
+            <tr>
+              <td>주요 산출물</td>
+              <td>제품 백로그, 스프린트 백로그, 번다운 차트</td>
+              <td>사용자 스토리, 릴리즈 계획</td>
+            </tr>
+            <tr>
+              <td>대표 실천법</td>
+              <td>데일리 스크럼(매일 15분 회의), 스프린트 리뷰</td>
+              <td>페어 프로그래밍, TDD, 리팩토링, 지속적 통합</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box">
+          <strong>💡 스크럼 용어 암기법</strong><br>
+          <strong>백로그</strong> = 해야 할 일 목록 (제품 백로그 → 우선순위 목록, 스프린트 백로그 → 이번 스프린트에 할 일)<br>
+          <strong>번다운 차트</strong> = 남은 작업량이 시간이 지남에 따라 줄어드는 그래프 (번다운 = 불태운다)<br>
+          <strong>데일리 스크럼</strong> = "어제 한 일 / 오늘 할 일 / 장애물" 3가지만 공유하는 짧은 회의
+        </div>
+
+        <h2 id="uml" class="section-anchor">2. UML 다이어그램 14종</h2>
+        <p>UML(Unified Modeling Language)은 소프트웨어 설계를 시각화하는 표준 표기법입니다. 시험에서 "다음 설명에 해당하는 UML 다이어그램은?" 형식으로 자주 출제됩니다. 14종을 <strong>구조 다이어그램(7종)</strong>과 <strong>행위 다이어그램(7종)</strong>으로 나누어 외우세요.</p>
+
+        <h3>구조 다이어그램 (7종) — 정적인 구조를 표현</h3>
+        <div class="uml-group">
+          <span class="uml-tag">클래스</span>
+          <span class="uml-tag">객체</span>
+          <span class="uml-tag">컴포넌트</span>
+          <span class="uml-tag">배치</span>
+          <span class="uml-tag">복합구조</span>
+          <span class="uml-tag">패키지</span>
+          <span class="uml-tag">프로파일</span>
+        </div>
+
+        <table class="sw-table">
+          <thead>
+            <tr><th>다이어그램</th><th>표현 내용</th><th>시험 포인트</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>클래스</strong></td>
+              <td>클래스의 속성·메서드·클래스 간 관계(연관, 의존, 상속, 실체화)</td>
+              <td>가장 자주 출제. 관계 표기 기호 암기 필수</td>
+            </tr>
+            <tr>
+              <td><strong>객체</strong></td>
+              <td>클래스의 인스턴스(실제 객체)와 관계를 특정 시점에 표현</td>
+              <td>클래스 다이어그램의 스냅샷</td>
+            </tr>
+            <tr>
+              <td><strong>컴포넌트</strong></td>
+              <td>소프트웨어 컴포넌트(독립 실행 단위)와 인터페이스 관계</td>
+              <td>CBD 방법론과 연계 출제</td>
+            </tr>
+            <tr>
+              <td><strong>배치</strong></td>
+              <td>하드웨어 노드에 소프트웨어 컴포넌트를 배치하는 물리적 구조</td>
+              <td>서버·네트워크 구성도와 유사한 개념</td>
+            </tr>
+            <tr>
+              <td><strong>패키지</strong></td>
+              <td>관련 요소를 그룹화한 패키지와 의존 관계</td>
+              <td>대규모 시스템 구조화에 사용</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>클래스 다이어그램 관계 기호 — 반드시 암기</h3>
+        <table class="sw-table">
+          <thead>
+            <tr><th>관계</th><th>설명</th><th>기호(화살표 방향)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>연관(Association)</strong></td><td>클래스 간 서로 관련 있음. 가장 일반적인 관계</td><td>─────→</td></tr>
+            <tr><td><strong>의존(Dependency)</strong></td><td>한 클래스가 다른 클래스를 일시적으로 사용</td><td>- - - →</td></tr>
+            <tr><td><strong>집합(Aggregation)</strong></td><td>전체-부분 관계. 부분은 독립적으로 존재 가능 (약한 결합)</td><td>◇─────</td></tr>
+            <tr><td><strong>합성(Composition)</strong></td><td>전체-부분 관계. 부분은 전체 없이 존재 불가 (강한 결합)</td><td>◆─────</td></tr>
+            <tr><td><strong>일반화(Generalization)</strong></td><td>상속 관계 (IS-A 관계). 자식 → 부모 방향</td><td>────▷</td></tr>
+            <tr><td><strong>실체화(Realization)</strong></td><td>인터페이스를 구현하는 관계</td><td>- - -▷</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 집합 vs 합성 구분법</strong><br>
+          <strong>집합(Aggregation)</strong>: 학교와 학생 → 학교가 없어도 학생은 존재 → 빈 마름모 ◇<br>
+          <strong>합성(Composition)</strong>: 사람과 심장 → 사람이 없으면 심장도 없음 → 채운 마름모 ◆<br>
+          <em>암기법: 합성은 Composition → C가 채워진(Complete) → 꽉 찬 마름모</em>
+        </div>
+
+        <h3>행위 다이어그램 (7종) — 동적인 흐름을 표현</h3>
+        <div class="uml-group">
+          <span class="uml-tag behavior">유스케이스</span>
+          <span class="uml-tag behavior">시퀀스</span>
+          <span class="uml-tag behavior">커뮤니케이션</span>
+          <span class="uml-tag behavior">상태</span>
+          <span class="uml-tag behavior">활동</span>
+          <span class="uml-tag behavior">타이밍</span>
+          <span class="uml-tag behavior">상호작용 개요</span>
+        </div>
+
+        <table class="sw-table">
+          <thead>
+            <tr><th>다이어그램</th><th>표현 내용</th><th>시험 포인트</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>유스케이스</strong></td>
+              <td>사용자(Actor)와 시스템 간 상호작용. 기능 요구사항 시각화</td>
+              <td>include, extend 관계 자주 출제</td>
+            </tr>
+            <tr>
+              <td><strong>시퀀스</strong></td>
+              <td>객체 간 메시지 교환 순서를 시간 흐름으로 표현 (수직 = 시간축)</td>
+              <td>가장 자주 출제. 생명선, 활성 박스 개념</td>
+            </tr>
+            <tr>
+              <td><strong>커뮤니케이션</strong></td>
+              <td>시퀀스와 같은 정보지만 공간 배치에 집중. 메시지에 번호 표기</td>
+              <td>시퀀스 다이어그램과의 차이점</td>
+            </tr>
+            <tr>
+              <td><strong>상태</strong></td>
+              <td>객체가 가질 수 있는 상태 변화와 전이 조건</td>
+              <td>이벤트·전이·상태 개념 암기</td>
+            </tr>
+            <tr>
+              <td><strong>활동</strong></td>
+              <td>업무 처리 흐름. 순서도(Flowchart)와 유사. 병렬 처리 표현 가능</td>
+              <td>swimlane(수영 레인)으로 역할 구분</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box">
+          <strong>💡 유스케이스 include vs extend 구분</strong><br>
+          <strong>include</strong>: 반드시 포함되는 기능. "로그인"은 "게시글 작성"에 항상 include<br>
+          <strong>extend</strong>: 특정 조건에서만 확장되는 선택 기능. "쿠폰 적용"은 결제에 extend<br>
+          화살표 방향: include는 기본→포함 방향, extend는 확장→기본 방향
+        </div>
+
+        <h2 id="design-pattern" class="section-anchor">3. GoF 디자인 패턴 23개</h2>
+        <p>GoF(Gang of Four) 디자인 패턴은 소프트웨어 설계에서 반복되는 문제의 검증된 해결책입니다. 23개를 <strong>생성(5) · 구조(7) · 행위(11)</strong> 패턴으로 나눕니다. 시험에서 설명을 읽고 패턴 이름을 맞히는 문제가 주로 나옵니다.</p>
+
+        <div class="warn-box">
+          <strong>⚠️ 23개 전부 외울 필요 없어요</strong><br>
+          시험에는 <strong>싱글톤, 팩토리 메서드, 옵서버, 전략, 데코레이터, 어댑터, 프록시, 템플릿 메서드, 커맨드, 이터레이터</strong> 등 10~12개가 반복 출제됩니다. 나머지는 이름과 분류 정도만 파악하세요.
+        </div>
+
+        <h3>생성 패턴 (5개) — 객체 생성 방식에 관한 패턴</h3>
+        <div class="pattern-grid">
+          <div class="pattern-card">
+            <div class="pname">싱글톤 (Singleton)</div>
+            <div class="ptype">생성</div>
+            <div>인스턴스를 오직 하나만 생성하고 전역 접근 제공. DB 연결, 로그 관리에 활용</div>
+          </div>
+          <div class="pattern-card">
+            <div class="pname">팩토리 메서드 (Factory Method)</div>
+            <div class="ptype">생성</div>
+            <div>객체 생성을 서브클래스에 위임. 어떤 객체를 만들지는 서브클래스가 결정</div>
+          </div>
+          <div class="pattern-card">
+            <div class="pname">추상 팩토리 (Abstract Factory)</div>
+            <div class="ptype">생성</div>
+            <div>관련 객체들의 패밀리를 생성하는 인터페이스 제공. 팩토리들의 팩토리</div>
+          </div>
+          <div class="pattern-card">
+            <div class="pname">빌더 (Builder)</div>
+            <div class="ptype">생성</div>
+            <div>복잡한 객체를 단계별로 생성. 같은 과정으로 다른 표현 결과를 만들 수 있음</div>
+          </div>
+          <div class="pattern-card">
+            <div class="pname">프로토타입 (Prototype)</div>
+            <div class="ptype">생성</div>
+            <div>기존 객체를 복사(Clone)하여 새 객체 생성. 생성 비용이 클 때 유용</div>
+          </div>
+        </div>
+
+        <h3>구조 패턴 (7개) — 클래스·객체를 조합하는 패턴</h3>
+        <div class="pattern-grid">
+          <div class="pattern-card">
+            <div class="pname">어댑터 (Adapter)</div>
+            <div class="ptype">구조</div>
+            <div>호환되지 않는 인터페이스를 연결. 220V→110V 변환기와 같은 역할</div>
+          </div>
+          <div class="pattern-card">
+            <div class="pname">브리지 (Bridge)</div>
+            <div class="ptype">구조</div>
+            <div>구현부와 추상부를 분리하여 독립적으로 확장 가능하게 함</div>
+          </div>
+          <div class="pattern-card">
+            <div class="pname">컴포지트 (Composite)</div>
+            <div class="ptype">구조</div>
+            <div>트리 구조로 객체 조합. 단일 객체와 복합 객체를 동일하게 취급 (파일시스템)</div>
+          </div>
+          <div class="pattern-card">
+            <div class="pname">데코레이터 (Decorator)</div>
+            <div class="ptype">구조</div>
+            <div>객체에 기능을 동적으로 추가. 상속 대신 위임으로 기능 확장</div>
+          </div>
+          <div class="pattern-card">
+            <div class="pname">퍼사드 (Facade)</div>
+            <div class="ptype">구조</div>
+            <div>복잡한 서브시스템에 단순화된 인터페이스 제공. 사용자는 퍼사드만 호출</div>
+          </div>
+          <div class="pattern-card">
+            <div class="pname">플라이웨이트 (Flyweight)</div>
+            <div class="ptype">구조</div>
+            <div>공유를 통해 많은 수의 작은 객체를 효율적으로 지원. 메모리 절약</div>
+          </div>
+          <div class="pattern-card">
+            <div class="pname">프록시 (Proxy)</div>
+            <div class="ptype">구조</div>
+            <div>실제 객체 대신 대리자 객체를 사용. 접근 제어, 지연 초기화, 로깅 등에 활용</div>
+          </div>
+        </div>
+
+        <h3>행위 패턴 (11개) — 객체 간 책임 분배와 통신에 관한 패턴</h3>
+        <table class="sw-table">
+          <thead>
+            <tr><th>패턴명</th><th>핵심 개념</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>옵서버 (Observer)</strong></td><td>상태 변경 시 의존 객체들에게 자동 알림. 이벤트 처리, 알림 시스템. <em>발행-구독 모델</em></td></tr>
+            <tr><td><strong>전략 (Strategy)</strong></td><td>알고리즘을 캡슐화하여 교체 가능하게 함. 정렬 알고리즘을 런타임에 바꾸는 것이 대표 예</td></tr>
+            <tr><td><strong>템플릿 메서드</strong></td><td>알고리즘 골격을 상위 클래스에, 세부 구현을 하위 클래스에. "훅 메서드" 개념</td></tr>
+            <tr><td><strong>커맨드 (Command)</strong></td><td>요청을 객체로 캡슐화. 실행 취소(Undo), 로깅, 큐잉 가능</td></tr>
+            <tr><td><strong>이터레이터 (Iterator)</strong></td><td>컬렉션 내부 구조 노출 없이 순차 접근. Java의 Iterator 인터페이스가 대표 사례</td></tr>
+            <tr><td><strong>책임 연쇄 (Chain of Responsibility)</strong></td><td>요청을 처리할 수 있는 객체가 나타날 때까지 연쇄적으로 전달</td></tr>
+            <tr><td><strong>인터프리터 (Interpreter)</strong></td><td>언어의 문법 규칙을 클래스로 표현하여 해석. SQL 파서, 정규 표현식 등</td></tr>
+            <tr><td><strong>미디에이터 (Mediator)</strong></td><td>객체 간 복잡한 통신을 중재자가 담당. 채팅방 서버가 대표 예</td></tr>
+            <tr><td><strong>메멘토 (Memento)</strong></td><td>객체의 내부 상태를 저장·복원. 문서 편집기의 실행 취소(Ctrl+Z)</td></tr>
+            <tr><td><strong>상태 (State)</strong></td><td>객체의 내부 상태에 따라 행동을 변경. 신호등(빨강/노랑/초록 상태)</td></tr>
+            <tr><td><strong>비지터 (Visitor)</strong></td><td>알고리즘을 객체 구조와 분리. 구조 변경 없이 새 연산을 추가 가능</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 자주 출제되는 패턴 시험 문제 유형</strong><br>
+          ✔ "하나의 인스턴스만 허용하는 패턴은?" → <strong>싱글톤</strong><br>
+          ✔ "이벤트 발생 시 여러 객체에 알리는 패턴은?" → <strong>옵서버</strong><br>
+          ✔ "실행 취소 기능 구현에 사용하는 패턴은?" → <strong>메멘토 또는 커맨드</strong><br>
+          ✔ "서브시스템의 복잡성을 숨기는 단순 인터페이스를 제공하는 패턴은?" → <strong>퍼사드</strong><br>
+          ✔ "알고리즘 교체가 런타임에 가능한 패턴은?" → <strong>전략</strong>
+        </div>
+
+        <h2 id="test" class="section-anchor">4. 소프트웨어 테스트</h2>
+        <p>테스트 파트는 <strong>화이트박스 vs 블랙박스</strong>의 구분과 <strong>커버리지 종류</strong>, 그리고 <strong>테스트 단계</strong>가 핵심입니다. 매 회차에 한두 문제씩 꾸준히 나옵니다.</p>
+
+        <h3>화이트박스 테스트 vs 블랙박스 테스트</h3>
+        <table class="sw-table">
+          <thead>
+            <tr><th>구분</th><th>화이트박스 테스트</th><th>블랙박스 테스트</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>관점</td><td>내부 소스 코드를 보고 테스트</td><td>내부 구조를 모르고 입출력만으로 테스트</td></tr>
+            <tr><td>다른 이름</td><td>구조 테스트, 유리 박스 테스트</td><td>기능 테스트, 명세 기반 테스트</td></tr>
+            <tr><td>테스트 기법</td><td>구문 커버리지, 결정 커버리지, 조건 커버리지, 경로 커버리지</td><td>동치 분할, 경계값 분석, 원인-결과 그래프, 오류 예측</td></tr>
+            <tr><td>주요 목적</td><td>코드의 모든 경로가 실행되는지 확인</td><td>요구사항 명세대로 동작하는지 확인</td></tr>
+          </tbody>
+        </table>
+
+        <h3>화이트박스 커버리지 — 강도 순서 암기 필수</h3>
+        <p>커버리지는 "테스트가 얼마나 꼼꼼하게 코드를 검증했는지"를 나타냅니다. 강도가 높을수록 더 많은 경우를 검사합니다.</p>
+
+        <table class="sw-table">
+          <thead>
+            <tr><th>커버리지</th><th>설명</th><th>강도</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>구문(Statement) 커버리지</strong></td>
+              <td>모든 구문(명령문)을 최소 1번 실행</td>
+              <td>★☆☆☆☆ (가장 약함)</td>
+            </tr>
+            <tr>
+              <td><strong>결정(Decision/Branch) 커버리지</strong></td>
+              <td>모든 분기(if문의 true/false)를 최소 1번씩 실행</td>
+              <td>★★☆☆☆</td>
+            </tr>
+            <tr>
+              <td><strong>조건(Condition) 커버리지</strong></td>
+              <td>각 조건식의 true/false를 모두 실행</td>
+              <td>★★★☆☆</td>
+            </tr>
+            <tr>
+              <td><strong>조건/결정 커버리지</strong></td>
+              <td>조건 커버리지 + 결정 커버리지를 동시에 만족</td>
+              <td>★★★★☆</td>
+            </tr>
+            <tr>
+              <td><strong>변경 조건/결정 커버리지 (MC/DC)</strong></td>
+              <td>각 조건이 독립적으로 전체 결과에 영향을 줌을 확인. 항공기 소프트웨어 기준</td>
+              <td>★★★★★</td>
+            </tr>
+            <tr>
+              <td><strong>다중 조건 커버리지</strong></td>
+              <td>모든 조건의 모든 조합을 실행. 가장 완벽하지만 경우의 수 폭발</td>
+              <td>★★★★★+</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 커버리지 문제 풀이 포인트</strong><br>
+          ✔ "가장 약한(기본) 커버리지는?" → <strong>구문 커버리지</strong><br>
+          ✔ "조건식의 참·거짓을 모두 테스트하는 커버리지는?" → <strong>조건 커버리지</strong><br>
+          ✔ "항공·우주 소프트웨어에서 요구하는 커버리지는?" → <strong>MC/DC(변경 조건/결정 커버리지)</strong>
+        </div>
+
+        <h3>블랙박스 테스트 기법</h3>
+        <table class="sw-table">
+          <thead>
+            <tr><th>기법</th><th>설명</th><th>예시</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>동치 분할</strong><br>(Equivalence Partitioning)</td>
+              <td>입력 데이터를 동등한 그룹(동치 클래스)으로 나누어 각 그룹에서 대표값 선택</td>
+              <td>나이 입력(1~120): 유효 클래스(1~120), 무효 클래스(&lt;1, &gt;120)로 분할</td>
+            </tr>
+            <tr>
+              <td><strong>경계값 분석</strong><br>(Boundary Value Analysis)</td>
+              <td>경계 부분(최소, 최소+1, 최대-1, 최대)에서 오류가 많이 발생하므로 경계값 중심 테스트</td>
+              <td>나이 1~120이면: 0, 1, 2, 119, 120, 121 테스트</td>
+            </tr>
+            <tr>
+              <td><strong>원인-결과 그래프</strong><br>(Cause-Effect Graphing)</td>
+              <td>입력 조건(원인)과 출력 결과(결과)의 관계를 그래프로 표현 후 테스트 케이스 도출</td>
+              <td>여러 입력 조건 조합이 복잡할 때 사용</td>
+            </tr>
+            <tr>
+              <td><strong>오류 예측</strong><br>(Error Guessing)</td>
+              <td>경험과 직관을 바탕으로 오류가 발생할 것 같은 케이스를 테스터가 직접 예측</td>
+              <td>입력값 0, NULL, 공백, 최대값 등을 경험적으로 테스트</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>테스트 단계 — 단위·통합·시스템·인수</h3>
+        <table class="sw-table">
+          <thead>
+            <tr><th>단계</th><th>대상</th><th>주요 특징</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>단위(Unit) 테스트</strong></td>
+              <td>개별 모듈·함수·메서드</td>
+              <td>개발자가 직접 수행. 화이트박스 기법 주로 사용</td>
+            </tr>
+            <tr>
+              <td><strong>통합(Integration) 테스트</strong></td>
+              <td>모듈을 결합한 인터페이스</td>
+              <td>상향식·하향식·빅뱅·샌드위치 방식으로 수행</td>
+            </tr>
+            <tr>
+              <td><strong>시스템(System) 테스트</strong></td>
+              <td>완성된 전체 시스템</td>
+              <td>요구사항 명세서와 비교. 기능·비기능 모두 검증</td>
+            </tr>
+            <tr>
+              <td><strong>인수(Acceptance) 테스트</strong></td>
+              <td>사용자 관점에서 전체 시스템</td>
+              <td>알파(내부 사용자), 베타(외부 사용자) 테스트 포함</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box">
+          <strong>💡 통합 테스트 방식 구분</strong><br>
+          <strong>상향식(Bottom-Up)</strong>: 하위 모듈부터 통합. 드라이버(Driver) 필요, 스텁 불필요<br>
+          <strong>하향식(Top-Down)</strong>: 상위 모듈부터 통합. 스텁(Stub) 필요, 드라이버 불필요<br>
+          <strong>빅뱅(Big-Bang)</strong>: 모든 모듈을 한꺼번에 통합. 오류 원인 찾기 어려움<br>
+          <strong>드라이버</strong> = 하위 모듈을 호출하는 임시 상위 모듈 | <strong>스텁</strong> = 아직 없는 하위 모듈을 대신하는 더미
+        </div>
+
+        <h2 id="quality" class="section-anchor">5. 소프트웨어 품질과 형상 관리</h2>
+
+        <h3>ISO/IEC 25010 소프트웨어 품질 특성</h3>
+        <p>소프트웨어 품질을 측정하는 국제 표준입니다. 8가지 특성을 영어 이름과 함께 외워두세요.</p>
+
+        <table class="sw-table">
+          <thead>
+            <tr><th>품질 특성</th><th>설명</th><th>하위 특성(예시)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>기능 적합성</strong><br>(Functional Suitability)</td><td>명시된 요구사항을 올바르게 수행하는 정도</td><td>기능 완전성, 기능 정확성, 기능 적절성</td></tr>
+            <tr><td><strong>성능 효율성</strong><br>(Performance Efficiency)</td><td>주어진 조건에서 자원 사용 대비 성능</td><td>시간 반응성, 자원 활용성, 용량</td></tr>
+            <tr><td><strong>호환성</strong><br>(Compatibility)</td><td>다른 제품·환경과 정보를 교환하는 능력</td><td>공존성, 상호운용성</td></tr>
+            <tr><td><strong>사용성</strong><br>(Usability)</td><td>사용자가 목표를 달성하기 위해 사용하는 용이성</td><td>학습성, 운용성, 사용자 오류 방지</td></tr>
+            <tr><td><strong>신뢰성</strong><br>(Reliability)</td><td>명시된 기간 동안 정상 작동을 유지하는 정도</td><td>성숙성, 가용성, 결함 허용성, 복구성</td></tr>
+            <tr><td><strong>보안성</strong><br>(Security)</td><td>정보 및 데이터를 보호하는 정도</td><td>기밀성, 무결성, 부인방지, 책임성</td></tr>
+            <tr><td><strong>유지보수성</strong><br>(Maintainability)</td><td>수정·개선이 용이한 정도</td><td>모듈성, 재사용성, 분석성, 변경성, 시험성</td></tr>
+            <tr><td><strong>이식성</strong><br>(Portability)</td><td>다른 환경으로 이전할 수 있는 정도</td><td>적응성, 설치성, 대체성</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 품질 특성 암기법</strong><br>
+          <strong>기성호사신보유이</strong>: 기능적합성 · 성능효율성 · 호환성 · 사용성 · 신뢰성 · 보안성 · 유지보수성 · 이식성
+        </div>
+
+        <h3>형상 관리(Configuration Management)</h3>
+        <p>형상 관리는 소프트웨어 산출물(소스 코드, 문서 등)의 변경을 체계적으로 관리하는 활동입니다.</p>
+
+        <table class="sw-table">
+          <thead>
+            <tr><th>도구</th><th>유형</th><th>특징</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Git</strong></td>
+              <td>분산형</td>
+              <td>로컬 저장소 보유. 오프라인 커밋 가능. 브랜치 전략 유연. 현재 표준</td>
+            </tr>
+            <tr>
+              <td><strong>SVN (Subversion)</strong></td>
+              <td>중앙집중형</td>
+              <td>중앙 서버에 모든 이력 저장. 접근 제어가 명확. Git 이전의 표준</td>
+            </tr>
+            <tr>
+              <td><strong>CVS</strong></td>
+              <td>중앙집중형</td>
+              <td>SVN의 이전 버전. 디렉터리 이동·이름 변경이 어려움</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box">
+          <strong>💡 형상 관리 4가지 활동</strong><br>
+          ① <strong>형상 식별</strong>: 관리할 항목(형상 항목) 선정<br>
+          ② <strong>형상 통제</strong>: 변경 요청 검토 후 승인/거부<br>
+          ③ <strong>형상 감사</strong>: 변경된 항목이 요구사항을 만족하는지 확인<br>
+          ④ <strong>형상 기록</strong>: 변경 이력을 문서화
+        </div>
+
+        <h2 id="practice" class="section-anchor">6. 실전 문제 풀어보기</h2>
+
+        <div class="exam-box">
+          <strong>📝 문제 1</strong><br>
+          소프트웨어 개발 방법론 중 위험 분석을 각 단계마다 수행하며, 계획 → 위험 분석 → 개발 → 평가의 사이클을 반복하는 모델의 이름을 쓰시오.
+          <br><br>
+          <strong>정답:</strong> 나선형 모델 (Spiral Model)
+        </div>
+
+        <div class="exam-box">
+          <strong>📝 문제 2</strong><br>
+          다음 설명에 해당하는 GoF 디자인 패턴의 이름을 쓰시오.<br><br>
+          <em>"어떤 객체의 상태가 변할 때, 그 객체에 의존하는 다른 객체들에게 자동으로 알림을 보내고 갱신이 이루어지도록 하는 패턴. 발행-구독(Publisher-Subscriber) 모델이라고도 한다."</em>
+          <br><br>
+          <strong>정답:</strong> 옵서버 패턴 (Observer Pattern)
+        </div>
+
+        <div class="exam-box">
+          <strong>📝 문제 3</strong><br>
+          소프트웨어 테스트에서 블랙박스 테스트 기법 중 하나로, 입력 조건의 경계에 해당하는 값들을 중심으로 테스트 케이스를 설계하는 기법의 이름을 쓰시오.
+          <br><br>
+          <strong>정답:</strong> 경계값 분석 (Boundary Value Analysis)
+        </div>
+
+        <div class="exam-box">
+          <strong>📝 문제 4</strong><br>
+          UML 클래스 다이어그램에서 전체-부분 관계를 나타내는 두 가지 관계 중, 부분 객체가 전체 객체 없이 독립적으로 존재할 수 없는 강한 결합 관계를 무엇이라 하는가?
+          <br><br>
+          <strong>정답:</strong> 합성 (Composition)
+        </div>
+
+        <div class="exam-box">
+          <strong>📝 문제 5</strong><br>
+          통합 테스트 방식 중 하위 모듈부터 상위 모듈 방향으로 통합하며, 하위 모듈을 호출하는 임시 상위 모듈인 ( ㉠ )이 필요한 방식은 ( ㉡ ) 통합이다. 빈칸을 채우시오.
+          <br><br>
+          <strong>정답:</strong> ㉠ 드라이버(Driver), ㉡ 상향식(Bottom-Up)
+        </div>
+
+        <div class="callout">
+          <strong>📚 소프트웨어 공학 실기 고득점 전략</strong><br><br>
+          <strong>① 방법론과 SDLC 모델을 표로 비교해서 외우세요.</strong> 나선형=위험분석, 프로토타입=불명확한 요구사항이라는 키워드와 짝을 지으면 됩니다.<br><br>
+          <strong>② UML은 구조 7종 + 행위 7종으로 나누고 대표적인 것(클래스·시퀀스·유스케이스) 3개는 완벽하게, 나머지는 특징만 파악하세요.</strong><br><br>
+          <strong>③ GoF 패턴은 설명을 읽고 이름을 맞히는 연습이 핵심입니다.</strong> 싱글톤·옵서버·전략·퍼사드·프록시는 반드시 설명과 이름을 연결할 수 있어야 합니다.<br><br>
+          <strong>④ 테스트 커버리지는 강도 순서(구문 → 결정 → 조건 → 조건/결정 → MC/DC)를 외우고, 화이트박스/블랙박스 기법 분류를 정확히 구분하세요.</strong>
+        </div>
+
+        <div class="tip-box">
+          <strong>🔗 함께 보면 좋은 글</strong><br>
+          · <a href="/posts/gisa-sql-guide.html">정보처리기사 실기 SQL 완전 정복</a><br>
+          · <a href="/posts/gisa-programming-guide.html">정보처리기사 실기 프로그래밍 완전 정복 (C·Java·Python)</a>
+        </div>
+
+      </div>
+
+  <!-- AdSense: 본문 하단 광고 -->
+  <ins class="adsbygoogle ad-post-bottom"
+       style="display:block"
+       data-ad-client="ca-pub-5414405329595188"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </article>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p>© 2026 매일이슈. 매일 조금씩, 더 나은 내일.</p>
+      <nav class="footer-nav">
+        <a href="/about.html">소개</a>
+        <a href="/privacy.html">개인정보처리방침</a>
+        <a href="/terms.html">이용약관</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="../main.js"></script>
+</body>
+</html>

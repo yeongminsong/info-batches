@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CG5VPJWVEQ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CG5VPJWVEQ');
+  </script>
+  <meta charset="UTF-8"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#6891f8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>정보처리기사 필기 1과목 소프트웨어 설계 핵심 요약 — 요구사항·UML·아키텍처·SOLID — 매일이슈</title>
+  <meta name="description" content="정보처리기사 필기 1과목 소프트웨어 설계 핵심 요약. 요구사항 분석, UML, 아키텍처 패턴, 객체지향 설계 원칙(SOLID), 디자인 패턴까지 시험에 나오는 것만 정리했습니다.">
+  <meta property="og:title" content="정보처리기사 필기 1과목 소프트웨어 설계 핵심 요약 — 매일이슈">
+  <meta property="og:description" content="요구사항 분석, UML, 아키텍처 패턴, SOLID 원칙, 디자인 패턴까지 필기 1과목 핵심만 정리.">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200&h=630&fit=crop">
+  <meta property="og:url" content="https://mailissue.co.kr/posts/gisa-subject1-sw-design.html">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="매일이슈">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="정보처리기사 필기 1과목 소프트웨어 설계 핵심 요약 — 매일이슈">
+  <meta name="twitter:description" content="요구사항 분석, UML, 아키텍처 패턴, SOLID 원칙, 디자인 패턴까지 필기 1과목 핵심만 정리.">
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200&h=630&fit=crop">
+  <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
+  <link rel="canonical" href="https://mailissue.co.kr/posts/gisa-subject1-sw-design.html">
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "정보처리기사 필기 1과목 소프트웨어 설계 핵심 요약",
+    "description": "정보처리기사 필기 1과목 소프트웨어 설계 핵심 요약. 요구사항 분석, UML, 아키텍처 패턴, SOLID, 디자인 패턴까지.",
+    "image": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200&h=630&fit=crop",
+    "url": "https://mailissue.co.kr/posts/gisa-subject1-sw-design.html",
+    "datePublished": "2026-06-02",
+    "dateModified": "2026-06-02",
+    "author": {"@type": "Organization", "name": "매일이슈"},
+    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://mailissue.co.kr"}
+  }</script>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
+  <link href="../style.css" rel="stylesheet">
+  <meta name="google-adsense-account" content="ca-pub-5414405329595188">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5414405329595188" crossorigin="anonymous"></script>
+  <style>
+    .g-table { width:100%; border-collapse:collapse; margin:1.2rem 0; font-size:0.93rem; }
+    .g-table th { background:var(--primary,#6891f8); color:#fff; padding:0.6rem 1rem; text-align:left; font-weight:600; }
+    .g-table td { padding:0.55rem 1rem; border-bottom:1px solid var(--border,#e3e6ea); vertical-align:top; }
+    .g-table tr:nth-child(even) td { background:var(--bg-gray,#f7f8fc); }
+    .exam-box { background:#fff8e1; border-left:4px solid #ffc107; border-radius:0 0.5rem 0.5rem 0; padding:1rem 1.2rem; margin:1.2rem 0; font-size:0.95rem; line-height:1.7; }
+    .exam-box strong { color:#e65100; }
+    .tip-box { background:#e8f5e9; border-left:4px solid #43a047; border-radius:0 0.5rem 0.5rem 0; padding:1rem 1.2rem; margin:1.2rem 0; font-size:0.95rem; line-height:1.7; }
+    .tip-box strong { color:#1b5e20; }
+    .toc-box { background:var(--bg-gray,#f7f8fc); border:1px solid var(--border,#e3e6ea); border-radius:0.75rem; padding:1rem 1.4rem; margin:1.5rem 0; font-size:0.93rem; }
+    .toc-box ol { margin:0.5rem 0 0; padding-left:1.4rem; }
+    .toc-box li { margin:0.3rem 0; }
+    .toc-box a { color:#6891f8; text-decoration:none; }
+    .section-anchor { scroll-margin-top:80px; }
+    .solid-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:0.75rem; margin:1rem 0; }
+    .solid-card { border:1.5px solid var(--border,#e3e6ea); border-radius:0.6rem; padding:0.8rem 1rem; font-size:0.88rem; }
+    .solid-card .sname { font-weight:700; color:#6891f8; font-size:1rem; margin-bottom:0.3rem; }
+    .solid-card .seng { font-size:0.78rem; color:#888; margin-bottom:0.4rem; }
+    .nav-links { display:flex; flex-wrap:wrap; gap:0.5rem; margin:1.5rem 0; }
+    .nav-links a { background:var(--bg-gray,#f7f8fc); border:1px solid var(--border,#e3e6ea); border-radius:0.5rem; padding:0.4rem 0.9rem; font-size:0.88rem; color:#6891f8; text-decoration:none; }
+    .nav-links a:hover { background:#6891f8; color:#fff; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/index.html" class="logo">매일이슈</a>
+      <nav class="nav">
+        <a href="/index.html">홈</a>
+        <a href="/category.html">카테고리</a>
+        <a href="/tags.html">태그</a>
+        <a href="/about.html">소개</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="테마 전환">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="post-hero-img" style="background-image:url('https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1400&h=500&fit=crop&auto=format');"></div>
+
+  <div class="post-wrapper">
+    <a href="/index.html" class="post-back">← 목록으로</a>
+    <article class="post-article">
+      <header class="post-header">
+        <div class="post-tags">
+          <span class="tag">정보처리기사</span>
+          <span class="tag">필기</span>
+          <span class="tag">1과목</span>
+          <span class="tag">소프트웨어설계</span>
+        </div>
+        <h1 class="post-h1">정보처리기사 필기 1과목 — 소프트웨어 설계 핵심 요약</h1>
+        <div class="post-meta">
+          <span>📅 2026. 06. 02</span>
+          <span>⏱ 18분 읽기</span>
+        </div>
+      </header>
+
+      <div class="post-content">
+  <ins class="adsbygoogle ad-post-top" style="display:block" data-ad-client="ca-pub-5414405329595188" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+        <p>정보처리기사 필기 1과목 <strong>소프트웨어 설계</strong>는 전체 100문항 중 20문항을 차지합니다. 요구사항 분석부터 UML, 아키텍처 패턴, 객체지향 설계 원칙까지 범위가 넓지만 출제 패턴이 어느 정도 정해져 있어요. 자주 나오는 개념만 제대로 익혀두면 충분히 고득점이 가능한 과목입니다.</p>
+
+        <div class="toc-box">
+          <strong>📋 목차</strong>
+          <ol>
+            <li><a href="#requirement">요구사항 분석</a></li>
+            <li><a href="#uml">UML과 다이어그램</a></li>
+            <li><a href="#architecture">소프트웨어 아키텍처 패턴</a></li>
+            <li><a href="#solid">객체지향 설계 원칙 — SOLID</a></li>
+            <li><a href="#cohesion">결합도와 응집도</a></li>
+            <li><a href="#interface">인터페이스 설계</a></li>
+          </ol>
+        </div>
+
+        <div class="nav-links">
+          <span style="font-size:0.85rem;color:#888;align-self:center;">필기 과목 바로가기 →</span>
+          <a href="/posts/gisa-subject1-sw-design.html">1과목</a>
+          <a href="/posts/gisa-subject2-sw-dev.html">2과목</a>
+          <a href="/posts/gisa-subject3-database.html">3과목</a>
+          <a href="/posts/gisa-subject4-programming.html">4과목</a>
+          <a href="/posts/gisa-subject5-system-mgmt.html">5과목</a>
+        </div>
+
+        <h2 id="requirement" class="section-anchor">1. 요구사항 분석</h2>
+
+        <h3>요구사항의 분류</h3>
+        <table class="g-table">
+          <thead><tr><th>종류</th><th>설명</th><th>예시</th></tr></thead>
+          <tbody>
+            <tr><td><strong>기능적 요구사항</strong></td><td>시스템이 반드시 수행해야 하는 기능·서비스</td><td>"사용자는 아이디/비밀번호로 로그인할 수 있어야 한다"</td></tr>
+            <tr><td><strong>비기능적 요구사항</strong></td><td>시스템의 품질·성능·제약 조건</td><td>"로그인 응답 시간은 2초 이내여야 한다"</td></tr>
+          </tbody>
+        </table>
+
+        <h3>요구사항 개발 프로세스</h3>
+        <table class="g-table">
+          <thead><tr><th>단계</th><th>활동</th></tr></thead>
+          <tbody>
+            <tr><td><strong>도출(Elicitation)</strong></td><td>인터뷰, 설문, 워크숍, 관찰 등으로 이해관계자에게 요구사항 수집</td></tr>
+            <tr><td><strong>분석(Analysis)</strong></td><td>수집된 요구사항의 충돌 해결, 우선순위 결정, 실현 가능성 검토</td></tr>
+            <tr><td><strong>명세(Specification)</strong></td><td>요구사항을 문서화. SRS(소프트웨어 요구사항 명세서) 작성</td></tr>
+            <tr><td><strong>검증(Validation)</strong></td><td>요구사항이 완전·일관·검증 가능한지 확인. 리뷰, 프로토타입으로 검증</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 자주 나오는 시험 포인트</strong><br>
+          ✔ 요구사항 개발 순서: <strong>도출 → 분석 → 명세 → 검증</strong><br>
+          ✔ "시스템이 '무엇을' 해야 하는가" → 기능적 / "얼마나 잘 해야 하는가" → 비기능적<br>
+          ✔ 요구사항 명세 문서 = <strong>SRS(Software Requirements Specification)</strong>
+        </div>
+
+        <h3>요구사항 확인 기법</h3>
+        <table class="g-table">
+          <thead><tr><th>기법</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>요구사항 검토(리뷰)</strong></td><td>여러 검토자가 문서를 읽고 오류·모순을 찾는 동료 검토</td></tr>
+            <tr><td><strong>프로토타이핑</strong></td><td>시제품을 만들어 사용자에게 보여주고 피드백 수집</td></tr>
+            <tr><td><strong>테스트 케이스 작성</strong></td><td>요구사항을 테스트 케이스로 작성해 검증 가능성 확인</td></tr>
+            <tr><td><strong>CASE 도구</strong></td><td>소프트웨어 개발을 지원하는 자동화 도구로 요구사항 추적·분석</td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="uml" class="section-anchor">2. UML과 다이어그램</h2>
+        <p>필기에서 UML은 다이어그램의 <strong>종류와 특징</strong>을 묻는 문제가 핵심입니다. 실기 소프트웨어 공학 글에서 자세히 다뤘으니 여기서는 필기 출제 포인트만 요약합니다.</p>
+
+        <table class="g-table">
+          <thead><tr><th>분류</th><th>다이어그램</th><th>핵심 키워드</th></tr></thead>
+          <tbody>
+            <tr><td rowspan="5"><strong>구조<br>(정적)</strong></td><td>클래스</td><td>속성·메서드·관계. 가장 자주 출제</td></tr>
+            <tr><td>객체</td><td>클래스의 인스턴스, 특정 시점의 스냅샷</td></tr>
+            <tr><td>컴포넌트</td><td>독립 실행 가능한 소프트웨어 단위</td></tr>
+            <tr><td>배치</td><td>하드웨어 노드에 컴포넌트 배치, 물리적 구조</td></tr>
+            <tr><td>패키지</td><td>관련 요소를 그룹화</td></tr>
+            <tr><td rowspan="5"><strong>행위<br>(동적)</strong></td><td>유스케이스</td><td>Actor, include, extend 관계</td></tr>
+            <tr><td>시퀀스</td><td>시간 흐름, 생명선(Lifeline), 메시지 순서</td></tr>
+            <tr><td>커뮤니케이션</td><td>시퀀스와 동일 정보, 공간 배치 강조, 메시지 번호</td></tr>
+            <tr><td>상태</td><td>객체의 상태 변화·전이 조건</td></tr>
+            <tr><td>활동</td><td>업무 흐름, 병렬 처리, swimlane으로 역할 구분</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 필기 UML 빈출 문제</strong><br>
+          ✔ "사용자(Actor)와 시스템 간 상호작용을 표현하는 다이어그램은?" → <strong>유스케이스 다이어그램</strong><br>
+          ✔ "객체 간 메시지 교환 순서를 시간 흐름으로 표현하는 다이어그램은?" → <strong>시퀀스 다이어그램</strong><br>
+          ✔ "include는 반드시 포함, extend는 조건부 확장" — 이 두 가지 관계는 매우 자주 출제
+        </div>
+
+        <h2 id="architecture" class="section-anchor">3. 소프트웨어 아키텍처 패턴</h2>
+        <p>아키텍처 패턴은 시스템 전체 구조를 설계하는 검증된 방식입니다. 각 패턴의 이름과 특징을 서술형·객관식 모두에 대비해 익혀두세요.</p>
+
+        <table class="g-table">
+          <thead><tr><th>패턴</th><th>구조</th><th>대표 예시</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>계층화(Layered)</strong></td>
+              <td>시스템을 계층으로 나누어 상위 계층이 하위 계층 서비스를 사용. 각 계층은 인접 계층과만 통신</td>
+              <td>OSI 7계층, MVC 패턴, TCP/IP</td>
+            </tr>
+            <tr>
+              <td><strong>클라이언트-서버</strong></td>
+              <td>클라이언트가 서버에 서비스를 요청하고 서버가 응답. 역할이 명확히 분리</td>
+              <td>웹 브라우저-웹 서버, 이메일 클라이언트</td>
+            </tr>
+            <tr>
+              <td><strong>파이프-필터</strong></td>
+              <td>데이터가 파이프를 통해 필터(처리 단계)를 순서대로 통과하며 변환</td>
+              <td>Unix 명령어 파이프(|), 컴파일러 처리 단계</td>
+            </tr>
+            <tr>
+              <td><strong>MVC</strong></td>
+              <td>Model(데이터)·View(화면)·Controller(논리)로 분리. 관심사 분리 원칙</td>
+              <td>Spring MVC, Django, Ruby on Rails</td>
+            </tr>
+            <tr>
+              <td><strong>마스터-슬레이브</strong></td>
+              <td>마스터가 작업을 슬레이브에 분배하고 결과를 수집·통합</td>
+              <td>DB 이중화, 병렬 처리, 임베디드 시스템</td>
+            </tr>
+            <tr>
+              <td><strong>브로커(Broker)</strong></td>
+              <td>분산 컴포넌트 간 통신을 브로커가 중재. 클라이언트는 브로커에만 요청</td>
+              <td>CORBA, RPC, 메시지 미들웨어</td>
+            </tr>
+            <tr>
+              <td><strong>이벤트 버스</strong></td>
+              <td>이벤트 발행자가 버스에 이벤트를 게시하면 구독자가 수신하여 처리</td>
+              <td>GUI 이벤트 처리, IoT 시스템</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 아키텍처 패턴 빈출 포인트</strong><br>
+          ✔ "Unix 파이프(|)처럼 데이터가 단계적으로 처리되는 패턴은?" → <strong>파이프-필터</strong><br>
+          ✔ "Model·View·Controller로 관심사를 분리하는 패턴은?" → <strong>MVC</strong><br>
+          ✔ "분산 환경에서 컴포넌트 간 통신을 중재하는 패턴은?" → <strong>브로커</strong>
+        </div>
+
+        <h2 id="solid" class="section-anchor">4. 객체지향 설계 원칙 — SOLID</h2>
+        <p>SOLID는 로버트 마틴이 정리한 객체지향 설계 5대 원칙입니다. 필기에서는 각 원칙의 이름(영문 포함)과 설명을 연결하는 문제가 자주 나옵니다.</p>
+
+        <div class="solid-grid">
+          <div class="solid-card">
+            <div class="sname">S — 단일 책임 원칙</div>
+            <div class="seng">Single Responsibility Principle (SRP)</div>
+            클래스는 변경해야 할 이유가 하나여야 한다. 하나의 클래스는 하나의 책임만 가져야 한다.
+          </div>
+          <div class="solid-card">
+            <div class="sname">O — 개방-폐쇄 원칙</div>
+            <div class="seng">Open-Closed Principle (OCP)</div>
+            소프트웨어 요소는 확장에는 열려 있고 수정에는 닫혀 있어야 한다.
+          </div>
+          <div class="solid-card">
+            <div class="sname">L — 리스코프 치환 원칙</div>
+            <div class="seng">Liskov Substitution Principle (LSP)</div>
+            서브타입(자식 클래스)은 언제나 기반 타입(부모 클래스)으로 교체 가능해야 한다.
+          </div>
+          <div class="solid-card">
+            <div class="sname">I — 인터페이스 분리 원칙</div>
+            <div class="seng">Interface Segregation Principle (ISP)</div>
+            클라이언트는 자신이 사용하지 않는 메서드에 의존하면 안 된다. 인터페이스를 작게 분리하라.
+          </div>
+          <div class="solid-card">
+            <div class="sname">D — 의존 역전 원칙</div>
+            <div class="seng">Dependency Inversion Principle (DIP)</div>
+            고수준 모듈은 저수준 모듈에 의존하지 않아야 한다. 둘 다 추상화에 의존해야 한다.
+          </div>
+        </div>
+
+        <div class="tip-box">
+          <strong>💡 SOLID 암기법</strong><br>
+          <strong>S</strong>ingle — 책임 하나<br>
+          <strong>O</strong>pen/Closed — 확장 열림, 수정 닫힘<br>
+          <strong>L</strong>iskov — 자식이 부모 대신 들어갈 수 있어야 함<br>
+          <strong>I</strong>nterface — 인터페이스는 잘게 쪼개라<br>
+          <strong>D</strong>ependency — 구체보다 추상에 의존하라
+        </div>
+
+        <h2 id="cohesion" class="section-anchor">5. 결합도(Coupling)와 응집도(Cohesion)</h2>
+        <p>좋은 설계의 기준입니다. <strong>결합도는 낮을수록, 응집도는 높을수록</strong> 좋은 설계입니다. 강도 순서를 외워두면 "다음 중 결합도가 가장 낮은 것은?" 문제에 바로 답할 수 있습니다.</p>
+
+        <h3>결합도 — 낮을수록 좋음 (약함 → 강함)</h3>
+        <table class="g-table">
+          <thead><tr><th>종류</th><th>설명</th><th>강도</th></tr></thead>
+          <tbody>
+            <tr><td><strong>자료(Data) 결합도</strong></td><td>모듈 간 단순 자료(값)만 파라미터로 전달</td><td>★☆☆☆☆ (가장 낮음 = 좋음)</td></tr>
+            <tr><td><strong>스탬프(Stamp) 결합도</strong></td><td>자료구조(레코드) 전체를 파라미터로 전달</td><td>★★☆☆☆</td></tr>
+            <tr><td><strong>제어(Control) 결합도</strong></td><td>제어 신호(플래그)를 파라미터로 전달해 흐름 제어</td><td>★★★☆☆</td></tr>
+            <tr><td><strong>외부(External) 결합도</strong></td><td>외부 환경·데이터 형식·프로토콜을 공유</td><td>★★★★☆</td></tr>
+            <tr><td><strong>공통(Common) 결합도</strong></td><td>전역 변수를 여러 모듈이 공유</td><td>★★★★☆</td></tr>
+            <tr><td><strong>내용(Content) 결합도</strong></td><td>한 모듈이 다른 모듈의 내부 데이터를 직접 참조·수정</td><td>★★★★★ (가장 높음 = 나쁨)</td></tr>
+          </tbody>
+        </table>
+
+        <h3>응집도 — 높을수록 좋음 (강함 → 약함)</h3>
+        <table class="g-table">
+          <thead><tr><th>종류</th><th>설명</th><th>강도</th></tr></thead>
+          <tbody>
+            <tr><td><strong>기능적(Functional) 응집도</strong></td><td>모듈의 모든 요소가 단 하나의 기능을 위해 존재</td><td>★★★★★ (가장 높음 = 좋음)</td></tr>
+            <tr><td><strong>순차적(Sequential) 응집도</strong></td><td>한 요소의 출력이 다음 요소의 입력으로 사용</td><td>★★★★☆</td></tr>
+            <tr><td><strong>통신적(Communicational) 응집도</strong></td><td>동일한 데이터를 사용하는 요소들이 모여 있음</td><td>★★★☆☆</td></tr>
+            <tr><td><strong>절차적(Procedural) 응집도</strong></td><td>요소들이 특정 순서로 수행되어야 하는 경우</td><td>★★★☆☆</td></tr>
+            <tr><td><strong>시간적(Temporal) 응집도</strong></td><td>같은 시점에 실행되는 요소들이 모여 있음 (초기화 루틴)</td><td>★★☆☆☆</td></tr>
+            <tr><td><strong>논리적(Logical) 응집도</strong></td><td>논리적으로 비슷한 기능을 하나의 모듈에 묶음</td><td>★★☆☆☆</td></tr>
+            <tr><td><strong>우연적(Coincidental) 응집도</strong></td><td>관련 없는 요소들이 우연히 한 모듈에 묶임</td><td>★☆☆☆☆ (가장 낮음 = 나쁨)</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 결합도·응집도 핵심 암기</strong><br>
+          결합도 낮은 순: <strong>자·스·제·외·공·내</strong> (자스제외공내)<br>
+          응집도 높은 순: <strong>기·순·통·절·시·논·우</strong> (기순통절시논우)<br>
+          ✔ "결합도가 가장 낮은(좋은) 것은?" → <strong>자료 결합도</strong><br>
+          ✔ "응집도가 가장 높은(좋은) 것은?" → <strong>기능적 응집도</strong>
+        </div>
+
+        <h2 id="interface" class="section-anchor">6. 인터페이스 설계</h2>
+
+        <h3>시스템 인터페이스 방식</h3>
+        <table class="g-table">
+          <thead><tr><th>방식</th><th>설명</th><th>특징</th></tr></thead>
+          <tbody>
+            <tr><td><strong>데이터베이스 연계</strong></td><td>DB 링크, DB 뷰 등을 통해 직접 데이터 공유</td><td>실시간 연동 가능. 긴밀한 결합</td></tr>
+            <tr><td><strong>파일 전송</strong></td><td>CSV, XML 등 파일로 주기적 데이터 교환</td><td>구현 단순. 실시간성 낮음</td></tr>
+            <tr><td><strong>웹 서비스(API)</strong></td><td>HTTP 기반 REST API, SOAP 방식으로 데이터 교환</td><td>표준화, 느슨한 결합, 범용성 높음</td></tr>
+            <tr><td><strong>메시지 큐</strong></td><td>MQ(Message Queue)를 통해 비동기 메시지 전달</td><td>시스템 간 의존도 낮음, 장애 격리</td></tr>
+          </tbody>
+        </table>
+
+        <h3>REST API 특징 — 필기 출제 포인트</h3>
+        <table class="g-table">
+          <thead><tr><th>특성</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>무상태성(Stateless)</strong></td><td>각 요청은 독립적이며 서버는 클라이언트 상태를 저장하지 않음</td></tr>
+            <tr><td><strong>균일한 인터페이스</strong></td><td>HTTP 메서드(GET·POST·PUT·DELETE)로 자원을 처리</td></tr>
+            <tr><td><strong>캐시 가능</strong></td><td>응답을 캐시하여 성능 향상 가능</td></tr>
+            <tr><td><strong>계층화 시스템</strong></td><td>클라이언트는 서버와 직접 연결인지 중간 서버와 연결인지 알 수 없음</td></tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box">
+          <strong>💡 HTTP 메서드와 CRUD 대응</strong><br>
+          <strong>GET</strong> → Read(조회) | <strong>POST</strong> → Create(생성)<br>
+          <strong>PUT</strong> → Update(전체 수정) | <strong>PATCH</strong> → Update(부분 수정) | <strong>DELETE</strong> → Delete(삭제)
+        </div>
+
+        <div class="callout">
+          <strong>📚 1과목 필기 고득점 전략</strong><br><br>
+          <strong>① 요구사항 개발 4단계 순서(도출→분석→명세→검증)와 각 단계 활동을 외우세요.</strong> 순서를 바꾸어 출제하는 문제가 자주 나옵니다.<br><br>
+          <strong>② 결합도·응집도는 표를 보지 않고 순서를 쓸 수 있을 때까지 반복하세요.</strong> "자스제외공내"와 "기순통절시논우"를 소리 내어 외우는 것이 효과적입니다.<br><br>
+          <strong>③ SOLID 원칙은 영문 약자와 한국어 설명을 세트로 외우세요.</strong> "OCP는 확장 열림·수정 닫힘"처럼 짝을 지어 기억하면 됩니다.<br><br>
+          <strong>④ 아키텍처 패턴은 대표 예시(파이프-필터=Unix 파이프, MVC=Spring)와 함께 외우면 쉽게 정착됩니다.</strong>
+        </div>
+
+        <div class="tip-box">
+          <strong>🔗 함께 보면 좋은 글</strong><br>
+          · <a href="/posts/gisa-subject2-sw-dev.html">정보처리기사 필기 2과목 — 소프트웨어 개발</a><br>
+          · <a href="/posts/gisa-software-engineering.html">정보처리기사 실기 소프트웨어 공학 완전 정복</a>
+        </div>
+      </div>
+
+  <ins class="adsbygoogle ad-post-bottom" style="display:block" data-ad-client="ca-pub-5414405329595188" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </article>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p>© 2026 매일이슈. 매일 조금씩, 더 나은 내일.</p>
+      <nav class="footer-nav">
+        <a href="/about.html">소개</a>
+        <a href="/privacy.html">개인정보처리방침</a>
+        <a href="/terms.html">이용약관</a>
+      </nav>
+    </div>
+  </footer>
+  <script src="../main.js"></script>
+</body>
+</html>
