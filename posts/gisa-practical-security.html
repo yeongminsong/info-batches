@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CG5VPJWVEQ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CG5VPJWVEQ');
+  </script>
+  <meta charset="UTF-8"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#6891f8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>정보처리기사 실기 보안 완전정복 — 암호화·인증·공격유형·접근제어 — 매일이슈</title>
+  <meta name="description" content="정보처리기사 실기 보안 핵심 정리. 대칭키·공개키 암호화, 해시 알고리즘, 주요 공격 유형(SQL 인젝션·XSS·CSRF), 접근 제어 모델까지 시험 출제 포인트 총정리.">
+  <meta property="og:title" content="정보처리기사 실기 보안 완전정복 — 매일이슈">
+  <meta property="og:description" content="암호화 방식, 해시 알고리즘, SQL 인젝션·XSS 등 공격 유형, 접근제어, 인증 기술까지 보안 핵심 총정리.">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=1200&h=630&fit=crop">
+  <meta property="og:url" content="https://mailissue.co.kr/posts/gisa-practical-security.html">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="매일이슈">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="정보처리기사 실기 보안 완전정복 — 매일이슈">
+  <meta name="twitter:description" content="암호화 방식, 해시 알고리즘, SQL 인젝션·XSS 등 공격 유형, 접근제어, 인증 기술까지 보안 핵심 총정리.">
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=1200&h=630&fit=crop">
+  <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
+  <link rel="canonical" href="https://mailissue.co.kr/posts/gisa-practical-security.html">
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "정보처리기사 실기 보안 완전정복",
+    "description": "암호화 방식, 공격 유형, 접근 제어, 인증 기술 등 정보처리기사 실기 보안 핵심 정리.",
+    "image": "https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=1200&h=630&fit=crop",
+    "url": "https://mailissue.co.kr/posts/gisa-practical-security.html",
+    "datePublished": "2026-06-04",
+    "dateModified": "2026-06-04",
+    "author": {"@type": "Organization", "name": "매일이슈"},
+    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://mailissue.co.kr"}
+  }</script>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
+  <link href="../style.css" rel="stylesheet">
+  <meta name="google-adsense-account" content="ca-pub-5414405329595188">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5414405329595188" crossorigin="anonymous"></script>
+  <style>
+    .g-table { width:100%; border-collapse:collapse; margin:1.2rem 0; font-size:0.93rem; }
+    .g-table th { background:var(--primary,#6891f8); color:#fff; padding:0.6rem 1rem; text-align:left; font-weight:600; }
+    .g-table td { padding:0.55rem 1rem; border-bottom:1px solid var(--border,#e3e6ea); vertical-align:top; }
+    .g-table tr:nth-child(even) td { background:var(--bg-gray,#f7f8fc); }
+    .exam-box { background:#fff8e1; border-left:4px solid #ffc107; border-radius:0 0.5rem 0.5rem 0; padding:1rem 1.2rem; margin:1.2rem 0; font-size:0.95rem; line-height:1.7; }
+    .exam-box strong { color:#e65100; }
+    .tip-box { background:#e8f5e9; border-left:4px solid #43a047; border-radius:0 0.5rem 0.5rem 0; padding:1rem 1.2rem; margin:1.2rem 0; font-size:0.95rem; line-height:1.7; }
+    .tip-box strong { color:#1b5e20; }
+    .toc-box { background:var(--bg-gray,#f7f8fc); border:1px solid var(--border,#e3e6ea); border-radius:0.75rem; padding:1rem 1.4rem; margin:1.5rem 0; font-size:0.93rem; }
+    .toc-box ol { margin:0.5rem 0 0; padding-left:1.4rem; }
+    .toc-box li { margin:0.3rem 0; }
+    .toc-box a { color:#6891f8; text-decoration:none; }
+    .section-anchor { scroll-margin-top:80px; }
+    .nav-links { display:flex; flex-wrap:wrap; gap:0.5rem; margin:1.5rem 0; }
+    .nav-links a { background:var(--bg-gray,#f7f8fc); border:1px solid var(--border,#e3e6ea); border-radius:0.5rem; padding:0.4rem 0.9rem; font-size:0.88rem; color:#6891f8; text-decoration:none; }
+    .nav-links a:hover { background:#6891f8; color:#fff; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/index.html" class="logo">매일이슈</a>
+      <nav class="nav">
+        <a href="/index.html">홈</a>
+        <a href="/category.html">카테고리</a>
+        <a href="/tags.html">태그</a>
+        <a href="/about.html">소개</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="테마 전환">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="post-hero-img" style="background-image:url('https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=1400&h=500&fit=crop&auto=format');"></div>
+
+  <div class="post-wrapper">
+    <a href="/index.html" class="post-back">← 목록으로</a>
+    <article class="post-article">
+      <header class="post-header">
+        <div class="post-tags">
+          <span class="tag">정보처리기사</span>
+          <span class="tag">실기</span>
+          <span class="tag">보안</span>
+          <span class="tag">암호화</span>
+        </div>
+        <h1 class="post-h1">정보처리기사 실기 보안 완전정복 — 암호화·인증·공격유형·접근제어</h1>
+        <div class="post-meta">
+          <span>📅 2026. 06. 04</span>
+          <span>⏱ 18분 읽기</span>
+        </div>
+      </header>
+
+      <div class="post-content">
+  <ins class="adsbygoogle ad-post-top" style="display:block" data-ad-client="ca-pub-5414405329595188" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+        <p>정보처리기사 보안 파트는 매회 2~3문제씩은 꼭 나옵니다. 암호화 알고리즘 종류, 주요 공격 유형 이름과 설명, 접근 제어 모델을 확실히 외워두면 안정적으로 점수를 챙길 수 있는 영역입니다. 생소한 용어가 많아 어렵게 느껴지지만, 핵심 개념들은 생각보다 많지 않습니다.</p>
+
+        <div class="toc-box">
+          <strong>📋 목차</strong>
+          <ol>
+            <li><a href="#crypto">암호화 방식</a></li>
+            <li><a href="#hash">해시 알고리즘</a></li>
+            <li><a href="#attacks">주요 공격 유형</a></li>
+            <li><a href="#access-control">접근 제어 모델</a></li>
+            <li><a href="#auth">인증 기술</a></li>
+            <li><a href="#security-tools">보안 기술 및 도구</a></li>
+          </ol>
+        </div>
+
+        <div class="nav-links">
+          <span style="font-size:0.85rem;color:#888;align-self:center;">실기 관련 글 →</span>
+          <a href="/posts/gisa-practical-network.html">네트워크 완전정복</a>
+          <a href="/posts/gisa-practical-os.html">운영체제 완전정복</a>
+          <a href="/posts/gisa-sql-guide.html">SQL 완전정복</a>
+          <a href="/posts/gisa-programming-guide.html">프로그래밍 완전정복</a>
+        </div>
+
+        <h2 id="crypto" class="section-anchor">1. 암호화 방식</h2>
+
+        <h3>대칭키 암호화</h3>
+        <p>암호화와 복호화에 같은 키를 사용하는 방식입니다. 속도가 빠르지만 키를 안전하게 전달하는 것이 문제예요.</p>
+
+        <table class="g-table">
+          <thead><tr><th>알고리즘</th><th>특징</th></tr></thead>
+          <tbody>
+            <tr><td><strong>DES</strong></td><td>56비트 키. 현재는 취약하여 사용 중단</td></tr>
+            <tr><td><strong>3DES(Triple DES)</strong></td><td>DES를 3번 반복. DES보다 안전하지만 느림</td></tr>
+            <tr><td><strong>AES</strong></td><td>128/192/256비트 키. 현재 표준 대칭키 알고리즘. 안전하고 빠름</td></tr>
+            <tr><td><strong>IDEA</strong></td><td>128비트 키. PGP에서 사용</td></tr>
+            <tr><td><strong>SEED</strong></td><td>한국 표준 대칭키 알고리즘. 128비트 키</td></tr>
+            <tr><td><strong>ARIA</strong></td><td>국가정보원에서 개발한 한국 표준. 128/192/256비트</td></tr>
+            <tr><td><strong>RC4</strong></td><td>스트림 암호. SSL/TLS에 사용됐으나 현재 취약</td></tr>
+          </tbody>
+        </table>
+
+        <h3>비대칭키 암호화 (공개키 암호화)</h3>
+        <p>암호화와 복호화에 서로 다른 키(공개키/개인키) 쌍을 사용합니다. 키 배송 문제를 해결하지만 속도가 느립니다.</p>
+
+        <table class="g-table">
+          <thead><tr><th>알고리즘</th><th>특징</th></tr></thead>
+          <tbody>
+            <tr><td><strong>RSA</strong></td><td>가장 널리 사용되는 공개키 암호. 큰 수의 소인수분해 어려움 이용</td></tr>
+            <tr><td><strong>ECC</strong></td><td>타원곡선 암호. RSA보다 짧은 키로 동일 보안 수준 달성</td></tr>
+            <tr><td><strong>DSA</strong></td><td>전자 서명에 특화된 알고리즘</td></tr>
+            <tr><td><strong>Diffie-Hellman</strong></td><td>키 교환 알고리즘. 안전하지 않은 채널에서 공유 비밀키 생성</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 암호화 빈출 포인트</strong><br>
+          ✔ 대칭키: 같은 키 사용. 빠름. 키 배송 문제. AES, DES, SEED, ARIA<br>
+          ✔ 비대칭키: 공개키/개인키 쌍. 느림. 키 배송 문제 없음. RSA<br>
+          ✔ "공개키로 암호화 → 개인키로 복호화" (기밀성)<br>
+          ✔ "개인키로 암호화 → 공개키로 복호화" (인증, 전자서명)<br>
+          ✔ 실제 시스템은 비대칭키로 대칭키를 안전하게 교환 후 대칭키로 통신 (혼합 방식)
+        </div>
+
+        <h2 id="hash" class="section-anchor">2. 해시 알고리즘</h2>
+
+        <p>임의 길이 입력을 고정 길이 출력으로 변환하는 단방향 함수입니다. 무결성 검증, 비밀번호 저장, 전자서명에 활용됩니다.</p>
+
+        <table class="g-table">
+          <thead><tr><th>알고리즘</th><th>출력 크기</th><th>특징</th></tr></thead>
+          <tbody>
+            <tr><td><strong>MD5</strong></td><td>128비트</td><td>빠르지만 충돌 취약점 발견. 보안 용도로 권장하지 않음</td></tr>
+            <tr><td><strong>SHA-1</strong></td><td>160비트</td><td>MD5보다 안전하지만 현재 취약. 사용 중단 권고</td></tr>
+            <tr><td><strong>SHA-256</strong></td><td>256비트</td><td>현재 표준. TLS, 비트코인 등에 사용</td></tr>
+            <tr><td><strong>SHA-3</strong></td><td>224~512비트</td><td>가장 최신 SHA 표준</td></tr>
+            <tr><td><strong>HAS-160</strong></td><td>160비트</td><td>한국 표준 해시 알고리즘</td></tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box">
+          <strong>💡 해시의 특성</strong><br>
+          ✔ 단방향성: 해시값으로 원래 값을 복원할 수 없음<br>
+          ✔ 결정성: 같은 입력은 항상 같은 해시값 출력<br>
+          ✔ 눈사태 효과: 입력값 1비트만 바꿔도 전혀 다른 해시값 출력<br>
+          ✔ 충돌 저항성: 서로 다른 입력이 같은 해시값을 가지는 것이 어려워야 함
+        </div>
+
+        <h2 id="attacks" class="section-anchor">3. 주요 공격 유형</h2>
+
+        <p>보안 파트에서 가장 자주 나오는 섹션입니다. 각 공격 이름과 원리를 정확하게 매칭해서 외워야 합니다.</p>
+
+        <h3>웹 공격</h3>
+        <table class="g-table">
+          <thead><tr><th>공격</th><th>원리</th><th>대응 방법</th></tr></thead>
+          <tbody>
+            <tr><td><strong>SQL 인젝션</strong></td><td>입력값에 SQL 쿼리 삽입. DB 무단 접근·변조</td><td>입력값 검증, 파라미터화 쿼리(Prepared Statement)</td></tr>
+            <tr><td><strong>XSS (크로스사이트 스크립팅)</strong></td><td>악성 스크립트를 게시물 등에 삽입. 다른 사용자 브라우저에서 실행</td><td>입력값 이스케이프 처리, CSP 설정</td></tr>
+            <tr><td><strong>CSRF (사이트 간 요청 위조)</strong></td><td>인증된 사용자가 의도치 않은 요청을 보내도록 유도</td><td>CSRF 토큰, SameSite 쿠키</td></tr>
+            <tr><td><strong>디렉토리 트래버설</strong></td><td>경로 조작(../../../)으로 허용되지 않은 파일 접근</td><td>입력값 정규화, 파일 경로 검증</td></tr>
+            <tr><td><strong>파일 업로드 취약점</strong></td><td>악성 파일 업로드 후 서버에서 실행</td><td>파일 형식·확장자 검증, 업로드 경로 제한</td></tr>
+          </tbody>
+        </table>
+
+        <h3>네트워크 공격</h3>
+        <table class="g-table">
+          <thead><tr><th>공격</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>DoS (서비스 거부)</strong></td><td>대량 요청으로 서버 과부하. 단일 공격자</td></tr>
+            <tr><td><strong>DDoS (분산 서비스 거부)</strong></td><td>수많은 좀비 PC(봇넷)를 이용한 대규모 DoS 공격</td></tr>
+            <tr><td><strong>스니핑(Sniffing)</strong></td><td>네트워크 패킷을 도청하여 정보 탈취. 수동적 공격</td></tr>
+            <tr><td><strong>스푸핑(Spoofing)</strong></td><td>IP, MAC, ARP 등 주소를 위조하여 신뢰 관계 악용</td></tr>
+            <tr><td><strong>ARP 스푸핑</strong></td><td>ARP 응답을 위조하여 트래픽을 공격자 경유로 유도</td></tr>
+            <tr><td><strong>세션 하이재킹</strong></td><td>인증된 세션을 탈취하여 공격자가 그 세션을 사용</td></tr>
+            <tr><td><strong>중간자 공격(MITM)</strong></td><td>통신 중간에서 데이터를 도청·변조</td></tr>
+            <tr><td><strong>DNS 스푸핑</strong></td><td>DNS 응답을 위조하여 가짜 사이트로 유도</td></tr>
+          </tbody>
+        </table>
+
+        <h3>기타 공격</h3>
+        <table class="g-table">
+          <thead><tr><th>공격</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>무차별 대입(Brute Force)</strong></td><td>모든 가능한 비밀번호 조합을 시도</td></tr>
+            <tr><td><strong>사전 공격(Dictionary)</strong></td><td>자주 사용되는 단어/패턴 사전으로 비밀번호 추측</td></tr>
+            <tr><td><strong>레인보우 테이블</strong></td><td>해시값과 원본 쌍을 미리 계산해 저장한 테이블로 해시 역추적</td></tr>
+            <tr><td><strong>사회공학(Social Engineering)</strong></td><td>기술적 취약점이 아닌 사람의 심리를 이용한 공격</td></tr>
+            <tr><td><strong>피싱(Phishing)</strong></td><td>가짜 사이트·메일로 개인 정보 탈취</td></tr>
+            <tr><td><strong>랜섬웨어(Ransomware)</strong></td><td>파일을 암호화하고 복호화 대가로 금전 요구</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 공격 유형 구분 포인트</strong><br>
+          ✔ SQL 인젝션 vs XSS: SQL 인젝션은 DB 공격, XSS는 브라우저 스크립트 실행<br>
+          ✔ DoS vs DDoS: 공격자 수가 차이. DDoS는 분산(Distributed)<br>
+          ✔ 스니핑 vs 스푸핑: 스니핑은 도청(수동), 스푸핑은 위조(능동)<br>
+          ✔ CSRF: 피해자가 직접 요청을 보내도록 유도 — XSS와 혼동 주의
+        </div>
+
+        <h2 id="access-control" class="section-anchor">4. 접근 제어 모델</h2>
+
+        <table class="g-table">
+          <thead><tr><th>모델</th><th>영문</th><th>특징</th></tr></thead>
+          <tbody>
+            <tr><td><strong>임의적 접근 제어</strong></td><td>DAC (Discretionary AC)</td><td>자원 소유자가 접근 권한 결정. 유연하지만 보안 취약. 일반 OS에 사용</td></tr>
+            <tr><td><strong>강제적 접근 제어</strong></td><td>MAC (Mandatory AC)</td><td>시스템이 보안 등급으로 접근 제어. 군사·정부 시스템에 사용. 엄격</td></tr>
+            <tr><td><strong>역할 기반 접근 제어</strong></td><td>RBAC (Role-Based AC)</td><td>역할(Role)에 따라 권한 부여. 관리 용이. 기업 환경에 적합</td></tr>
+            <tr><td><strong>속성 기반 접근 제어</strong></td><td>ABAC (Attribute-Based AC)</td><td>사용자·자원·환경 속성을 조합하여 동적 접근 제어. 가장 세밀한 제어 가능</td></tr>
+          </tbody>
+        </table>
+
+        <h3>접근 제어 보안 모델</h3>
+        <table class="g-table">
+          <thead><tr><th>모델</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>벨-라파둘라(Bell-LaPadula)</strong></td><td>기밀성 강조. 낮은 보안 등급이 높은 등급 자원을 읽지 못함(No Read Up). 높은 등급이 낮은 등급에 쓰지 못함(No Write Down)</td></tr>
+            <tr><td><strong>비바(Biba)</strong></td><td>무결성 강조. 낮은 등급이 높은 등급에 쓰지 못함(No Write Up). 높은 등급이 낮은 등급을 읽지 못함(No Read Down)</td></tr>
+            <tr><td><strong>클락-윌슨(Clark-Wilson)</strong></td><td>무결성 강조. 트랜잭션 무결성 유지. 상업 시스템에 적합</td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="auth" class="section-anchor">5. 인증 기술</h2>
+
+        <table class="g-table">
+          <thead><tr><th>기술</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>OTP (일회용 비밀번호)</strong></td><td>매번 달라지는 비밀번호. 재사용 공격 차단. TOTP(시간 기반), HOTP(카운터 기반)</td></tr>
+            <tr><td><strong>PKI (공개키 기반구조)</strong></td><td>인증서 기반으로 공개키의 신뢰성 보증. CA(인증기관)가 인증서 발급</td></tr>
+            <tr><td><strong>전자 서명</strong></td><td>개인키로 서명, 공개키로 검증. 무결성 + 부인 방지 + 인증 제공</td></tr>
+            <tr><td><strong>SSO (단일 로그인)</strong></td><td>한 번 로그인으로 여러 서비스 접근. 사용 편의성↑ 단일 인증 지점 공격 위험↑</td></tr>
+            <tr><td><strong>Kerberos</strong></td><td>티켓 기반 인증 프로토콜. 네트워크에서 신뢰받은 제3자 인증기관(KDC) 사용</td></tr>
+            <tr><td><strong>OAuth</strong></td><td>타사 서비스에 제한된 접근 권한 부여. "카카오로 로그인"이 대표 예시</td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="security-tools" class="section-anchor">6. 보안 기술 및 도구</h2>
+
+        <table class="g-table">
+          <thead><tr><th>기술/도구</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>방화벽(Firewall)</strong></td><td>패킷 필터링으로 허가된 트래픽만 통과. 패킷 필터링, 상태 기반(Stateful) 등</td></tr>
+            <tr><td><strong>IDS (침입 탐지 시스템)</strong></td><td>침입을 탐지하고 관리자에게 경보. 수동적 대응</td></tr>
+            <tr><td><strong>IPS (침입 방지 시스템)</strong></td><td>침입 탐지 + 능동적 차단. IDS 발전형</td></tr>
+            <tr><td><strong>DMZ (비무장 지대)</strong></td><td>외부망과 내부망 사이의 완충 구간. 웹서버·메일서버 배치</td></tr>
+            <tr><td><strong>VPN (가상 사설망)</strong></td><td>공용 네트워크를 통해 암호화된 사설 터널 형성</td></tr>
+            <tr><td><strong>SSL/TLS</strong></td><td>전송 계층 암호화. HTTPS의 기반 기술</td></tr>
+            <tr><td><strong>IPSec</strong></td><td>네트워크 계층(IP)에서 암호화·인증 제공. VPN에 사용</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 보안 도구 빈출 포인트</strong><br>
+          ✔ IDS vs IPS: IDS는 탐지만, IPS는 탐지 + 차단<br>
+          ✔ 방화벽: OSI 3~4계층에서 동작. 패킷 필터링<br>
+          ✔ DMZ: 방화벽 두 개 사이에 위치한 반신뢰 구간<br>
+          ✔ VPN + IPSec: 안전한 원격 접속에 함께 사용되는 조합
+        </div>
+
+        <h2>마무리</h2>
+        <p>보안 파트는 용어를 정확히 아는 것이 관건입니다. 비슷하게 들리는 용어들(스니핑·스푸핑, DoS·DDoS, IDS·IPS)을 확실히 구분하고, 암호화 알고리즘별 키 크기와 특징을 외워두면 빠르게 점수를 챙길 수 있습니다. 공격 유형은 공격 원리를 이해하면 이름을 잊어도 논리적으로 추론이 가능하니 암기보다 이해 위주로 공부하세요.</p>
+
+      </div>
+    </article>
+
+    <aside class="post-sidebar">
+      <div class="sidebar-section">
+        <h3>관련 글</h3>
+        <ul class="sidebar-list">
+          <li><a href="/posts/gisa-practical-network.html">실기 네트워크 완전정복</a></li>
+          <li><a href="/posts/gisa-practical-os.html">실기 운영체제 완전정복</a></li>
+          <li><a href="/posts/gisa-subject5-system-mgmt.html">필기 5과목 정보시스템 관리</a></li>
+          <li><a href="/posts/gisa-sql-guide.html">실기 SQL 완전정복</a></li>
+          <li><a href="/posts/gisa-exam-strategy.html">합격 공부 전략 가이드</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <p>© 2026 매일이슈. 모든 권리 보유.</p>
+    <p><a href="/privacy.html">개인정보처리방침</a> · <a href="/terms.html">이용약관</a></p>
+  </footer>
+  <script src="../main.js"></script>
+</body>
+</html>

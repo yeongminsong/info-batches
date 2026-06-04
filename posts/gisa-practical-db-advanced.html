@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CG5VPJWVEQ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CG5VPJWVEQ');
+  </script>
+  <meta charset="UTF-8"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#6891f8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>정보처리기사 실기 데이터베이스 심화 — 정규화·트랜잭션·인덱스·관계 대수 — 매일이슈</title>
+  <meta name="description" content="정보처리기사 실기 데이터베이스 심화 정리. 정규화 1NF~BCNF 상세 풀이, 트랜잭션 ACID와 격리 수준, 인덱스 종류, 관계 대수 연산자까지 실기 출제 핵심 총정리.">
+  <meta property="og:title" content="정보처리기사 실기 데이터베이스 심화 — 매일이슈">
+  <meta property="og:description" content="정규화 단계별 상세 풀이, 트랜잭션 ACID, 격리 수준, 인덱스, 관계 대수까지 데이터베이스 심화 총정리.">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=1200&h=630&fit=crop">
+  <meta property="og:url" content="https://mailissue.co.kr/posts/gisa-practical-db-advanced.html">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="매일이슈">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="정보처리기사 실기 데이터베이스 심화 — 매일이슈">
+  <meta name="twitter:description" content="정규화 단계별 상세 풀이, 트랜잭션 ACID, 격리 수준, 인덱스, 관계 대수까지 데이터베이스 심화 총정리.">
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=1200&h=630&fit=crop">
+  <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
+  <link rel="canonical" href="https://mailissue.co.kr/posts/gisa-practical-db-advanced.html">
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "정보처리기사 실기 데이터베이스 심화",
+    "description": "정규화, 트랜잭션 ACID, 격리 수준, 인덱스, 관계 대수 등 데이터베이스 심화 내용 정리.",
+    "image": "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=1200&h=630&fit=crop",
+    "url": "https://mailissue.co.kr/posts/gisa-practical-db-advanced.html",
+    "datePublished": "2026-06-04",
+    "dateModified": "2026-06-04",
+    "author": {"@type": "Organization", "name": "매일이슈"},
+    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://mailissue.co.kr"}
+  }</script>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
+  <link href="../style.css" rel="stylesheet">
+  <meta name="google-adsense-account" content="ca-pub-5414405329595188">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5414405329595188" crossorigin="anonymous"></script>
+  <style>
+    .g-table { width:100%; border-collapse:collapse; margin:1.2rem 0; font-size:0.93rem; }
+    .g-table th { background:var(--primary,#6891f8); color:#fff; padding:0.6rem 1rem; text-align:left; font-weight:600; }
+    .g-table td { padding:0.55rem 1rem; border-bottom:1px solid var(--border,#e3e6ea); vertical-align:top; }
+    .g-table tr:nth-child(even) td { background:var(--bg-gray,#f7f8fc); }
+    .exam-box { background:#fff8e1; border-left:4px solid #ffc107; border-radius:0 0.5rem 0.5rem 0; padding:1rem 1.2rem; margin:1.2rem 0; font-size:0.95rem; line-height:1.7; }
+    .exam-box strong { color:#e65100; }
+    .tip-box { background:#e8f5e9; border-left:4px solid #43a047; border-radius:0 0.5rem 0.5rem 0; padding:1rem 1.2rem; margin:1.2rem 0; font-size:0.95rem; line-height:1.7; }
+    .tip-box strong { color:#1b5e20; }
+    .toc-box { background:var(--bg-gray,#f7f8fc); border:1px solid var(--border,#e3e6ea); border-radius:0.75rem; padding:1rem 1.4rem; margin:1.5rem 0; font-size:0.93rem; }
+    .toc-box ol { margin:0.5rem 0 0; padding-left:1.4rem; }
+    .toc-box li { margin:0.3rem 0; }
+    .toc-box a { color:#6891f8; text-decoration:none; }
+    .section-anchor { scroll-margin-top:80px; }
+    .code-block { background:#1e1e2e; color:#cdd6f4; border-radius:0.6rem; padding:1rem 1.2rem; font-family:'Consolas','Fira Code',monospace; font-size:0.88rem; margin:1rem 0; overflow-x:auto; line-height:1.7; }
+    .nav-links { display:flex; flex-wrap:wrap; gap:0.5rem; margin:1.5rem 0; }
+    .nav-links a { background:var(--bg-gray,#f7f8fc); border:1px solid var(--border,#e3e6ea); border-radius:0.5rem; padding:0.4rem 0.9rem; font-size:0.88rem; color:#6891f8; text-decoration:none; }
+    .nav-links a:hover { background:#6891f8; color:#fff; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/index.html" class="logo">매일이슈</a>
+      <nav class="nav">
+        <a href="/index.html">홈</a>
+        <a href="/category.html">카테고리</a>
+        <a href="/tags.html">태그</a>
+        <a href="/about.html">소개</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="테마 전환">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="post-hero-img" style="background-image:url('https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=1400&h=500&fit=crop&auto=format');"></div>
+
+  <div class="post-wrapper">
+    <a href="/index.html" class="post-back">← 목록으로</a>
+    <article class="post-article">
+      <header class="post-header">
+        <div class="post-tags">
+          <span class="tag">정보처리기사</span>
+          <span class="tag">실기</span>
+          <span class="tag">데이터베이스</span>
+          <span class="tag">정규화</span>
+        </div>
+        <h1 class="post-h1">정보처리기사 실기 데이터베이스 심화 — 정규화·트랜잭션·인덱스·관계 대수</h1>
+        <div class="post-meta">
+          <span>📅 2026. 06. 04</span>
+          <span>⏱ 20분 읽기</span>
+        </div>
+      </header>
+
+      <div class="post-content">
+  <ins class="adsbygoogle ad-post-top" style="display:block" data-ad-client="ca-pub-5414405329595188" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+        <p>정보처리기사 데이터베이스는 필기 3과목과 실기 모두에서 가장 많은 점수가 걸린 영역입니다. SQL은 별도로 다룬 글이 있으니 이번엔 SQL 외의 이론 부분을 집중적으로 정리합니다. 정규화 단계, 트랜잭션 ACID 속성, 트랜잭션 격리 수준, 인덱스 종류, 그리고 관계 대수까지 실기에서 서술형으로 물어보는 핵심 개념들입니다.</p>
+
+        <div class="toc-box">
+          <strong>📋 목차</strong>
+          <ol>
+            <li><a href="#normalization">정규화 (1NF~BCNF)</a></li>
+            <li><a href="#anomaly">이상 현상</a></li>
+            <li><a href="#transaction">트랜잭션과 ACID</a></li>
+            <li><a href="#isolation">트랜잭션 격리 수준</a></li>
+            <li><a href="#index">인덱스</a></li>
+            <li><a href="#relational-algebra">관계 대수</a></li>
+            <li><a href="#concurrency">동시성 제어</a></li>
+          </ol>
+        </div>
+
+        <div class="nav-links">
+          <span style="font-size:0.85rem;color:#888;align-self:center;">DB 관련 글 →</span>
+          <a href="/posts/gisa-sql-guide.html">SQL 완전정복</a>
+          <a href="/posts/gisa-subject3-database.html">필기 3과목 DB</a>
+          <a href="/posts/gisa-practical-os.html">운영체제 완전정복</a>
+        </div>
+
+        <h2 id="normalization" class="section-anchor">1. 정규화 (1NF ~ BCNF)</h2>
+
+        <p>정규화는 데이터 중복을 줄이고 이상 현상을 없애기 위해 릴레이션을 분해하는 과정입니다. 실기에서 "이 릴레이션은 몇 정규형인가?"처럼 단계를 판별하거나 "BCNF를 만족하도록 분해하시오" 같은 문제가 나옵니다.</p>
+
+        <table class="g-table">
+          <thead><tr><th>정규형</th><th>조건</th><th>제거되는 문제</th></tr></thead>
+          <tbody>
+            <tr><td><strong>비정규형</strong></td><td>반복 그룹(다중값 속성) 존재</td><td>-</td></tr>
+            <tr><td><strong>1NF</strong></td><td>모든 속성 값이 원자값(더 이상 분해 불가). 반복 그룹 없음</td><td>반복 그룹 제거</td></tr>
+            <tr><td><strong>2NF</strong></td><td>1NF + 기본키가 아닌 속성들이 기본키 전체에 완전 함수 종속</td><td>부분 함수 종속 제거</td></tr>
+            <tr><td><strong>3NF</strong></td><td>2NF + 기본키가 아닌 속성들 사이에 이행 함수 종속이 없음</td><td>이행 함수 종속 제거</td></tr>
+            <tr><td><strong>BCNF</strong></td><td>3NF + 모든 결정자가 후보키</td><td>결정자이면서 후보키가 아닌 것 제거</td></tr>
+          </tbody>
+        </table>
+
+        <h3>정규화 예시로 이해하기</h3>
+        <p>주문 정보를 담은 다음 테이블을 정규화해 봅시다.</p>
+
+        <div class="code-block">
+비정규형 테이블:
+주문번호 | 고객명 | 도시 | 상품1 | 수량1 | 상품2 | 수량2
+------------------------------------------------------------
+1001    | 홍길동 | 서울 | 노트북 | 1    | 마우스 | 2
+
+1NF 변환 (반복 그룹 제거):
+주문번호 | 고객명 | 도시 | 상품명 | 수량
+-----------------------------------------
+1001    | 홍길동 | 서울 | 노트북  | 1
+1001    | 홍길동 | 서울 | 마우스  | 2
+→ PK: (주문번호, 상품명)
+
+2NF 문제: 고객명, 도시는 주문번호에만 종속 (부분 종속)
+→ 분해: 주문(주문번호, 고객명, 도시) + 주문상품(주문번호, 상품명, 수량)
+
+3NF 문제: 도시가 고객명을 통해 주문번호에 이행 종속
+→ 분해: 주문(주문번호, 고객명) + 고객(고객명, 도시)
+        </div>
+
+        <div class="exam-box">
+          <strong>🎯 정규화 핵심 포인트</strong><br>
+          ✔ 부분 함수 종속: 복합 기본키에서 일부 키에만 종속 → 2NF로 해결<br>
+          ✔ 이행 함수 종속: A→B, B→C인데 A→C → 3NF로 해결<br>
+          ✔ BCNF: 3NF를 만족하지만 결정자가 후보키가 아닌 경우까지 해결<br>
+          ✔ 4NF, 5NF는 시험에 거의 나오지 않음. 주로 1NF~BCNF 집중
+        </div>
+
+        <h2 id="anomaly" class="section-anchor">2. 이상 현상</h2>
+
+        <p>정규화가 되지 않은 테이블에서 발생하는 데이터 관리 문제입니다. 3가지 이상 현상의 이름과 예시를 정확히 알아야 합니다.</p>
+
+        <table class="g-table">
+          <thead><tr><th>이상 현상</th><th>설명</th><th>예시</th></tr></thead>
+          <tbody>
+            <tr><td><strong>삽입 이상</strong></td><td>원하는 데이터를 삽입하려면 원하지 않는 데이터도 함께 삽입해야 하는 현상</td><td>주문 없이 고객만 등록할 수 없는 경우</td></tr>
+            <tr><td><strong>삭제 이상</strong></td><td>필요한 데이터를 삭제하려면 다른 데이터도 함께 삭제되는 현상</td><td>마지막 주문 삭제 시 고객 정보도 사라지는 경우</td></tr>
+            <tr><td><strong>갱신 이상</strong></td><td>중복된 데이터 일부만 변경하면 데이터 불일치가 발생하는 현상</td><td>고객 주소가 여러 행에 중복 저장되어 일부만 업데이트되는 경우</td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="transaction" class="section-anchor">3. 트랜잭션과 ACID</h2>
+
+        <p>트랜잭션은 데이터베이스의 상태를 변환시키는 하나의 논리적 작업 단위입니다. 여러 연산을 하나로 묶어서 모두 성공하거나 모두 실패해야 합니다.</p>
+
+        <table class="g-table">
+          <thead><tr><th>속성</th><th>영문</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>원자성</strong></td><td>Atomicity</td><td>트랜잭션 내 모든 연산은 전부 실행되거나 전혀 실행되지 않아야 함. 중간 상태 없음</td></tr>
+            <tr><td><strong>일관성</strong></td><td>Consistency</td><td>트랜잭션 완료 후에도 데이터베이스의 무결성 제약이 유지되어야 함</td></tr>
+            <tr><td><strong>고립성</strong></td><td>Isolation</td><td>동시에 실행되는 트랜잭션들은 서로에게 영향을 주지 않아야 함</td></tr>
+            <tr><td><strong>지속성</strong></td><td>Durability</td><td>커밋된 트랜잭션의 결과는 장애가 발생해도 영구적으로 보존되어야 함</td></tr>
+          </tbody>
+        </table>
+
+        <h3>트랜잭션 상태</h3>
+        <table class="g-table">
+          <thead><tr><th>상태</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>활동(Active)</strong></td><td>트랜잭션 실행 중인 상태</td></tr>
+            <tr><td><strong>부분 완료(Partially Committed)</strong></td><td>마지막 연산까지 실행했지만 아직 커밋 안 된 상태</td></tr>
+            <tr><td><strong>완료(Committed)</strong></td><td>트랜잭션이 성공적으로 완료되어 커밋된 상태</td></tr>
+            <tr><td><strong>실패(Failed)</strong></td><td>오류로 인해 트랜잭션 실행이 중단된 상태</td></tr>
+            <tr><td><strong>중단(Aborted)</strong></td><td>롤백 완료 후 트랜잭션 이전 상태로 복구된 상태</td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="isolation" class="section-anchor">4. 트랜잭션 격리 수준</h2>
+
+        <p>여러 트랜잭션이 동시에 실행될 때 발생하는 문제를 어느 수준까지 허용할지 정하는 설정입니다. 격리 수준이 높을수록 안전하지만 성능이 낮아집니다.</p>
+
+        <table class="g-table">
+          <thead><tr><th>격리 수준</th><th>Dirty Read</th><th>Non-Repeatable Read</th><th>Phantom Read</th></tr></thead>
+          <tbody>
+            <tr><td><strong>READ UNCOMMITTED</strong></td><td>발생</td><td>발생</td><td>발생</td></tr>
+            <tr><td><strong>READ COMMITTED</strong></td><td>방지</td><td>발생</td><td>발생</td></tr>
+            <tr><td><strong>REPEATABLE READ</strong></td><td>방지</td><td>방지</td><td>발생</td></tr>
+            <tr><td><strong>SERIALIZABLE</strong></td><td>방지</td><td>방지</td><td>방지</td></tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box">
+          <strong>💡 동시성 문제 3종류</strong><br>
+          • <strong>Dirty Read</strong>: 아직 커밋되지 않은 데이터를 다른 트랜잭션이 읽음<br>
+          • <strong>Non-Repeatable Read</strong>: 같은 쿼리를 두 번 실행했는데 다른 값이 나옴 (행 수정)<br>
+          • <strong>Phantom Read</strong>: 같은 쿼리를 두 번 실행했는데 없던 행이 생기거나 사라짐 (행 삽입·삭제)
+        </div>
+
+        <h2 id="index" class="section-anchor">5. 인덱스</h2>
+
+        <p>데이터 검색 속도를 높이기 위해 별도로 생성하는 자료구조입니다. 책의 색인과 같은 역할입니다.</p>
+
+        <table class="g-table">
+          <thead><tr><th>종류</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>클러스터드 인덱스</strong></td><td>테이블 데이터가 인덱스 순서에 따라 물리적으로 정렬됨. 테이블당 1개만 가능. 기본키에 자동 생성</td></tr>
+            <tr><td><strong>비클러스터드 인덱스</strong></td><td>인덱스는 별도 공간에 존재. 실제 데이터 순서와 무관. 여러 개 생성 가능</td></tr>
+            <tr><td><strong>밀집 인덱스</strong></td><td>모든 레코드에 대해 인덱스 항목 존재</td></tr>
+            <tr><td><strong>희소 인덱스</strong></td><td>일부 레코드(주로 블록 대표)에만 인덱스 항목 존재. 공간 절약</td></tr>
+            <tr><td><strong>복합 인덱스</strong></td><td>두 개 이상 컬럼을 묶어서 생성하는 인덱스</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 인덱스 주의사항</strong><br>
+          ✔ 인덱스는 검색 성능↑, 삽입·수정·삭제 성능↓ (인덱스도 함께 수정해야 하므로)<br>
+          ✔ WHERE 절에 자주 사용되는 컬럼에 인덱스 생성 효과적<br>
+          ✔ 카디널리티가 높을수록(값의 종류가 많을수록) 인덱스 효과적<br>
+          ✔ B-트리 인덱스가 가장 일반적. 범위 검색에 유리
+        </div>
+
+        <h2 id="relational-algebra" class="section-anchor">6. 관계 대수</h2>
+
+        <p>관계형 데이터베이스에서 릴레이션을 조작하는 연산들입니다. 실기에서 연산자 기호와 의미를 묻는 문제가 나옵니다.</p>
+
+        <table class="g-table">
+          <thead><tr><th>연산자</th><th>기호</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>셀렉션(Selection)</strong></td><td>σ (시그마)</td><td>조건을 만족하는 행(튜플) 추출. SQL의 WHERE에 해당</td></tr>
+            <tr><td><strong>프로젝션(Projection)</strong></td><td>π (파이)</td><td>특정 열(속성)만 추출. SQL의 SELECT 컬럼 지정에 해당</td></tr>
+            <tr><td><strong>합집합(Union)</strong></td><td>∪</td><td>두 릴레이션의 튜플 합침. 중복 제거. 두 릴레이션 구조 같아야 함</td></tr>
+            <tr><td><strong>차집합(Difference)</strong></td><td>−</td><td>한 릴레이션에만 있는 튜플 반환</td></tr>
+            <tr><td><strong>교집합(Intersection)</strong></td><td>∩</td><td>두 릴레이션에 모두 있는 튜플 반환</td></tr>
+            <tr><td><strong>카티션 곱(Cartesian Product)</strong></td><td>×</td><td>두 릴레이션의 모든 조합. 행 수 = n × m</td></tr>
+            <tr><td><strong>조인(Join)</strong></td><td>⋈</td><td>두 릴레이션을 공통 속성으로 연결. 카티션 곱 + 셀렉션</td></tr>
+            <tr><td><strong>디비전(Division)</strong></td><td>÷</td><td>특정 릴레이션의 모든 값과 대응하는 튜플만 반환</td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="concurrency" class="section-anchor">7. 동시성 제어</h2>
+
+        <p>여러 트랜잭션이 동시에 같은 데이터에 접근할 때 발생하는 문제를 막기 위한 기법입니다.</p>
+
+        <table class="g-table">
+          <thead><tr><th>기법</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>잠금(Locking)</strong></td><td>데이터에 잠금을 걸어 다른 트랜잭션의 동시 접근 차단. 공유 잠금(읽기), 배타 잠금(쓰기)</td></tr>
+            <tr><td><strong>2단계 잠금(2PL)</strong></td><td>잠금 확장 단계(취득만)와 잠금 수축 단계(해제만)로 나눔. 직렬성 보장. 교착상태 가능</td></tr>
+            <tr><td><strong>타임스탬프</strong></td><td>트랜잭션에 시작 시간을 부여해 충돌 시 오래된 트랜잭션을 롤백</td></tr>
+            <tr><td><strong>낙관적 동시성 제어</strong></td><td>충돌이 없다고 가정하고 진행 후 완료 시점에 충돌 검사. 충돌 시 롤백</td></tr>
+            <tr><td><strong>MVCC</strong></td><td>데이터의 여러 버전을 유지. 읽기 작업에 잠금 불필요. PostgreSQL, MySQL InnoDB에서 사용</td></tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box">
+          <strong>💡 회복 기법</strong><br>
+          • <strong>로그 기반 회복</strong>: 변경 전·후 값을 로그에 기록. 장애 발생 시 Redo(재실행) 또는 Undo(취소)<br>
+          • <strong>체크포인트</strong>: 주기적으로 메모리 내용을 디스크에 저장. 회복 시 체크포인트 이후만 처리<br>
+          • <strong>그림자 페이지</strong>: 수정 전 페이지를 별도 보관. 장애 시 원본 복구
+        </div>
+
+        <h2>마무리</h2>
+        <p>데이터베이스 이론은 SQL과 함께 실기에서 가장 중요한 영역입니다. 특히 정규화는 단계별 조건을 정확히 알고, 주어진 테이블이 어느 정규형인지 판별할 수 있어야 합니다. 트랜잭션 ACID와 격리 수준은 서술형으로 자주 나오니 각 용어의 정확한 설명을 써보는 연습을 반복하세요.</p>
+
+      </div>
+    </article>
+
+    <aside class="post-sidebar">
+      <div class="sidebar-section">
+        <h3>관련 글</h3>
+        <ul class="sidebar-list">
+          <li><a href="/posts/gisa-sql-guide.html">실기 SQL 완전정복</a></li>
+          <li><a href="/posts/gisa-subject3-database.html">필기 3과목 데이터베이스</a></li>
+          <li><a href="/posts/gisa-practical-os.html">실기 운영체제 완전정복</a></li>
+          <li><a href="/posts/gisa-programming-guide.html">실기 프로그래밍 완전정복</a></li>
+          <li><a href="/posts/gisa-exam-strategy.html">합격 공부 전략 가이드</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <p>© 2026 매일이슈. 모든 권리 보유.</p>
+    <p><a href="/privacy.html">개인정보처리방침</a> · <a href="/terms.html">이용약관</a></p>
+  </footer>
+  <script src="../main.js"></script>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CG5VPJWVEQ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CG5VPJWVEQ');
+  </script>
+  <meta charset="UTF-8"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#6891f8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>정보처리기사 실기 운영체제 완전정복 — 프로세스·스케줄링·메모리·교착상태 — 매일이슈</title>
+  <meta name="description" content="정보처리기사 실기 운영체제 핵심 정리. 프로세스 상태, CPU 스케줄링 알고리즘, 메모리 관리, 교착상태 조건과 해결법까지 시험에 나오는 내용 총정리.">
+  <meta property="og:title" content="정보처리기사 실기 운영체제 완전정복 — 매일이슈">
+  <meta property="og:description" content="프로세스 스케줄링, 메모리 관리, 교착상태, 페이지 교체 알고리즘까지 운영체제 핵심 개념 총정리.">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&h=630&fit=crop">
+  <meta property="og:url" content="https://mailissue.co.kr/posts/gisa-practical-os.html">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="매일이슈">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="정보처리기사 실기 운영체제 완전정복 — 매일이슈">
+  <meta name="twitter:description" content="프로세스 스케줄링, 메모리 관리, 교착상태, 페이지 교체 알고리즘까지 운영체제 핵심 개념 총정리.">
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&h=630&fit=crop">
+  <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
+  <link rel="canonical" href="https://mailissue.co.kr/posts/gisa-practical-os.html">
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "정보처리기사 실기 운영체제 완전정복",
+    "description": "프로세스 스케줄링, 메모리 관리, 교착상태, 페이지 교체 알고리즘 등 운영체제 핵심 정리.",
+    "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&h=630&fit=crop",
+    "url": "https://mailissue.co.kr/posts/gisa-practical-os.html",
+    "datePublished": "2026-06-04",
+    "dateModified": "2026-06-04",
+    "author": {"@type": "Organization", "name": "매일이슈"},
+    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://mailissue.co.kr"}
+  }</script>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
+  <link href="../style.css" rel="stylesheet">
+  <meta name="google-adsense-account" content="ca-pub-5414405329595188">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5414405329595188" crossorigin="anonymous"></script>
+  <style>
+    .g-table { width:100%; border-collapse:collapse; margin:1.2rem 0; font-size:0.93rem; }
+    .g-table th { background:var(--primary,#6891f8); color:#fff; padding:0.6rem 1rem; text-align:left; font-weight:600; }
+    .g-table td { padding:0.55rem 1rem; border-bottom:1px solid var(--border,#e3e6ea); vertical-align:top; }
+    .g-table tr:nth-child(even) td { background:var(--bg-gray,#f7f8fc); }
+    .exam-box { background:#fff8e1; border-left:4px solid #ffc107; border-radius:0 0.5rem 0.5rem 0; padding:1rem 1.2rem; margin:1.2rem 0; font-size:0.95rem; line-height:1.7; }
+    .exam-box strong { color:#e65100; }
+    .tip-box { background:#e8f5e9; border-left:4px solid #43a047; border-radius:0 0.5rem 0.5rem 0; padding:1rem 1.2rem; margin:1.2rem 0; font-size:0.95rem; line-height:1.7; }
+    .tip-box strong { color:#1b5e20; }
+    .code-block { background:#1e1e2e; color:#cdd6f4; border-radius:0.6rem; padding:1rem 1.2rem; font-family:'Consolas','Fira Code',monospace; font-size:0.88rem; margin:1rem 0; overflow-x:auto; line-height:1.7; }
+    .toc-box { background:var(--bg-gray,#f7f8fc); border:1px solid var(--border,#e3e6ea); border-radius:0.75rem; padding:1rem 1.4rem; margin:1.5rem 0; font-size:0.93rem; }
+    .toc-box ol { margin:0.5rem 0 0; padding-left:1.4rem; }
+    .toc-box li { margin:0.3rem 0; }
+    .toc-box a { color:#6891f8; text-decoration:none; }
+    .section-anchor { scroll-margin-top:80px; }
+    .nav-links { display:flex; flex-wrap:wrap; gap:0.5rem; margin:1.5rem 0; }
+    .nav-links a { background:var(--bg-gray,#f7f8fc); border:1px solid var(--border,#e3e6ea); border-radius:0.5rem; padding:0.4rem 0.9rem; font-size:0.88rem; color:#6891f8; text-decoration:none; }
+    .nav-links a:hover { background:#6891f8; color:#fff; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/index.html" class="logo">매일이슈</a>
+      <nav class="nav">
+        <a href="/index.html">홈</a>
+        <a href="/category.html">카테고리</a>
+        <a href="/tags.html">태그</a>
+        <a href="/about.html">소개</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="테마 전환">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="post-hero-img" style="background-image:url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=1400&h=500&fit=crop&auto=format');"></div>
+
+  <div class="post-wrapper">
+    <a href="/index.html" class="post-back">← 목록으로</a>
+    <article class="post-article">
+      <header class="post-header">
+        <div class="post-tags">
+          <span class="tag">정보처리기사</span>
+          <span class="tag">실기</span>
+          <span class="tag">운영체제</span>
+          <span class="tag">프로세스</span>
+        </div>
+        <h1 class="post-h1">정보처리기사 실기 운영체제 완전정복 — 프로세스·스케줄링·메모리·교착상태</h1>
+        <div class="post-meta">
+          <span>📅 2026. 06. 04</span>
+          <span>⏱ 20분 읽기</span>
+        </div>
+      </header>
+
+      <div class="post-content">
+  <ins class="adsbygoogle ad-post-top" style="display:block" data-ad-client="ca-pub-5414405329595188" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+        <p>정보처리기사 실기에서 운영체제는 매회 빠짐없이 나오는 영역입니다. 특히 <strong>CPU 스케줄링 계산 문제</strong>와 <strong>교착상태 조건</strong>은 반드시 숙지해야 해요. 처음에는 용어가 낯설게 느껴지지만, 핵심 개념 몇 가지를 제대로 잡으면 생각보다 어렵지 않습니다.</p>
+
+        <div class="toc-box">
+          <strong>📋 목차</strong>
+          <ol>
+            <li><a href="#process">프로세스와 스레드</a></li>
+            <li><a href="#scheduling">CPU 스케줄링 알고리즘</a></li>
+            <li><a href="#deadlock">교착상태(Deadlock)</a></li>
+            <li><a href="#memory">메모리 관리</a></li>
+            <li><a href="#page">페이지 교체 알고리즘</a></li>
+            <li><a href="#ipc">프로세스 간 통신(IPC)</a></li>
+          </ol>
+        </div>
+
+        <div class="nav-links">
+          <span style="font-size:0.85rem;color:#888;align-self:center;">실기 관련 글 →</span>
+          <a href="/posts/gisa-software-engineering.html">소프트웨어 공학</a>
+          <a href="/posts/gisa-sql-guide.html">SQL 완전정복</a>
+          <a href="/posts/gisa-programming-guide.html">프로그래밍 완전정복</a>
+          <a href="/posts/gisa-practical-network.html">네트워크 완전정복</a>
+          <a href="/posts/gisa-practical-security.html">보안 완전정복</a>
+        </div>
+
+        <h2 id="process" class="section-anchor">1. 프로세스와 스레드</h2>
+
+        <h3>프로세스(Process)란?</h3>
+        <p>프로세스는 실행 중인 프로그램을 의미합니다. 프로그램은 디스크에 저장된 코드일 뿐이지만, 메모리에 올라와서 CPU에 의해 실행되면 프로세스가 됩니다. 프로세스는 자신만의 메모리 공간(코드, 데이터, 힙, 스택)을 가집니다.</p>
+
+        <h3>프로세스 상태 전이</h3>
+        <table class="g-table">
+          <thead><tr><th>상태</th><th>설명</th><th>전이 조건</th></tr></thead>
+          <tbody>
+            <tr><td><strong>생성(New)</strong></td><td>프로세스가 생성되어 준비 큐 진입을 기다리는 상태</td><td>생성 → 준비: 승인(Admitted)</td></tr>
+            <tr><td><strong>준비(Ready)</strong></td><td>CPU를 할당받기 위해 대기 중인 상태</td><td>준비 → 실행: 디스패치(Dispatch)</td></tr>
+            <tr><td><strong>실행(Running)</strong></td><td>CPU를 할당받아 명령어를 실행 중인 상태</td><td>실행 → 준비: 타임아웃(Time-out)</td></tr>
+            <tr><td><strong>대기(Waiting)</strong></td><td>I/O 작업 등을 기다리며 CPU를 반납한 상태</td><td>실행 → 대기: I/O 요청 / 대기 → 준비: I/O 완료</td></tr>
+            <tr><td><strong>종료(Terminated)</strong></td><td>실행 완료 또는 강제 종료된 상태</td><td>실행 → 종료: Exit</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 시험 포인트</strong><br>
+          ✔ "CPU를 할당받기 위해 기다리는 상태" → <strong>준비(Ready)</strong> 상태<br>
+          ✔ "I/O 완료 후 어느 상태로 가는가?" → <strong>준비(Ready)</strong> 상태 (실행으로 바로 가지 않음)<br>
+          ✔ 디스패치: 준비 → 실행 전이, 타임아웃/선점: 실행 → 준비 전이
+        </div>
+
+        <h3>프로세스 vs 스레드</h3>
+        <table class="g-table">
+          <thead><tr><th>구분</th><th>프로세스</th><th>스레드</th></tr></thead>
+          <tbody>
+            <tr><td><strong>정의</strong></td><td>독립적 실행 단위. 자체 메모리 공간 보유</td><td>프로세스 내 실행 단위. 메모리 공유</td></tr>
+            <tr><td><strong>메모리</strong></td><td>각 프로세스는 독립적인 주소 공간 사용</td><td>코드, 데이터, 힙 영역을 같은 프로세스 내 스레드끼리 공유</td></tr>
+            <tr><td><strong>통신</strong></td><td>IPC(파이프, 소켓 등) 사용, 비교적 복잡</td><td>공유 메모리로 통신, 간단하지만 동기화 문제 발생 가능</td></tr>
+            <tr><td><strong>전환 비용</strong></td><td>컨텍스트 스위칭 비용 큼</td><td>컨텍스트 스위칭 비용 작음</td></tr>
+            <tr><td><strong>영향</strong></td><td>한 프로세스 오류가 다른 프로세스에 영향 없음</td><td>한 스레드 오류가 같은 프로세스 내 전체 스레드에 영향</td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="scheduling" class="section-anchor">2. CPU 스케줄링 알고리즘</h2>
+
+        <p>CPU 스케줄링은 여러 프로세스 중 어떤 것에 CPU를 줄지 결정하는 정책입니다. 실기 시험에서는 각 알고리즘의 특징뿐 아니라 <strong>평균 대기 시간을 직접 계산</strong>하는 문제도 나옵니다.</p>
+
+        <h3>스케줄링 알고리즘 비교</h3>
+        <table class="g-table">
+          <thead><tr><th>알고리즘</th><th>방식</th><th>특징</th><th>선점 여부</th></tr></thead>
+          <tbody>
+            <tr><td><strong>FCFS</strong></td><td>먼저 도착한 순서대로 처리</td><td>구현 간단. 뒤에 짧은 작업이 와도 앞 작업 끝날 때까지 대기 (호위 효과)</td><td>비선점</td></tr>
+            <tr><td><strong>SJF</strong></td><td>실행 시간이 짧은 작업 우선</td><td>평균 대기 시간 최소화. 실행 시간 예측 어려움. 기아(Starvation) 발생 가능</td><td>비선점</td></tr>
+            <tr><td><strong>SRTF</strong></td><td>남은 시간이 가장 짧은 작업 선점</td><td>SJF의 선점 버전. 평균 대기 시간 최소. 잦은 선점으로 오버헤드 증가</td><td>선점</td></tr>
+            <tr><td><strong>우선순위</strong></td><td>우선순위 높은 작업 우선</td><td>기아 발생 가능 → 에이징(Aging)으로 해결</td><td>선점/비선점</td></tr>
+            <tr><td><strong>Round Robin</strong></td><td>시간 할당량(퀀텀)만큼 돌아가며 처리</td><td>타임 셰어링 시스템에 적합. 퀀텀 크면 FCFS에 가까워짐</td><td>선점</td></tr>
+            <tr><td><strong>다단계 큐</strong></td><td>여러 준비 큐를 우선순위별로 운영</td><td>큐 간 이동 불가. 각 큐마다 다른 알고리즘 적용 가능</td><td>선점</td></tr>
+            <tr><td><strong>다단계 피드백 큐</strong></td><td>다단계 큐에서 큐 간 이동 허용</td><td>에이징 가능. 가장 현실적인 스케줄링 방식</td><td>선점</td></tr>
+          </tbody>
+        </table>
+
+        <h3>FCFS 계산 예시</h3>
+        <p>프로세스 P1(실행 시간 10ms), P2(3ms), P3(5ms)가 순서대로 도착했을 때 FCFS 평균 대기 시간을 구해봅시다.</p>
+
+        <div class="code-block">
+P1: 대기 0ms → 실행 10ms
+P2: 대기 10ms → 실행 3ms
+P3: 대기 13ms → 실행 5ms
+
+평균 대기 시간 = (0 + 10 + 13) / 3 = 7.67ms
+        </div>
+
+        <div class="exam-box">
+          <strong>🎯 스케줄링 계산 문제 공략법</strong><br>
+          ✔ 간트 차트(Gantt Chart)를 직접 그려서 각 프로세스의 대기 시간 계산<br>
+          ✔ 대기 시간 = 완료 시간 - 도착 시간 - 실행 시간<br>
+          ✔ 반환 시간(Turnaround Time) = 완료 시간 - 도착 시간<br>
+          ✔ Round Robin은 타임 퀀텀 값에 따라 결과가 달라지니 퀀텀을 반드시 확인
+        </div>
+
+        <h2 id="deadlock" class="section-anchor">3. 교착상태(Deadlock)</h2>
+
+        <p>교착상태는 두 개 이상의 프로세스가 서로 상대방이 점유한 자원을 기다리며 무한정 대기하는 상태입니다. 실기에서 교착상태 4가지 조건은 반드시 암기해야 합니다.</p>
+
+        <h3>교착상태 발생 조건 (코프만 조건)</h3>
+        <table class="g-table">
+          <thead><tr><th>조건</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>상호 배제(Mutual Exclusion)</strong></td><td>한 번에 한 프로세스만 자원 사용 가능. 다른 프로세스는 대기해야 함</td></tr>
+            <tr><td><strong>점유와 대기(Hold and Wait)</strong></td><td>자원을 점유한 프로세스가 추가 자원을 요청하며 대기</td></tr>
+            <tr><td><strong>비선점(No Preemption)</strong></td><td>다른 프로세스가 점유한 자원을 강제로 빼앗을 수 없음</td></tr>
+            <tr><td><strong>순환 대기(Circular Wait)</strong></td><td>프로세스들이 원형으로 서로의 자원을 기다리는 상태 형성</td></tr>
+          </tbody>
+        </table>
+
+        <h3>교착상태 해결 방법</h3>
+        <table class="g-table">
+          <thead><tr><th>방법</th><th>설명</th><th>특징</th></tr></thead>
+          <tbody>
+            <tr><td><strong>예방(Prevention)</strong></td><td>4가지 조건 중 하나를 원천적으로 제거</td><td>자원 낭비 심함. 실용성 낮음</td></tr>
+            <tr><td><strong>회피(Avoidance)</strong></td><td>안전 상태(Safe State)를 유지하며 자원 할당. 은행가 알고리즘</td><td>자원 요청마다 안전 여부 계산 필요</td></tr>
+            <tr><td><strong>탐지(Detection)</strong></td><td>교착상태 발생을 허용하고, 탐지 알고리즘으로 주기적 검사</td><td>자원 그래프 사이클 확인</td></tr>
+            <tr><td><strong>회복(Recovery)</strong></td><td>교착상태 탐지 후 프로세스 종료 또는 자원 선점으로 해결</td><td>탐지와 함께 사용</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 교착상태 빈출 포인트</strong><br>
+          ✔ 4가지 조건 이름 정확히 암기: 상호배제, 점유와 대기, 비선점, 순환 대기<br>
+          ✔ 은행가 알고리즘 → 교착상태 <strong>회피</strong>에 사용<br>
+          ✔ "교착상태가 발생해도 허용" → 탐지(Detection) 방식<br>
+          ✔ 4조건 중 하나만 제거해도 교착상태는 발생하지 않음
+        </div>
+
+        <h2 id="memory" class="section-anchor">4. 메모리 관리</h2>
+
+        <h3>메모리 할당 방식</h3>
+        <table class="g-table">
+          <thead><tr><th>방식</th><th>설명</th><th>문제점</th></tr></thead>
+          <tbody>
+            <tr><td><strong>연속 메모리 할당</strong></td><td>프로세스를 연속된 메모리 공간에 배치. 단일 분할, 다중 고정 분할, 다중 가변 분할</td><td>단편화(Fragmentation) 발생</td></tr>
+            <tr><td><strong>페이징(Paging)</strong></td><td>물리 메모리를 고정 크기 프레임으로, 논리 메모리를 같은 크기 페이지로 나눔</td><td>내부 단편화 발생. 외부 단편화 없음</td></tr>
+            <tr><td><strong>세그멘테이션(Segmentation)</strong></td><td>논리 주소 공간을 코드, 데이터, 스택 등 의미 있는 단위(세그먼트)로 나눔</td><td>외부 단편화 발생. 내부 단편화 없음</td></tr>
+          </tbody>
+        </table>
+
+        <h3>단편화 비교</h3>
+        <table class="g-table">
+          <thead><tr><th>구분</th><th>내부 단편화</th><th>외부 단편화</th></tr></thead>
+          <tbody>
+            <tr><td><strong>발생 원인</strong></td><td>할당된 메모리 내부에 사용하지 않는 공간 발생</td><td>할당된 메모리 외부에 자투리 공간이 흩어져 발생</td></tr>
+            <tr><td><strong>발생 조건</strong></td><td>고정 크기로 나눌 때</td><td>가변 크기로 나눌 때</td></tr>
+            <tr><td><strong>해결책</strong></td><td>세그멘테이션 사용</td><td>압축(Compaction), 페이징 사용</td></tr>
+          </tbody>
+        </table>
+
+        <h3>가상 메모리</h3>
+        <p>물리 메모리보다 큰 프로그램을 실행할 수 있게 해주는 기법입니다. 필요한 페이지만 물리 메모리에 올리고 나머지는 디스크의 스왑 영역에 저장합니다. 가상 메모리의 핵심은 <strong>요구 페이징(Demand Paging)</strong>입니다.</p>
+
+        <div class="tip-box">
+          <strong>💡 페이지 폴트(Page Fault)</strong><br>
+          프로세스가 참조하려는 페이지가 물리 메모리에 없는 상황. 발생하면 운영체제가 디스크에서 해당 페이지를 메모리로 가져옵니다. 페이지 폴트가 너무 자주 발생하면 <strong>스래싱(Thrashing)</strong>이 발생해 성능이 급격히 저하됩니다.
+        </div>
+
+        <h2 id="page" class="section-anchor">5. 페이지 교체 알고리즘</h2>
+
+        <p>물리 메모리가 꽉 찼을 때 어떤 페이지를 내보낼지 결정하는 알고리즘입니다. 시험에서 직접 계산 문제로 나오는 경우가 있어서 각 알고리즘의 동작 방식을 확실히 이해해야 합니다.</p>
+
+        <table class="g-table">
+          <thead><tr><th>알고리즘</th><th>교체 기준</th><th>특징</th></tr></thead>
+          <tbody>
+            <tr><td><strong>OPT (최적)</strong></td><td>앞으로 가장 오랫동안 사용되지 않을 페이지</td><td>페이지 폴트 최소. 미래 참조 알 수 없어 실제 구현 불가. 비교 기준으로 사용</td></tr>
+            <tr><td><strong>FIFO</strong></td><td>가장 오래전에 들어온 페이지</td><td>구현 간단. Belady's Anomaly 발생 가능 (프레임 늘려도 폴트 증가)</td></tr>
+            <tr><td><strong>LRU</strong></td><td>가장 오랫동안 사용하지 않은 페이지</td><td>참조 지역성 원리 활용. 구현 복잡하나 실용적. Belady's Anomaly 없음</td></tr>
+            <tr><td><strong>LFU</strong></td><td>참조 횟수가 가장 적은 페이지</td><td>초기에 많이 사용되고 이후 안 쓰이는 페이지가 남아있을 수 있음</td></tr>
+            <tr><td><strong>NUR (Clock)</strong></td><td>최근에 사용하지 않은 페이지 (참조 비트 활용)</td><td>LRU 근사 알고리즘. 구현 간단하고 실용적</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 페이지 교체 계산 문제 공략</strong><br>
+          ✔ 프레임 수와 참조 문자열이 주어지면 → 각 알고리즘별로 페이지 폴트 횟수 계산<br>
+          ✔ 계산 방법: 프레임에 페이지가 없으면 폴트 발생, 있으면 히트<br>
+          ✔ FIFO는 큐(선입선출)처럼 처리, LRU는 가장 최근 사용 시점 기록<br>
+          ✔ "Belady's Anomaly가 발생하는 알고리즘은?" → <strong>FIFO</strong>
+        </div>
+
+        <h2 id="ipc" class="section-anchor">6. 프로세스 간 통신(IPC)</h2>
+
+        <p>서로 다른 프로세스 사이에 데이터를 주고받는 방법입니다. 시험에서 각 방식의 특징을 구분하는 문제가 나옵니다.</p>
+
+        <table class="g-table">
+          <thead><tr><th>방식</th><th>설명</th><th>특징</th></tr></thead>
+          <tbody>
+            <tr><td><strong>파이프(Pipe)</strong></td><td>단방향 통신. 부모-자식 프로세스 간 사용</td><td>단순하나 양방향 통신엔 2개 파이프 필요</td></tr>
+            <tr><td><strong>명명 파이프(Named Pipe)</strong></td><td>이름을 가진 파이프. 관계없는 프로세스 간 통신 가능</td><td>파이프보다 유연</td></tr>
+            <tr><td><strong>공유 메모리</strong></td><td>여러 프로세스가 동일 메모리 영역을 공유</td><td>빠른 통신. 동기화 문제 주의 필요</td></tr>
+            <tr><td><strong>메시지 큐</strong></td><td>커널이 관리하는 메시지 박스에 데이터 전송</td><td>비동기 통신 가능</td></tr>
+            <tr><td><strong>소켓(Socket)</strong></td><td>네트워크를 통한 프로세스 간 통신</td><td>다른 컴퓨터의 프로세스와도 통신 가능</td></tr>
+            <tr><td><strong>세마포어(Semaphore)</strong></td><td>공유 자원 접근을 제어하는 정수 변수</td><td>동기화 및 상호 배제에 사용</td></tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box">
+          <strong>💡 세마포어 vs 뮤텍스</strong><br>
+          세마포어는 카운팅 방식으로 여러 개의 자원 관리가 가능하고, 다른 프로세스가 signal(해제)할 수 있습니다. 뮤텍스(Mutex)는 잠금/해제가 반드시 같은 스레드/프로세스에서 이루어져야 하며 소유권 개념이 있습니다. 단순 상호 배제에는 뮤텍스, 자원 개수 카운팅이 필요하면 세마포어를 사용합니다.
+        </div>
+
+        <h2>마무리</h2>
+        <p>운영체제는 범위가 넓어 보이지만 시험에서는 <strong>프로세스 상태 전이, CPU 스케줄링 계산, 교착상태 4조건, 페이지 교체 알고리즘</strong>에서 대부분의 점수가 나옵니다. 특히 계산 문제는 간트 차트를 직접 그려가며 여러 번 연습하는 게 가장 효과적입니다. 이해 없이 외우려 하면 변형 문제에서 막히니 원리를 파악하는 방식으로 공부하세요.</p>
+
+      </div>
+    </article>
+
+    <aside class="post-sidebar">
+      <div class="sidebar-section">
+        <h3>관련 글</h3>
+        <ul class="sidebar-list">
+          <li><a href="/posts/gisa-practical-network.html">실기 네트워크 완전정복</a></li>
+          <li><a href="/posts/gisa-practical-security.html">실기 보안 완전정복</a></li>
+          <li><a href="/posts/gisa-software-engineering.html">실기 소프트웨어 공학</a></li>
+          <li><a href="/posts/gisa-sql-guide.html">실기 SQL 완전정복</a></li>
+          <li><a href="/posts/gisa-exam-strategy.html">합격 공부 전략 가이드</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <p>© 2026 매일이슈. 모든 권리 보유.</p>
+    <p><a href="/privacy.html">개인정보처리방침</a> · <a href="/terms.html">이용약관</a></p>
+  </footer>
+  <script src="../main.js"></script>
+</body>
+</html>

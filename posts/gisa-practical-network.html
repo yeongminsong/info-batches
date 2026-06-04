@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CG5VPJWVEQ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CG5VPJWVEQ');
+  </script>
+  <meta charset="UTF-8"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#6891f8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>정보처리기사 실기 네트워크 완전정복 — OSI 7계층·TCP/IP·프로토콜·서브넷 — 매일이슈</title>
+  <meta name="description" content="정보처리기사 실기 네트워크 핵심 정리. OSI 7계층, TCP/IP 4계층, 주요 프로토콜, IP 주소 체계, 서브넷 마스크까지 시험에 꼭 나오는 내용만 정리했습니다.">
+  <meta property="og:title" content="정보처리기사 실기 네트워크 완전정복 — 매일이슈">
+  <meta property="og:description" content="OSI 7계층, TCP/IP, 주요 프로토콜, 라우팅, 서브넷 마스크까지 네트워크 핵심 완전정복.">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&h=630&fit=crop">
+  <meta property="og:url" content="https://mailissue.co.kr/posts/gisa-practical-network.html">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="매일이슈">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="정보처리기사 실기 네트워크 완전정복 — 매일이슈">
+  <meta name="twitter:description" content="OSI 7계층, TCP/IP, 주요 프로토콜, 라우팅, 서브넷 마스크까지 네트워크 핵심 완전정복.">
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&h=630&fit=crop">
+  <meta name="naver-site-verification" content="04a7e46cac63797a1e8f9f72f95ec02cf046c35e">
+  <link rel="canonical" href="https://mailissue.co.kr/posts/gisa-practical-network.html">
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "정보처리기사 실기 네트워크 완전정복",
+    "description": "OSI 7계층, TCP/IP 4계층, 주요 프로토콜, 서브넷 마스크 등 네트워크 핵심 정리.",
+    "image": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&h=630&fit=crop",
+    "url": "https://mailissue.co.kr/posts/gisa-practical-network.html",
+    "datePublished": "2026-06-04",
+    "dateModified": "2026-06-04",
+    "author": {"@type": "Organization", "name": "매일이슈"},
+    "publisher": {"@type": "Organization", "name": "매일이슈", "url": "https://mailissue.co.kr"}
+  }</script>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" rel="stylesheet">
+  <link href="../style.css" rel="stylesheet">
+  <meta name="google-adsense-account" content="ca-pub-5414405329595188">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5414405329595188" crossorigin="anonymous"></script>
+  <style>
+    .g-table { width:100%; border-collapse:collapse; margin:1.2rem 0; font-size:0.93rem; }
+    .g-table th { background:var(--primary,#6891f8); color:#fff; padding:0.6rem 1rem; text-align:left; font-weight:600; }
+    .g-table td { padding:0.55rem 1rem; border-bottom:1px solid var(--border,#e3e6ea); vertical-align:top; }
+    .g-table tr:nth-child(even) td { background:var(--bg-gray,#f7f8fc); }
+    .exam-box { background:#fff8e1; border-left:4px solid #ffc107; border-radius:0 0.5rem 0.5rem 0; padding:1rem 1.2rem; margin:1.2rem 0; font-size:0.95rem; line-height:1.7; }
+    .exam-box strong { color:#e65100; }
+    .tip-box { background:#e8f5e9; border-left:4px solid #43a047; border-radius:0 0.5rem 0.5rem 0; padding:1rem 1.2rem; margin:1.2rem 0; font-size:0.95rem; line-height:1.7; }
+    .tip-box strong { color:#1b5e20; }
+    .toc-box { background:var(--bg-gray,#f7f8fc); border:1px solid var(--border,#e3e6ea); border-radius:0.75rem; padding:1rem 1.4rem; margin:1.5rem 0; font-size:0.93rem; }
+    .toc-box ol { margin:0.5rem 0 0; padding-left:1.4rem; }
+    .toc-box li { margin:0.3rem 0; }
+    .toc-box a { color:#6891f8; text-decoration:none; }
+    .section-anchor { scroll-margin-top:80px; }
+    .osi-stack { border:1.5px solid var(--border,#e3e6ea); border-radius:0.6rem; overflow:hidden; margin:1rem 0; }
+    .osi-layer { padding:0.6rem 1rem; display:flex; justify-content:space-between; align-items:center; font-size:0.9rem; }
+    .osi-layer:nth-child(odd) { background:var(--bg-gray,#f7f8fc); }
+    .osi-num { font-weight:700; color:#6891f8; width:30px; }
+    .nav-links { display:flex; flex-wrap:wrap; gap:0.5rem; margin:1.5rem 0; }
+    .nav-links a { background:var(--bg-gray,#f7f8fc); border:1px solid var(--border,#e3e6ea); border-radius:0.5rem; padding:0.4rem 0.9rem; font-size:0.88rem; color:#6891f8; text-decoration:none; }
+    .nav-links a:hover { background:#6891f8; color:#fff; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/index.html" class="logo">매일이슈</a>
+      <nav class="nav">
+        <a href="/index.html">홈</a>
+        <a href="/category.html">카테고리</a>
+        <a href="/tags.html">태그</a>
+        <a href="/about.html">소개</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="테마 전환">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="post-hero-img" style="background-image:url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1400&h=500&fit=crop&auto=format');"></div>
+
+  <div class="post-wrapper">
+    <a href="/index.html" class="post-back">← 목록으로</a>
+    <article class="post-article">
+      <header class="post-header">
+        <div class="post-tags">
+          <span class="tag">정보처리기사</span>
+          <span class="tag">실기</span>
+          <span class="tag">네트워크</span>
+          <span class="tag">OSI7계층</span>
+        </div>
+        <h1 class="post-h1">정보처리기사 실기 네트워크 완전정복 — OSI 7계층·TCP/IP·프로토콜·서브넷</h1>
+        <div class="post-meta">
+          <span>📅 2026. 06. 04</span>
+          <span>⏱ 18분 읽기</span>
+        </div>
+      </header>
+
+      <div class="post-content">
+  <ins class="adsbygoogle ad-post-top" style="display:block" data-ad-client="ca-pub-5414405329595188" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+        <p>정보처리기사 실기에서 네트워크는 보안과 함께 묶여서 나오는 경우가 많습니다. OSI 계층 구조와 각 계층의 프로토콜, TCP와 UDP의 차이, IP 주소 체계는 거의 매회 등장하는 단골 주제예요. 한 번만 제대로 이해해두면 응용 문제에도 흔들리지 않습니다.</p>
+
+        <div class="toc-box">
+          <strong>📋 목차</strong>
+          <ol>
+            <li><a href="#osi">OSI 7계층 모델</a></li>
+            <li><a href="#tcpip">TCP/IP 4계층</a></li>
+            <li><a href="#protocols">핵심 프로토콜 정리</a></li>
+            <li><a href="#tcp-udp">TCP vs UDP</a></li>
+            <li><a href="#ip">IP 주소와 서브넷 마스크</a></li>
+            <li><a href="#routing">라우팅 프로토콜</a></li>
+          </ol>
+        </div>
+
+        <div class="nav-links">
+          <span style="font-size:0.85rem;color:#888;align-self:center;">실기 관련 글 →</span>
+          <a href="/posts/gisa-practical-os.html">운영체제 완전정복</a>
+          <a href="/posts/gisa-practical-security.html">보안 완전정복</a>
+          <a href="/posts/gisa-sql-guide.html">SQL 완전정복</a>
+          <a href="/posts/gisa-programming-guide.html">프로그래밍 완전정복</a>
+        </div>
+
+        <h2 id="osi" class="section-anchor">1. OSI 7계층 모델</h2>
+
+        <p>OSI(Open Systems Interconnection) 모델은 네트워크 통신을 7개 계층으로 나눈 표준 모델입니다. 시험에서 계층 이름, 번호, 대표 프로토콜·장비를 함께 물어봅니다. 암기할 때 "물-데-네-전-세-표-응" 처럼 첫 글자로 외우는 방법이 효과적입니다.</p>
+
+        <div class="osi-stack">
+          <div class="osi-layer"><span class="osi-num">7</span><strong>응용 계층 (Application)</strong><span>HTTP, HTTPS, FTP, SMTP, DNS, Telnet</span></div>
+          <div class="osi-layer"><span class="osi-num">6</span><strong>표현 계층 (Presentation)</strong><span>데이터 형식 변환, 암호화, 압축 (JPEG, MPEG, SSL/TLS)</span></div>
+          <div class="osi-layer"><span class="osi-num">5</span><strong>세션 계층 (Session)</strong><span>연결 설정·유지·종료 (NetBIOS, RPC)</span></div>
+          <div class="osi-layer"><span class="osi-num">4</span><strong>전송 계층 (Transport)</strong><span>TCP, UDP — 포트 번호, 신뢰성 전송</span></div>
+          <div class="osi-layer"><span class="osi-num">3</span><strong>네트워크 계층 (Network)</strong><span>IP, ICMP, ARP, 라우터 — IP 주소 기반 라우팅</span></div>
+          <div class="osi-layer"><span class="osi-num">2</span><strong>데이터링크 계층 (Data Link)</strong><span>이더넷, MAC 주소, 스위치, 브리지 — 프레임 단위</span></div>
+          <div class="osi-layer"><span class="osi-num">1</span><strong>물리 계층 (Physical)</strong><span>전기 신호, 허브, 리피터 — 비트 단위 전송</span></div>
+        </div>
+
+        <table class="g-table">
+          <thead><tr><th>계층</th><th>데이터 단위</th><th>대표 장비</th><th>핵심 기능</th></tr></thead>
+          <tbody>
+            <tr><td>7 응용</td><td>데이터(Data)</td><td>-</td><td>사용자 인터페이스, 응용 서비스 제공</td></tr>
+            <tr><td>6 표현</td><td>데이터(Data)</td><td>-</td><td>데이터 형식 변환, 암호화, 압축</td></tr>
+            <tr><td>5 세션</td><td>데이터(Data)</td><td>-</td><td>통신 세션 관리, 동기화</td></tr>
+            <tr><td>4 전송</td><td>세그먼트(Segment)</td><td>게이트웨이</td><td>종단 간 신뢰성 통신, 흐름·오류 제어</td></tr>
+            <tr><td>3 네트워크</td><td>패킷(Packet)</td><td>라우터</td><td>논리 주소(IP) 기반 경로 결정</td></tr>
+            <tr><td>2 데이터링크</td><td>프레임(Frame)</td><td>스위치, 브리지</td><td>물리 주소(MAC) 기반 통신, 오류 검출</td></tr>
+            <tr><td>1 물리</td><td>비트(Bit)</td><td>허브, 리피터</td><td>전기 신호로 비트 전송</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 OSI 계층 빈출 포인트</strong><br>
+          ✔ "MAC 주소를 이용하는 계층" → <strong>2계층 데이터링크 계층</strong><br>
+          ✔ "IP 주소를 이용하는 계층" → <strong>3계층 네트워크 계층</strong><br>
+          ✔ "포트 번호를 이용하는 계층" → <strong>4계층 전송 계층</strong><br>
+          ✔ "라우터가 동작하는 계층" → <strong>3계층</strong>, "스위치가 동작하는 계층" → <strong>2계층</strong>
+        </div>
+
+        <h2 id="tcpip" class="section-anchor">2. TCP/IP 4계층</h2>
+
+        <p>실제 인터넷에서 사용하는 표준 모델입니다. OSI 7계층을 실용적으로 4계층으로 통합한 모델이에요.</p>
+
+        <table class="g-table">
+          <thead><tr><th>TCP/IP 계층</th><th>대응 OSI 계층</th><th>프로토콜</th></tr></thead>
+          <tbody>
+            <tr><td><strong>응용 계층 (Application)</strong></td><td>5~7계층 (세션+표현+응용)</td><td>HTTP, HTTPS, FTP, SMTP, POP3, DNS, Telnet, SSH</td></tr>
+            <tr><td><strong>전송 계층 (Transport)</strong></td><td>4계층 (전송)</td><td>TCP, UDP</td></tr>
+            <tr><td><strong>인터넷 계층 (Internet)</strong></td><td>3계층 (네트워크)</td><td>IP, ICMP, ARP, RARP, OSPF, BGP</td></tr>
+            <tr><td><strong>네트워크 접근 계층 (Network Access)</strong></td><td>1~2계층 (물리+데이터링크)</td><td>이더넷, Wi-Fi, PPP</td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="protocols" class="section-anchor">3. 핵심 프로토콜 정리</h2>
+
+        <table class="g-table">
+          <thead><tr><th>프로토콜</th><th>포트</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><strong>HTTP</strong></td><td>80</td><td>웹 페이지 전송. 비암호화</td></tr>
+            <tr><td><strong>HTTPS</strong></td><td>443</td><td>HTTP + TLS/SSL 암호화</td></tr>
+            <tr><td><strong>FTP</strong></td><td>20(데이터), 21(제어)</td><td>파일 전송 프로토콜</td></tr>
+            <tr><td><strong>SSH</strong></td><td>22</td><td>원격 접속, 암호화된 터미널</td></tr>
+            <tr><td><strong>SMTP</strong></td><td>25</td><td>이메일 전송(발신)</td></tr>
+            <tr><td><strong>DNS</strong></td><td>53</td><td>도메인 이름 → IP 주소 변환</td></tr>
+            <tr><td><strong>DHCP</strong></td><td>67(서버), 68(클라이언트)</td><td>IP 주소 자동 할당</td></tr>
+            <tr><td><strong>POP3</strong></td><td>110</td><td>이메일 수신. 서버에서 클라이언트로 다운로드</td></tr>
+            <tr><td><strong>IMAP</strong></td><td>143</td><td>이메일 수신. 서버에서 직접 관리</td></tr>
+            <tr><td><strong>SNMP</strong></td><td>161</td><td>네트워크 장비 모니터링 및 관리</td></tr>
+            <tr><td><strong>Telnet</strong></td><td>23</td><td>원격 접속, 비암호화 (SSH로 대체)</td></tr>
+            <tr><td><strong>ICMP</strong></td><td>-</td><td>IP 오류 보고, ping 명령어에 사용</td></tr>
+            <tr><td><strong>ARP</strong></td><td>-</td><td>IP 주소 → MAC 주소 변환</td></tr>
+            <tr><td><strong>RARP</strong></td><td>-</td><td>MAC 주소 → IP 주소 변환 (역방향)</td></tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box">
+          <strong>💡 포트 번호 암기 팁</strong><br>
+          "FTP는 파일을 떠나보낸다(21), HTTP는 팔아요(80), HTTPS는 사사(443), SSH는 이이(22), DNS는 공삼(53)"처럼 숫자와 연상을 연결해서 외우면 잘 기억됩니다. 시험에서 포트 번호 묻는 문제가 자주 나옵니다.
+        </div>
+
+        <h2 id="tcp-udp" class="section-anchor">4. TCP vs UDP</h2>
+
+        <p>TCP와 UDP는 전송 계층의 두 핵심 프로토콜입니다. 특징 비교는 시험에서 단골로 나옵니다.</p>
+
+        <table class="g-table">
+          <thead><tr><th>특성</th><th>TCP</th><th>UDP</th></tr></thead>
+          <tbody>
+            <tr><td><strong>연결 방식</strong></td><td>연결 지향(3-way handshake로 연결 수립)</td><td>비연결 지향</td></tr>
+            <tr><td><strong>신뢰성</strong></td><td>높음 — 순서 보장, 재전송, 오류 제어</td><td>낮음 — 전달 보장 없음</td></tr>
+            <tr><td><strong>속도</strong></td><td>상대적으로 느림</td><td>빠름</td></tr>
+            <tr><td><strong>흐름 제어</strong></td><td>있음 (슬라이딩 윈도우)</td><td>없음</td></tr>
+            <tr><td><strong>혼잡 제어</strong></td><td>있음</td><td>없음</td></tr>
+            <tr><td><strong>활용 예</strong></td><td>웹(HTTP), 이메일(SMTP), 파일 전송(FTP)</td><td>동영상 스트리밍, DNS, VoIP, 게임</td></tr>
+          </tbody>
+        </table>
+
+        <h3>TCP 3-way Handshake</h3>
+        <p>TCP 연결 수립 과정으로, 실기 시험에서 순서를 묻는 문제가 나옵니다.</p>
+        <table class="g-table">
+          <thead><tr><th>단계</th><th>클라이언트 → 서버</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td>1단계</td><td><strong>SYN</strong> 전송</td><td>연결 요청. 시퀀스 번호 초기화</td></tr>
+            <tr><td>2단계</td><td><strong>SYN + ACK</strong> 수신</td><td>서버가 요청 수락 + 자신도 연결 요청</td></tr>
+            <tr><td>3단계</td><td><strong>ACK</strong> 전송</td><td>클라이언트가 서버 요청 수락. 연결 수립</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 TCP/UDP 빈출 포인트</strong><br>
+          ✔ "신뢰성 있는 전송이 필요한 프로토콜" → <strong>TCP</strong><br>
+          ✔ "실시간 스트리밍에 적합한 전송 계층 프로토콜" → <strong>UDP</strong><br>
+          ✔ TCP 3-way Handshake 순서: <strong>SYN → SYN+ACK → ACK</strong><br>
+          ✔ TCP 연결 종료는 4-way Handshake (FIN, ACK, FIN, ACK)
+        </div>
+
+        <h2 id="ip" class="section-anchor">5. IP 주소와 서브넷 마스크</h2>
+
+        <h3>IPv4 주소 클래스</h3>
+        <table class="g-table">
+          <thead><tr><th>클래스</th><th>첫 번째 옥텟 범위</th><th>용도</th><th>기본 서브넷 마스크</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Class A</strong></td><td>1 ~ 126</td><td>대형 네트워크. 호스트 수 최다</td><td>255.0.0.0 (/8)</td></tr>
+            <tr><td><strong>Class B</strong></td><td>128 ~ 191</td><td>중형 네트워크</td><td>255.255.0.0 (/16)</td></tr>
+            <tr><td><strong>Class C</strong></td><td>192 ~ 223</td><td>소형 네트워크. 가장 일반적</td><td>255.255.255.0 (/24)</td></tr>
+            <tr><td><strong>Class D</strong></td><td>224 ~ 239</td><td>멀티캐스트용</td><td>-</td></tr>
+            <tr><td><strong>Class E</strong></td><td>240 ~ 255</td><td>연구·예약용</td><td>-</td></tr>
+          </tbody>
+        </table>
+
+        <h3>사설 IP 주소 대역</h3>
+        <table class="g-table">
+          <thead><tr><th>클래스</th><th>사설 IP 범위</th></tr></thead>
+          <tbody>
+            <tr><td>Class A</td><td>10.0.0.0 ~ 10.255.255.255</td></tr>
+            <tr><td>Class B</td><td>172.16.0.0 ~ 172.31.255.255</td></tr>
+            <tr><td>Class C</td><td>192.168.0.0 ~ 192.168.255.255</td></tr>
+          </tbody>
+        </table>
+
+        <div class="tip-box">
+          <strong>💡 서브넷 마스크 계산 방법</strong><br>
+          /24 = 255.255.255.0 → 네트워크 주소 3옥텟, 호스트 8비트 = 2⁸ - 2 = 254개 호스트<br>
+          /25 = 255.255.255.128 → 호스트 7비트 = 2⁷ - 2 = 126개 호스트<br>
+          /26 = 255.255.255.192 → 호스트 6비트 = 2⁶ - 2 = 62개 호스트<br>
+          (전체 주소 수에서 네트워크 주소와 브로드캐스트 주소 2개를 빼야 실제 사용 가능 호스트 수)
+        </div>
+
+        <h3>IPv4 vs IPv6</h3>
+        <table class="g-table">
+          <thead><tr><th>특성</th><th>IPv4</th><th>IPv6</th></tr></thead>
+          <tbody>
+            <tr><td>주소 길이</td><td>32비트 (4옥텟)</td><td>128비트 (16옥텟)</td></tr>
+            <tr><td>표기법</td><td>10진수 점 표기 (192.168.0.1)</td><td>16진수 콜론 표기 (2001:db8::1)</td></tr>
+            <tr><td>주소 개수</td><td>약 43억 개</td><td>사실상 무한 (2¹²⁸)</td></tr>
+            <tr><td>헤더</td><td>가변 길이 (20~60바이트)</td><td>고정 40바이트. 단순화</td></tr>
+            <tr><td>보안</td><td>선택적 (IPSec 별도)</td><td>IPSec 기본 탑재</td></tr>
+            <tr><td>브로드캐스트</td><td>있음</td><td>없음 (멀티캐스트로 대체)</td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="routing" class="section-anchor">6. 라우팅 프로토콜</h2>
+
+        <p>라우터가 패킷의 최적 경로를 결정할 때 사용하는 프로토콜입니다. 내부(IGP)와 외부(EGP) 프로토콜로 나뉩니다.</p>
+
+        <table class="g-table">
+          <thead><tr><th>구분</th><th>프로토콜</th><th>알고리즘</th><th>특징</th></tr></thead>
+          <tbody>
+            <tr><td rowspan="2"><strong>IGP<br>(내부)</strong></td><td>RIP</td><td>거리 벡터</td><td>홉 수 기준. 최대 15홉. 소규모 네트워크. 느린 수렴</td></tr>
+            <tr><td>OSPF</td><td>링크 상태</td><td>대역폭 기준. 대규모 네트워크. 빠른 수렴. 계층적 구조</td></tr>
+            <tr><td><strong>EGP<br>(외부)</strong></td><td>BGP</td><td>경로 벡터</td><td>AS(자율 시스템) 간 라우팅. 인터넷 백본에 사용</td></tr>
+          </tbody>
+        </table>
+
+        <div class="exam-box">
+          <strong>🎯 라우팅 프로토콜 빈출 포인트</strong><br>
+          ✔ RIP: 거리 벡터, 최대 15홉, 홉 수 기준, Bellman-Ford 알고리즘<br>
+          ✔ OSPF: 링크 상태, 홉 무제한, 대역폭 기준, Dijkstra 알고리즘<br>
+          ✔ BGP: AS 간 라우팅, 인터넷 전체 경로 관리에 사용<br>
+          ✔ "홉 수가 가장 적은 경로를 선택하는 프로토콜" → <strong>RIP</strong>
+        </div>
+
+        <h2>마무리</h2>
+        <p>네트워크는 외워야 할 내용이 많아 보이지만, OSI 7계층과 프로토콜 포트 번호를 확실히 잡으면 반은 된 겁니다. 나머지 TCP/UDP, IP 주소 체계, 라우팅은 이해를 바탕으로 암기하면 응용 문제에서도 흔들리지 않습니다. 실기 준비 초반에 네트워크를 잡아두면 보안 파트 공부할 때도 훨씬 수월해집니다.</p>
+
+      </div>
+    </article>
+
+    <aside class="post-sidebar">
+      <div class="sidebar-section">
+        <h3>관련 글</h3>
+        <ul class="sidebar-list">
+          <li><a href="/posts/gisa-practical-os.html">실기 운영체제 완전정복</a></li>
+          <li><a href="/posts/gisa-practical-security.html">실기 보안 완전정복</a></li>
+          <li><a href="/posts/gisa-subject5-system-mgmt.html">필기 5과목 정보시스템 관리</a></li>
+          <li><a href="/posts/gisa-sql-guide.html">실기 SQL 완전정복</a></li>
+          <li><a href="/posts/gisa-exam-strategy.html">합격 공부 전략 가이드</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <p>© 2026 매일이슈. 모든 권리 보유.</p>
+    <p><a href="/privacy.html">개인정보처리방침</a> · <a href="/terms.html">이용약관</a></p>
+  </footer>
+  <script src="../main.js"></script>
+</body>
+</html>
