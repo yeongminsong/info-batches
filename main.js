@@ -293,6 +293,87 @@ signupForm?.addEventListener('submit', e => {
   setTimeout(() => location.href = '/index.html', 1200);
 });
 
+// ── Post: 브레드크럼 자동 주입 ──
+(function injectBreadcrumb() {
+  const wrapper = document.querySelector('.post-wrapper');
+  if (!wrapper) return;
+
+  const firstTag = document.querySelector('.post-header .tag')?.textContent?.trim() || '';
+  const title    = document.querySelector('.post-h1')?.textContent?.trim() || '';
+  if (!title) return;
+
+  // 태그 → 카테고리명 매핑
+  const catLabel = (['생활꿀팁','건강','재테크','절약','요리'].includes(firstTag))
+    ? '생활꿀팁'
+    : (['뉴스요약','경제','사회'].includes(firstTag))
+    ? '뉴스요약'
+    : 'IT테크';
+
+  const shortTitle = title.length > 45 ? title.slice(0, 45) + '…' : title;
+
+  // 시각적 브레드크럼
+  const nav = document.createElement('nav');
+  nav.setAttribute('aria-label', '브레드크럼');
+  nav.className = 'breadcrumb-nav';
+  nav.innerHTML = `
+    <ol class="breadcrumb">
+      <li><a href="/index.html">홈</a></li>
+      <li><a href="/category.html">${catLabel}</a></li>
+      <li><span>${shortTitle}</span></li>
+    </ol>`;
+
+  const backLink = wrapper.querySelector('.post-back');
+  if (backLink) backLink.after(nav);
+  else wrapper.prepend(nav);
+
+  // BreadcrumbList JSON-LD 스키마 동적 주입
+  const pageUrl = 'https://mailissue.co.kr' + location.pathname;
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: '홈', item: 'https://mailissue.co.kr/' },
+      { '@type': 'ListItem', position: 2, name: catLabel, item: 'https://mailissue.co.kr/category.html' },
+      { '@type': 'ListItem', position: 3, name: title, item: pageUrl },
+    ],
+  };
+  const s = document.createElement('script');
+  s.type = 'application/ld+json';
+  s.textContent = JSON.stringify(schema);
+  document.head.appendChild(s);
+})();
+
+// ── Post: 저자(Author) 박스 자동 주입 ──
+(function injectAuthorBox() {
+  const article = document.querySelector('.post-article');
+  if (!article) return;
+
+  const dateEl = document.querySelector('.post-meta span');
+  const dateText = dateEl ? dateEl.textContent.replace('📅', '').trim() : '';
+
+  const box = document.createElement('div');
+  box.className = 'author-box';
+  box.setAttribute('itemscope', '');
+  box.setAttribute('itemtype', 'https://schema.org/Person');
+  box.innerHTML = `
+    <div class="author-avatar" aria-hidden="true">매</div>
+    <div class="author-info">
+      <div class="author-label">작성자</div>
+      <div class="author-name" itemprop="name">매일이슈 편집팀</div>
+      <p class="author-desc">생활 꿀팁, IT 테크 트렌드, 자격증 정보 등 실용적인 정보를 핵심만 골라 전달합니다. 어렵고 복잡한 내용도 누구나 쉽게 이해할 수 있도록 정리하는 것이 목표입니다.</p>
+      <div class="author-meta">
+        <a href="/about.html" itemprop="url">운영자 소개</a>
+        ${dateText ? `<span class="sep">·</span><span>발행일 ${dateText}</span>` : ''}
+        <span class="sep">·</span>
+        <a href="mailto:contact@mailissue.co.kr">contact@mailissue.co.kr</a>
+      </div>
+    </div>`;
+
+  const content = article.querySelector('.post-content');
+  if (content) content.after(box);
+  else article.appendChild(box);
+})();
+
 // ── Post: Comments 자동 주입 ──
 (function injectComments() {
   const article = document.querySelector('.post-article');

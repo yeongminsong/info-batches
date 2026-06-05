@@ -1574,3 +1574,105 @@ a { color: inherit; text-decoration: none; }
   margin: 2rem 0;
   min-height: 90px;
 }
+
+/* ── Breadcrumb ── */
+.breadcrumb-nav {
+  margin: 0.4rem 0 1.2rem;
+}
+.breadcrumb {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  padding: 0;
+}
+.breadcrumb li {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.breadcrumb li:not(:last-child)::after {
+  content: '›';
+  color: var(--border);
+  font-size: 1rem;
+  line-height: 1;
+}
+.breadcrumb a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.breadcrumb a:hover { color: var(--text); }
+.breadcrumb li:last-child span {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* ── Author Box ── */
+.author-box {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  background: var(--bg-gray);
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  padding: 1.2rem 1.4rem;
+  margin: 2.5rem 0 1rem;
+}
+.author-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6891f8 0%, #4a6fd4 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  letter-spacing: -1px;
+}
+.author-info { flex: 1; min-width: 0; }
+.author-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.2rem;
+}
+.author-name {
+  font-weight: 700;
+  font-size: 0.97rem;
+  margin-bottom: 0.35rem;
+  color: var(--text);
+}
+.author-desc {
+  font-size: 0.87rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+  margin-bottom: 0.5rem;
+}
+.author-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.author-meta a {
+  color: #6891f8;
+  text-decoration: none;
+  font-weight: 600;
+}
+.author-meta a:hover { text-decoration: underline; }
+.author-meta .sep { color: var(--border); }
+@media (max-width: 480px) {
+  .author-box { flex-direction: column; }
+  .author-avatar { width: 40px; height: 40px; font-size: 1rem; }
+}
